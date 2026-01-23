@@ -1,0 +1,17 @@
+{
+  "updatedAt": "2026-01-23",
+  "projects": [
+    {
+      "id": "mvp-01",
+      "name": "Smart Reply for Social Comments",
+      "gradient": "linear-gradient(135deg, #7c3aed 0%, #ec4899 45%, #f97316 100%)",
+      "problem": "Social Media Comment Suggestions is a lightweight assistant that helps people reply faster (and better) in comment threads.",
+      "status": "building",
+      "hypothesis": "People who actively comment on social media will use and value AI-generated, context-aware comment suggestions because it helps them reply faster while sounding more thoughtful and on-brand.",
+      "details": "<b>MVP idea (auto-insert scope):</b>\nBuild a lightweight browser extension that detects when a user focuses a comment field, opens a small popover with a few reply-style options, generates 3–5 context-aware suggestions, and pastes the selected suggestion directly into the active input field.\n\n<br><br><b>User flow:</b>\n\n<br>1. User clicks the comment/reply field they want to respond to.\n\n<br>2. A popover appears next to the field with reply-style buttons and suggested replies.\n\n<br>3. The user clicks a suggestion and it’s automatically inserted into the comment field (editable before posting).\n<br/><br/>The tool removes the friction of figuring out what to say by instantly turning context into ready-to-post replies, saving time, reducing social anxiety, and helping users consistently respond with the right tone—whether they want to be thoughtful, witty, professional, or diplomatic.",
+      "links": [
+        { "label": "Read More", "href": "#", "kind": "primary" }
+      ]
+    }
+  ]
+}
