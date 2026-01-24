@@ -187,14 +187,17 @@ async function loadProjects() {
     if (!res.ok) throw new Error(`Failed to load projects (${res.status})`);
     const data = await res.json();
     const projects = data?.projects || [];
-    renderProjects(target, projects);
-
     const meta = document.getElementById("projects-meta");
     if (meta) {
       const dateText = formatUpdatedAt(data?.updatedAt);
       const count = Array.isArray(projects) ? projects.length : 0;
       meta.textContent = dateText ? `Updated ${dateText} · ${count} builds` : `${count} builds`;
+      // Register *after* content is set so it animates in the right order,
+      // then cards will animate after it.
+      registerAppearElements([meta]);
     }
+
+    renderProjects(target, projects);
   } catch (err) {
     target.replaceChildren();
     target.setAttribute("aria-busy", "false");
@@ -274,13 +277,13 @@ const APPEAR_DEFAULT_FROM_OPACITY = 0.0;
 let appearIdSeq = 0;
 let appearObserver = null;
 let appearFallbackListening = false;
-let appearFlushScheduled = false;
+let appearRescheduleRequested = false;
+let appearViewportListenersAttached = false;
 
 const appearOptions = new WeakMap();
-const appearScheduled = new WeakSet();
+const appearTimeouts = new WeakMap();
 const appearRegistered = new Set();
 const appearFallbackElements = new Set();
-const appearPending = [];
 
 function compareAppearOrder(a, b) {
   const topA = a.getBoundingClientRect().top;
@@ -321,48 +324,76 @@ function normalizeAppearOptions(options = {}) {
   };
 }
 
-function queueAppearAnimations(els) {
-  for (const el of els) {
-    if (!(el instanceof HTMLElement)) continue;
-    appearPending.push(el);
+function clearScheduledAppear(el) {
+  const timeoutId = appearTimeouts.get(el);
+  if (typeof timeoutId === "number") {
+    window.clearTimeout(timeoutId);
   }
-
-  if (appearFlushScheduled) return;
-  appearFlushScheduled = true;
-
-  window.requestAnimationFrame(() => {
-    appearFlushScheduled = false;
-
-    const uniq = new Set();
-    for (const el of appearPending.splice(0, appearPending.length)) {
-      if (!(el instanceof HTMLElement)) continue;
-      if (el.dataset.appearAnimated === "true") continue;
-      if (appearScheduled.has(el)) continue;
-      uniq.add(el);
-    }
-
-    const ordered = Array.from(uniq);
-    ordered.sort(compareAppearOrder);
-    scheduleAppearAnimation(ordered);
-  });
+  appearTimeouts.delete(el);
 }
 
-function scheduleAppearAnimation(elementsInOrder) {
-  for (const [idx, el] of elementsInOrder.entries()) {
+function rescheduleAppearAnimationsInViewport() {
+  const toAnimate = [];
+
+  // Cancel any scheduled animations that are no longer eligible (e.g. scrolled away).
+  for (const el of appearRegistered) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (el.dataset.appearAnimated === "true") {
+      clearScheduledAppear(el);
+      continue;
+    }
+    if (!isInViewport(el, 0)) {
+      clearScheduledAppear(el);
+    }
+  }
+
+  // Build one global, deterministic list of visible elements.
+  for (const el of appearRegistered) {
     if (!(el instanceof HTMLElement)) continue;
     if (el.dataset.appearAnimated === "true") continue;
-    if (appearScheduled.has(el)) continue;
+    if (!isInViewport(el, 0)) continue;
+    toAnimate.push(el);
+  }
+
+  toAnimate.sort(compareAppearOrder);
+
+  for (const [idx, el] of toAnimate.entries()) {
+    if (!(el instanceof HTMLElement)) continue;
+    if (el.dataset.appearAnimated === "true") continue;
 
     const opts = normalizeAppearOptions(appearOptions.get(el));
     const id = ensureAppearId(el);
 
-    appearScheduled.add(el);
-
-    window.setTimeout(() => {
-      appearScheduled.delete(el);
+    // Re-schedule from scratch so the stagger always matches top-to-bottom order.
+    clearScheduledAppear(el);
+    const timeoutId = window.setTimeout(() => {
+      appearTimeouts.delete(el);
       animateAppearById(id, opts);
+      if (el.dataset.appearAnimated === "true") {
+        appearObserver?.unobserve(el);
+        appearFallbackElements.delete(el);
+      }
     }, idx * APPEAR_STAGGER_MS);
+
+    appearTimeouts.set(el, timeoutId);
   }
+}
+
+function requestAppearReschedule() {
+  if (appearRescheduleRequested) return;
+  appearRescheduleRequested = true;
+  window.requestAnimationFrame(() => {
+    appearRescheduleRequested = false;
+    rescheduleAppearAnimationsInViewport();
+  });
+}
+
+function ensureAppearViewportListeners() {
+  if (appearViewportListenersAttached) return;
+  appearViewportListenersAttached = true;
+  // Keep ordering deterministic as the user scrolls/resizes.
+  window.addEventListener("scroll", requestAppearReschedule, { passive: true });
+  window.addEventListener("resize", requestAppearReschedule);
 }
 
 function ensureAppearObserver() {
@@ -371,17 +402,17 @@ function ensureAppearObserver() {
 
   appearObserver = new IntersectionObserver(
     (entries, obs) => {
-      const toAnimate = [];
-
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
         const el = entry.target;
         if (!(el instanceof HTMLElement)) continue;
-        obs.unobserve(el);
-        toAnimate.push(el);
+        if (el.dataset.appearAnimated === "true") {
+          obs.unobserve(el);
+          continue;
+        }
       }
 
-      queueAppearAnimations(toAnimate);
+      // Recompute a single global top-to-bottom stagger order.
+      requestAppearReschedule();
     },
     { threshold: APPEAR_THRESHOLD },
   );
@@ -390,21 +421,15 @@ function ensureAppearObserver() {
 }
 
 function fallbackAppearCheck() {
-  const visible = [];
   for (const el of appearFallbackElements) {
     if (!(el instanceof HTMLElement)) continue;
     if (el.dataset.appearAnimated === "true") {
       appearFallbackElements.delete(el);
       continue;
     }
-    if (appearScheduled.has(el)) continue;
     if (!isInViewport(el, 0)) continue;
-    visible.push(el);
-    appearFallbackElements.delete(el);
   }
-
-  visible.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
-  queueAppearAnimations(visible);
+  requestAppearReschedule();
 
   if (appearFallbackElements.size === 0 && appearFallbackListening) {
     appearFallbackListening = false;
@@ -414,29 +439,14 @@ function fallbackAppearCheck() {
 }
 
 function animateVisibleRegisteredInOrder() {
-  const visible = [];
-  const observer = ensureAppearObserver();
-
-  for (const el of appearRegistered) {
-    if (!(el instanceof HTMLElement)) continue;
-    if (el.dataset.appearAnimated === "true") continue;
-    if (appearScheduled.has(el)) continue;
-    if (!isInViewport(el, 0)) continue;
-
-    // Prevent a later observer callback from re-queuing the same element.
-    observer?.unobserve(el);
-    appearFallbackElements.delete(el);
-
-    visible.push(el);
-  }
-
-  visible.sort(compareAppearOrder);
-  scheduleAppearAnimation(visible);
+  requestAppearReschedule();
 }
 
 function registerAppearElements(elements, options = {}) {
   const $ = window.jQuery;
   if (typeof $ !== "function") return;
+
+  ensureAppearViewportListeners();
 
   const reduceMotion = prefersReducedMotion();
   const els = Array.from(elements || []).filter((el) => el instanceof HTMLElement);
@@ -473,6 +483,7 @@ function registerAppearElements(elements, options = {}) {
     window.addEventListener("resize", fallbackAppearCheck);
     fallbackAppearCheck();
   }
+  requestAppearReschedule();
 }
 
 function initAppearAnimations() {
@@ -482,10 +493,11 @@ function initAppearAnimations() {
         ".profile__image",
         ".profile__name",
         ".profile__tagline",
-        ".profile__social .social-link",
+        ".profile__social",
         ".section__title",
         // Paragraphs (scoped to avoid animating the entire legal footer copy).
-        ".content p",
+        // Note: exclude `.section__meta` so it can animate when populated (e.g. projects updated line).
+        ".content p:not(.section__meta)",
         // Form blocks.
         ".field",
         ".idea-form__actions",
