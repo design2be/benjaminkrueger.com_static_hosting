@@ -207,12 +207,44 @@ async function loadProjects() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initAppearAnimations();
+  initStartupsMarquee();
   loadProjects();
   initIdeaForm();
   initImprintToggle();
   initDataPolicyToggle();
   initPolicyDeepLinks();
 });
+
+function initStartupsMarquee() {
+  const marquee = document.querySelector(".startups-marquee");
+  if (!(marquee instanceof HTMLElement)) return;
+
+  const inner = marquee.querySelector(".startups-marquee__inner");
+  const track = marquee.querySelector(".startups-marquee__track");
+  if (!(inner instanceof HTMLElement)) return;
+  if (!(track instanceof HTMLUListElement)) return;
+
+  if (marquee.dataset.marqueeReady === "true") return;
+  marquee.dataset.marqueeReady = "true";
+
+  // Duplicate the track for a seamless loop.
+  const clone = track.cloneNode(true);
+  if (clone instanceof HTMLUListElement) {
+    clone.setAttribute("aria-hidden", "true");
+    // Prevent duplicate announcements if screen readers traverse images anyway.
+    for (const img of clone.querySelectorAll("img")) {
+      if (img instanceof HTMLImageElement) img.alt = "";
+    }
+    inner.append(clone);
+  }
+
+  // Set duration based on width so speed feels consistent across viewports.
+  const width = track.scrollWidth || track.getBoundingClientRect().width || 0;
+  const pxPerSecond = 55; // lower = slower
+  const secondsRaw = width > 0 ? width / pxPerSecond : 28;
+  const seconds = Math.max(18, Math.min(48, secondsRaw));
+  inner.style.setProperty("--marquee-duration", `${seconds.toFixed(2)}s`);
+}
 
 function animateAppearById(id, { duration = 650, easing = "easeOut", fromY = 20, fromOpacity = 0.2 } = {}) {
   const el = document.getElementById(id);
@@ -494,6 +526,7 @@ function initAppearAnimations() {
         ".profile__name",
         ".profile__tagline",
         ".profile__social",
+        ".profile__startups",
         ".section__title",
         // Paragraphs (scoped to avoid animating the entire legal footer copy).
         // Note: exclude `.section__meta` so it can animate when populated (e.g. projects updated line).

@@ -163,6 +163,104 @@ p {
   margin-top: 4px;
 }
 
+.profile__startups {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: 14px;
+  background: transparent;
+}
+
+.profile__startups-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 20px;
+  background: transparent;
+}
+
+.startups-marquee {
+  --startups-logo-height: 30px;
+  --startups-gap: 44px;
+  overflow: hidden;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  background: transparent; /* keep fully transparent */
+  /* Subtle edge fade */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.startups-marquee__inner {
+  --marquee-duration: 28s;
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: startups-marquee var(--marquee-duration) linear infinite;
+  background: transparent;
+}
+
+.startups-marquee__track {
+  list-style: none;
+  margin: 0;
+  padding: 12px 4px;
+  padding-right: calc(4px + var(--startups-gap)); /* seam spacing for looping */
+  display: flex;
+  align-items: center;
+  gap: var(--startups-gap);
+}
+
+.startups-carousel__item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.startups-carousel__logo {
+  height: var(--startups-logo-height);
+  width: auto;
+  max-height: var(--startups-logo-height);
+  display: block;
+  opacity: 0.92;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+@media (min-width: 760px) {
+  .startups-marquee {
+    --startups-gap: 56px;
+  }
+  .startups-marquee__track {
+    padding: 14px 2px;
+    padding-right: calc(2px + var(--startups-gap)); /* seam spacing for looping */
+    gap: var(--startups-gap);
+  }
+}
+
+@keyframes startups-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .startups-marquee {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .startups-marquee__inner {
+    animation: none;
+    width: auto;
+  }
+}
+
 .social-link {
   width: 38px;
   height: 38px;
