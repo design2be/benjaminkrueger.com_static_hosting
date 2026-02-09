@@ -37,6 +37,17 @@ body {
   height: 100%;
 }
 
+/* Prevent tiny viewport-unit rounding from causing horizontal scroll (mobile). */
+html {
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html {
+    overflow-x: hidden;
+  }
+}
+
 body {
   margin: 0;
   font-family: var(--font-sans);
@@ -165,8 +176,11 @@ p {
 
 .profile__startups {
   width: 100vw;
+  width: 100dvw;
   margin-left: calc(50% - 50vw);
+  margin-left: calc(50% - 50dvw);
   margin-right: calc(50% - 50vw);
+  margin-right: calc(50% - 50dvw);
   margin-top: 14px;
   background: transparent;
 }
@@ -690,8 +704,11 @@ p {
 /* Full-bleed sections */
 .section--fullbleed {
   width: 100vw;
+  width: 100dvw;
   margin-left: calc(50% - 50vw);
+  margin-left: calc(50% - 50dvw);
   margin-right: calc(50% - 50vw);
+  margin-right: calc(50% - 50dvw);
   padding: 44px 0;
   border-top: 1px solid rgba(15, 23, 42, 0.08);
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);

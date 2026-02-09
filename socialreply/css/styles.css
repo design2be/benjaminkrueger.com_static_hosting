@@ -24,6 +24,13 @@ body {
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html {
+    overflow-x: hidden;
+  }
 }
 
 body {
@@ -47,6 +54,8 @@ body {
   align-items: center;
   padding: 0 16px;
   gap: 12px;
+  max-width: var(--page-max);
+  margin: 0 auto;
 }
 
 .topbar-back {
@@ -106,6 +115,21 @@ body {
 .topbar-cta:focus-visible {
   outline: 3px solid rgba(47, 129, 255, 0.35);
   outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  .topbar-inner {
+    height: auto;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+
+  .topbar-cta {
+    margin-left: 0;
+    flex: 1 1 100%;
+    justify-content: center;
+  }
 }
 
 .logo {
