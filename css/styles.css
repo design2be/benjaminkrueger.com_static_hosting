@@ -146,11 +146,14 @@ p {
   justify-items: center;
   gap: 14px;
   text-align: center;
+  width: 100%;
+  min-width: 0;
 }
 
 .profile__image {
-  width: 230px;
-  height: 230px;
+  width: min(230px, 60vw);
+  aspect-ratio: 1 / 1;
+  height: auto;
   border-radius: 9999px;
   object-fit: cover;
   background: #f1f5f9;
@@ -171,6 +174,7 @@ p {
   font-size: 20px;
   line-height: 1.65;
   color: rgba(15, 23, 42, 0.72);
+  overflow-wrap: anywhere;
 }
 
 .profile__social {
@@ -182,14 +186,13 @@ p {
 }
 
 .profile__startups {
-  width: 100vw;
-  width: 100dvw;
-  margin-left: calc(50% - 50vw);
-  margin-left: calc(50% - 50dvw);
-  margin-right: calc(50% - 50vw);
-  margin-right: calc(50% - 50dvw);
+  width: 100%;
+  justify-self: stretch;
+  margin-left: 0;
+  margin-right: 0;
   margin-top: 14px;
   background: transparent;
+  min-width: 0;
 }
 
 .profile__startups-inner {
@@ -197,12 +200,15 @@ p {
   margin: 0 auto;
   padding: 0 20px;
   background: transparent;
+  min-width: 0;
 }
 
 .startups-marquee {
   --startups-logo-height: 30px;
   --startups-gap: 44px;
   overflow: hidden;
+  width: 100%;
+  min-width: 0;
   border-top: 1px solid rgba(15, 23, 42, 0.08);
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
   background: transparent; /* keep fully transparent */
@@ -217,6 +223,7 @@ p {
   --marquee-duration: 28s;
   display: flex;
   width: max-content;
+  min-width: 0;
   will-change: transform;
   animation: startups-marquee var(--marquee-duration) linear infinite;
   background: transparent;
@@ -425,6 +432,7 @@ p {
   font-weight: 650;
   color: rgba(15, 23, 42, 0.92);
   line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .build-card__status {
@@ -529,6 +537,7 @@ p {
   font-size: 17px;
   line-height: 1.55;
   color: rgba(15, 23, 42, 0.72);
+  overflow-wrap: anywhere;
   display: -webkit-box;
   line-clamp: 2;
   -webkit-line-clamp: 2;
@@ -572,14 +581,25 @@ p {
   font-size: 17px;
   line-height: 1.55;
   color: rgba(15, 23, 42, 0.76);
+  overflow-wrap: anywhere;
 }
 
 .build-card__actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 2px;
+}
+
+@media (max-width: 520px) {
+  .build-card__actions {
+    justify-content: flex-start;
+  }
+  .build-card__toggle {
+    flex: 1 1 auto;
+  }
 }
 
 .build-card__toggle.build-card__link--primary {
