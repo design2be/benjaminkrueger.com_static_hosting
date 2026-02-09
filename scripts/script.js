@@ -29,6 +29,22 @@ function titleCaseStatus(status) {
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
+function formatMonthYear(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return "";
+
+  // Support YYYY-MM by normalizing to an ISO date.
+  const iso = /^\d{4}-\d{2}$/.test(s) ? `${s}-01` : s;
+
+  try {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "";
+    return new Intl.DateTimeFormat(undefined, { month: "short", year: "numeric" }).format(d);
+  } catch {
+    return "";
+  }
+}
+
 function createChevronIcon() {
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", "0 0 24 24");
@@ -87,6 +103,38 @@ function renderProjects(target, projects) {
     main.append(meta);
 
     const side = el("div", "build-card__side");
+
+    const thumbSrc = typeof project?.thumbnail === "string" ? project.thumbnail.trim() : "";
+    if (thumbSrc) {
+      const links = Array.isArray(project?.links) ? project.links : [];
+      const primaryLink = links.find((l) => String(l?.kind || "").trim().toLowerCase() === "primary");
+      const hrefRaw = typeof primaryLink?.href === "string" ? primaryLink.href : typeof links[0]?.href === "string" ? links[0].href : "";
+      const href = String(hrefRaw || "").trim();
+
+      const img = document.createElement("img");
+      img.className = "build-card__thumb";
+      img.src = thumbSrc;
+      img.alt = project?.name ? `${project.name} thumbnail` : "Project thumbnail";
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.addEventListener("error", () => img.remove());
+
+      if (href && href !== "#") {
+        const a = document.createElement("a");
+        a.className = "build-card__thumb-link";
+        a.href = href;
+        a.setAttribute("aria-label", project?.name ? `Open ${project.name}` : "Open project");
+        if (isExternalHref(href)) {
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        }
+        a.append(img);
+        side.append(a);
+      } else {
+        side.append(img);
+      }
+    }
+
     const statusText = titleCaseStatus(project?.status);
     if (statusText) {
       const statusKey = String(project.status || "")
@@ -94,6 +142,13 @@ function renderProjects(target, projects) {
         .toLowerCase()
         .replace(/\s+/g, "-");
       side.append(el("span", `build-card__status build-card__status--${statusKey}`, statusText));
+
+      if (statusKey === "launched") {
+        const launchText = formatMonthYear(project?.launchDate);
+        if (launchText) {
+          side.append(el("div", "build-card__launch-date", launchText));
+        }
+      }
     } else {
       side.append(el("span", "build-card__status build-card__status--unknown", "TBD"));
     }
@@ -133,6 +188,27 @@ function renderProjects(target, projects) {
     const toggleLabel = el("span", "build-card__toggle-label", "Details");
     toggleBtn.append(toggleLabel, createChevronIcon());
     actions.append(toggleBtn);
+
+    const links = Array.isArray(project?.links) ? project.links : [];
+    for (const link of links) {
+      const href = typeof link?.href === "string" ? link.href.trim() : "";
+      if (!href || href === "#") continue;
+      const label = typeof link?.label === "string" ? link.label.trim() : "";
+      const kind = typeof link?.kind === "string" ? link.kind.trim().toLowerCase() : "";
+
+      const a = document.createElement("a");
+      a.className = `build-card__toggle build-card__link${kind === "primary" ? " build-card__link--primary" : ""}`;
+      a.href = href;
+      a.textContent = label || "Open";
+
+      if (isExternalHref(href)) {
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+      }
+
+      actions.append(a);
+    }
+
     main.append(actions);
 
     setExpanded(card, toggleBtn, toggleLabel, details, false);
@@ -559,6 +635,19 @@ function setDisclosureOpen(toggle, panel, open) {
   panel.hidden = !open;
 }
 
+function openImprintPanel({ scroll = true, behavior = "smooth" } = {}) {
+  const toggle = document.getElementById("imprint-toggle");
+  const panel = document.getElementById("imprint-panel");
+  if (!(toggle instanceof HTMLButtonElement)) return;
+  if (!(panel instanceof HTMLElement)) return;
+
+  setDisclosureOpen(toggle, panel, true);
+
+  if (scroll) {
+    panel.scrollIntoView({ behavior, block: "start" });
+  }
+}
+
 function openDataPolicyPanel({ scroll = true, behavior = "smooth" } = {}) {
   const toggle = document.getElementById("data-policy-toggle");
   const panel = document.getElementById("data-policy-panel");
@@ -684,21 +773,34 @@ function initDataPolicyToggle() {
 }
 
 function initPolicyDeepLinks() {
-  // Open the in-footer Data Policy panel when linked via hash.
+  // Open in-footer policy panels when linked via hash.
   const hash = String(window.location.hash || "").toLowerCase();
+  if (hash === "#imprint-panel" || hash === "#imprint") {
+    openImprintPanel({ scroll: true, behavior: "auto" });
+  }
   if (hash === "#data-policy-panel" || hash === "#data-policy") {
     // Use instant scrolling on load (mirrors native anchor navigation).
     openDataPolicyPanel({ scroll: true, behavior: "auto" });
   }
 
-  // Intercept in-page links that are meant to open the footer policy panel.
+  // Intercept in-page links that are meant to open the footer policy panels.
   document.addEventListener("click", (e) => {
     const target = e.target instanceof Element ? e.target : null;
-    const link = target?.closest('a[data-open-panel="data-policy"]');
+    const imprintLink = target?.closest('a[data-open-panel="imprint"]');
+    const dataPolicyLink = target?.closest('a[data-open-panel="data-policy"]');
+    const link = imprintLink || dataPolicyLink;
     if (!link) return;
 
     e.preventDefault();
     e.stopPropagation();
+
+    if (imprintLink) {
+      if (window.location.hash !== "#imprint-panel") {
+        history.pushState(null, "", "#imprint-panel");
+      }
+      openImprintPanel({ scroll: true });
+      return;
+    }
 
     if (window.location.hash !== "#data-policy-panel") {
       history.pushState(null, "", "#data-policy-panel");

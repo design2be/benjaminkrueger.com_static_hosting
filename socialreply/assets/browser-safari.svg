@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Safari">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#7dd3fc" />
+      <stop offset="55%" stop-color="#0ea5e9" />
+      <stop offset="100%" stop-color="#075985" />
+    </radialGradient>
+  </defs>
+  <circle cx="32" cy="32" r="30" fill="url(#g)" />
+  <circle cx="32" cy="32" r="30" fill="none" stroke="rgba(17,24,39,0.12)" stroke-width="2" />
+  <circle cx="32" cy="32" r="22" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="2" />
+
+  <!-- subtle ticks -->
+  <g stroke="rgba(255,255,255,0.55)" stroke-width="2" stroke-linecap="round" opacity="0.7">
+    <path d="M32 10v4" />
+    <path d="M32 50v4" />
+    <path d="M10 32h4" />
+    <path d="M50 32h4" />
+  </g>
+
+  <!-- compass needle -->
+  <g transform="translate(32 32) rotate(-28)">
+    <path d="M0 -18 L6 2 L0 0 L-6 2 Z" fill="#ef4444" />
+    <path d="M0 18 L6 -2 L0 0 L-6 -2 Z" fill="#ffffff" opacity="0.95" />
+  </g>
+  <circle cx="32" cy="32" r="3" fill="rgba(255,255,255,0.9)" />
+</svg>
+

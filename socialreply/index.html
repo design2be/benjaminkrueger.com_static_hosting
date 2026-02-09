@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SocialReply</title>
+
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head> 
+  <body>
+    <header class="topbar" id="top">
+      <div class="topbar-inner">
+        <a class="topbar-back" href="../index.html" aria-label="Back to main site">← Back</a>
+        <a class="topbar-home" href="#top" aria-label="Back to top">
+          <img class="logo" src="./assets/social_reply_logo_h100px.png" alt="SocialReply" />
+        </a>
+        <a class="topbar-cta" href="#downloads">Get SocialReply Free</a>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="hero">
+        <div class="container">
+          <h1 class="hero-title">
+
+            Replying to Social Media <br>Comments. <span class="hero-highlight"> Made Effortless.</span>
+          </h1>
+          <p class="hero-subtitle">
+            SocialReply crafts thoughtful, ready-to-post responses while you scroll<br/>
+            LinkedIn, YouTube, and Instagram. Powered by AI.
+          </p>
+          <div class="demo-step is-visible" data-demo-step aria-live="polite">
+            <span class="demo-step-num" aria-hidden="true">1</span>
+            <span class="demo-step-text">Scroll your feed (LinkedIn, YouTube, Instagram).</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section" id="demo" aria-label="Product demonstration">
+        <div class="container">
+          <div class="demo-grid">
+            <div class="social-shell" data-demo-shell>
+              <div class="social-stage" aria-label="Social feed with plugin">
+                <div class="feed-pane">
+                  <div class="feed-viewport" aria-label="Abstract social media feed">
+                    <div class="feed-track" data-demo-feed-track>
+                      <article class="post">
+                        <div class="post-header">
+                          <div class="avatar" aria-hidden="true"></div>
+                          <div class="meta">
+                            <div class="meta-top">
+                              <span class="name">Alex Rivera</span>
+                              <span class="handle">@alexr</span>
+                              <span class="dot" aria-hidden="true">·</span>
+                              <span class="time">2h</span>
+                            </div>
+                            <div class="meta-sub">Dog training • 1st</div>
+                          </div>
+                          <button class="post-menu" type="button" aria-label="More">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path
+                                d="M6.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="post-text">
+                          Training isn’t ever “done”—it’s a rhythm. The best progress I’ve seen comes from tiny,
+                          repeatable reps and lots of celebration for the calm moments.
+                        </p>
+                        <div class="post-media" aria-hidden="true">
+                          <img
+                            class="post-photo"
+                            src="./assets/pet1.avif"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div class="post-stats" aria-hidden="true">
+                          <span>312 reactions</span>
+                          <span class="dot">·</span>
+                          <span>48 comments</span>
+                        </div>
+                        <div class="comments" aria-label="Comments">
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--1" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Jamie</span>
+                                <span class="comment-text">Any tips for keeping my puppy calm when we see other dogs on walks?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--2" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Casey</span>
+                                <span class="comment-text">Love the “reward the calm” idea — it even helped my cat with carrier training.</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Noah</span>
+                                <span class="comment-text">Do you do quick mini-sessions with your pet, or one longer daily practice?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="post">
+                        <div class="post-header">
+                          <div class="avatar avatar-alt" aria-hidden="true"></div>
+                          <div class="meta">
+                            <div class="meta-top">
+                              <span class="name">Priya S.</span>
+                              <span class="handle">@priyas</span>
+                              <span class="dot" aria-hidden="true">·</span>
+                              <span class="time">4h</span>
+                            </div>
+                            <div class="meta-sub">Rescue volunteer • 2nd</div>
+                          </div>
+                          <button class="post-menu" type="button" aria-label="More">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path
+                                d="M6.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="post-text">
+                          A small shift that helped our new rescue: 2 minutes of sniffing before training. Fewer zoomies,
+                          more focus.
+                        </p>
+                        <div class="post-media" aria-hidden="true">
+                          <img
+                            class="post-photo"
+                            src="./assets/pet2.png"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div class="post-stats" aria-hidden="true">
+                          <span>144 reactions</span>
+                          <span class="dot">·</span>
+                          <span>22 comments</span>
+                        </div>
+                        <div class="comments" aria-label="Comments">
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--2" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Morgan</span>
+                                <span class="comment-text">Best indoor enrichment for rainy days with a high-energy dog?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--1" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Ari</span>
+                                <span class="comment-text">We tried a treat-scatter game and my pup was instantly calmer.</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Drew</span>
+                                <span class="comment-text">How do you use treats without upsetting your dog’s tummy?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="post post--target" data-demo-target-post>
+                        <div class="post-header">
+                          <div class="avatar avatar-warm" aria-hidden="true"></div>
+                          <div class="meta">
+                            <div class="meta-top">
+                              <span class="name">Chris Nguyen</span>
+                              <span class="handle">@chrisng</span>
+                              <span class="dot" aria-hidden="true">·</span>
+                              <span class="time">6h</span>
+                            </div>
+                            <div class="meta-sub">Dog parent • 1st</div>
+                          </div>
+                          <button class="post-menu" type="button" aria-label="More">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path
+                                d="M6.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="post-text">
+                          Real progress with a sensitive dog came from saying no to “just say hi” so we could say yes to
+                          calm, confidence-building reps.
+                        </p>
+                        <div class="post-media" aria-hidden="true">
+                          <img
+                            class="post-photo"
+                            src="./assets/pet3.png"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div class="post-stats" aria-hidden="true">
+                          <span>508 reactions</span>
+                          <span class="dot">·</span>
+                          <span>96 comments</span>
+                        </div>
+                        <div class="comments" aria-label="Comments">
+                          <div class="comment" data-demo-target-comment>
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Mina</span>
+                                <span class="comment-text">This resonates. Managing on-leash greetings with my dog is the hardest part.</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button" data-demo-reply-btn>Reply</button>
+                            </div>
+
+                            <div class="reply-bubble" data-demo-inserted-reply aria-hidden="true">
+                              <div class="reply-header">
+                                <span class="comment-avatar comment-avatar--you" aria-hidden="true"></span>
+                                <div class="reply-label">You</div>
+                              </div>
+                              <div class="reply-text"></div>
+                              <div class="reply-time">Just now</div>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--2" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Taylor</span>
+                                <span class="comment-text">
+                                  I adopted a shy rescue cat. Any tips for building confidence without overwhelming her?
+                                </span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--1" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Rowan</span>
+                                <span class="comment-text">Do you choose goals based on safety, stress level, or what your pet enjoys most?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Jules</span>
+                                <span class="comment-text">How do you set boundaries when strangers want to pet your dog?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="post">
+                        <div class="post-header">
+                          <div class="avatar avatar-cool" aria-hidden="true"></div>
+                          <div class="meta">
+                            <div class="meta-top">
+                              <span class="name">Sam Patel</span>
+                              <span class="handle">@samp</span>
+                              <span class="dot" aria-hidden="true">·</span>
+                              <span class="time">9h</span>
+                            </div>
+                            <div class="meta-sub">Puppy class • 2nd</div>
+                          </div>
+                          <button class="post-menu" type="button" aria-label="More">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path
+                                d="M6.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="post-text">
+                          If you’re training a puppy, don’t just reward the “sit”—reward the decision to check in and
+                          disengage. That’s where the compounding happens.
+                        </p>
+                        <div class="post-media" aria-hidden="true">
+                          <img
+                            class="post-photo"
+                            src="./assets/pet1.avif"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div class="post-stats" aria-hidden="true">
+                          <span>221 reactions</span>
+                          <span class="dot">·</span>
+                          <span>31 comments</span>
+                        </div>
+                        <div class="comments" aria-label="Comments">
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--1" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Avery</span>
+                                <span class="comment-text">How do you keep walks fun without letting sniffing turn into total chaos?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--2" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Kai</span>
+                                <span class="comment-text">Teaching a solid “leave it” changed life with my puppy.</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Sasha</span>
+                                <span class="comment-text">Any favorite cues for settling on a mat when guests come over?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="post">
+                        <div class="post-header">
+                          <div class="avatar avatar-alt" aria-hidden="true"></div>
+                          <div class="meta">
+                            <div class="meta-top">
+                              <span class="name">Elena</span>
+                              <span class="handle">@elena</span>
+                              <span class="dot" aria-hidden="true">·</span>
+                              <span class="time">12h</span>
+                            </div>
+                            <div class="meta-sub">Foster home • 2nd</div>
+                          </div>
+                          <button class="post-menu" type="button" aria-label="More">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path
+                                d="M6.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="post-text">
+                          One underrated habit: prep a tiny “walk kit” (treats + poop bags + a toy). The clarity is
+                          calming—for you and for them.
+                        </p>
+                        <div class="post-media" aria-hidden="true">
+                          <img
+                            class="post-photo"
+                            src="./assets/pet2.png"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div class="post-stats" aria-hidden="true">
+                          <span>97 reactions</span>
+                          <span class="dot">·</span>
+                          <span>18 comments</span>
+                        </div>
+                        <div class="comments" aria-label="Comments">
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--2" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Devon</span>
+                                <span class="comment-text">What do you do when your dog plants themself and refuses to move?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--1" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Leah</span>
+                                <span class="comment-text">The tiny treat pouch + toy combo is my daily must-have too.</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Omar</span>
+                                <span class="comment-text">Do you have house rules for visitors around your pets (no jumping/petting)?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="post">
+                        <div class="post-header">
+                          <div class="avatar avatar-warm" aria-hidden="true"></div>
+                          <div class="meta">
+                            <div class="meta-top">
+                              <span class="name">Jordan K.</span>
+                              <span class="handle">@jordank</span>
+                              <span class="dot" aria-hidden="true">·</span>
+                              <span class="time">1d</span>
+                            </div>
+                            <div class="meta-sub">Behavior nerd • 1st</div>
+                          </div>
+                          <button class="post-menu" type="button" aria-label="More">
+                            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                              <path
+                                d="M6.5 10.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm5.5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <p class="post-text">
+                          The fastest way to understand your dog is to watch their body language—no talking, just
+                          observing.
+                        </p>
+                        <div class="post-media" aria-hidden="true">
+                          <img
+                            class="post-photo"
+                            src="./assets/pet3.png"
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </div>
+                        <div class="post-stats" aria-hidden="true">
+                          <span>389 reactions</span>
+                          <span class="dot">·</span>
+                          <span>54 comments</span>
+                        </div>
+                        <div class="comments" aria-label="Comments">
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--1" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Riley</span>
+                                <span class="comment-text">Any quick tells that a pet is getting stressed during play?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--2" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Nina</span>
+                                <span class="comment-text">Shelter volunteer tip: a few minutes of calm handling helps anxious pets.</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+
+                          <div class="comment">
+                            <div class="comment-line">
+                              <span class="comment-avatar comment-avatar--3" aria-hidden="true"></span>
+                              <span class="comment-content">
+                                <span class="comment-author">Theo</span>
+                                <span class="comment-text">Do you record little training clips to track your pet’s progress?</span>
+                              </span>
+                            </div>
+                            <div class="comment-actions">
+                              <button class="reply-btn" type="button">Reply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                </div>
+
+                <section class="plugin-popup is-docked" data-demo-popup aria-hidden="true">
+                  <div class="popup-header">
+                    <img class="popup-logo" src="./assets/social_reply_logo_h100px.png" alt="SocialReply" />
+                    <button class="popup-close" type="button" aria-label="Close">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path
+                          d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12 5.7 16.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="popup-body">
+                    <div class="popup-grid">
+                      <div class="popup-field">
+                        <div class="popup-label">Intent</div>
+                        <div class="popup-switch" role="radiogroup" aria-label="Intent" data-demo-intent-group>
+                          <button
+                            class="popup-switch-option is-selected"
+                            type="button"
+                            role="radio"
+                            aria-checked="true"
+                            data-demo-intent-agree
+                          >
+                            Agree
+                          </button>
+                          <button class="popup-switch-option" type="button" role="radio" aria-checked="false">
+                            Follow Up
+                          </button>
+                          <button
+                            class="popup-switch-option"
+                            type="button"
+                            role="radio"
+                            aria-checked="false"
+                            data-demo-intent-compliment
+                          >
+                            Compliment
+                          </button>
+                          <button class="popup-switch-option" type="button" role="radio" aria-checked="false">
+                            Disagree
+                          </button>
+                        </div>
+                      </div>
+                      <div class="popup-field">
+                        <div class="popup-label">Tone</div>
+                        <div class="popup-switch" role="radiogroup" aria-label="Tone" data-demo-tone-group>
+                          <button
+                            class="popup-switch-option is-selected"
+                            type="button"
+                            role="radio"
+                            aria-checked="true"
+                            data-demo-tone-professional
+                          >
+                            Professional
+                          </button>
+                          <button
+                            class="popup-switch-option"
+                            type="button"
+                            role="radio"
+                            aria-checked="false"
+                            data-demo-tone-friendly
+                          >
+                            Friendly
+                          </button>
+                          <button class="popup-switch-option" type="button" role="radio" aria-checked="false">
+                            Confident
+                          </button>
+                          <button class="popup-switch-option" type="button" role="radio" aria-checked="false">
+                            Curious
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="popup-field popup-field--slider" aria-label="Reply length">
+                      <div class="popup-slider-head">
+                        <div class="popup-label">Length</div>
+                        <div class="popup-slider-value"><span data-demo-length-words>35</span> words</div>
+                      </div>
+                      <input
+                        class="popup-slider"
+                        type="range"
+                        min="10"
+                        max="60"
+                        step="1"
+                        value="35"
+                        aria-label="Reply length in words"
+                      />
+                    </div>
+
+                    <div class="popup-toggles">
+                      <div class="toggle-row">
+                        <div class="toggle-label">Include a question</div>
+                        <div class="toggle is-on" aria-hidden="true"></div>
+                      </div>
+                    </div>
+
+                    <div class="popup-actions">
+                      <button class="popup-btn popup-btn--primary" type="button" data-demo-generate>
+                        <span class="popup-btn-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path
+                              d="M12 2l1.62 4.2L18 8l-4.38 1.8L12 14l-1.62-4.2L6 8l4.38-1.8L12 2Zm7 8 .92 2.3L22 13l-2.08.7L19 16l-.92-2.3L16 13l2.08-.7L19 10Zm-14 2 .92 2.3L8 15l-2.08.7L5 18l-.92-2.3L2 15l2.08-.7L5 12Z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </span>
+                        <span class="popup-btn-spinner" data-demo-generate-spinner aria-hidden="true"></span>
+                        <span data-demo-generate-label>Craft Reply</span>
+                      </button>
+                    </div>
+
+                    <div class="popup-suggestions" data-demo-suggestions hidden>
+                      <div class="suggestion-card" data-demo-suggestion-card>
+                        <div class="suggestion-loading" data-demo-suggestion-loading aria-hidden="true">
+                          <div class="suggestion-spinner" aria-hidden="true"></div>
+                          <div class="suggestion-loading-label">Generating…</div>
+                        </div>
+                        <div class="suggestion-content" role="button" tabindex="0" aria-label="Insert suggestion">
+                          <div class="suggestion-text" data-demo-suggestion-text></div>
+                          <div class="suggestion-add-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                              <path
+                                d="M12 5a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H6a1 1 0 1 1 0-2h5V6a1 1 0 0 1 1-1Z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </section>
+              </div>
+
+              <div class="demo-cursor" data-demo-cursor aria-hidden="true">
+                <div class="cursor-dot"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="browsers" id="downloads" aria-label="Supported browsers">
+        <div class="container">
+          <h2 class="browsers-title">
+            Available <span class="browsers-free">free</span> on your favorite browser
+          </h2>
+          <div class="browser-grid" role="list">
+            <button class="browser-card browser-card--cta" type="button" role="listitem" aria-label="Download for Chrome">
+              <img class="browser-icon" src="./assets/browser-chrome.svg" alt="" aria-hidden="true" />
+              <div class="browser-meta">
+                <div class="browser-name">Chrome</div>
+                <div class="browser-cta">Download</div>
+              </div>
+            </button>
+            <button
+              class="browser-card browser-card--disabled"
+              type="button"
+              role="listitem"
+              aria-label="Safari coming soon"
+              disabled
+            >
+              <img class="browser-icon" src="./assets/browser-safari.svg" alt="" aria-hidden="true" />
+              <div class="browser-meta">
+                <div class="browser-name">Safari</div>
+                <div class="browser-cta">Coming soon</div>
+              </div>
+            </button>
+            <button
+              class="browser-card browser-card--disabled"
+              type="button"
+              role="listitem"
+              aria-label="Firefox coming soon"
+              disabled
+            >
+              <img class="browser-icon" src="./assets/browser-firefox.svg" alt="" aria-hidden="true" />
+              <div class="browser-meta">
+                <div class="browser-name">Firefox</div>
+                <div class="browser-cta">Coming soon</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="benefits" aria-label="Benefits of SocialReply">
+        <div class="container">
+          <h2 class="benefits-title">Turn comments into <span class="hero-highlight">conversations</span>.</h2>
+
+          <div class="benefit-row">
+            <div class="benefit-media">
+              <img
+                class="benefit-illustration"
+                src="./assets/social_reply_faster.png"
+                alt="Illustration: turning a comment into a thoughtful reply"
+              />
+            </div>
+            <div class="benefit-copy">
+              <h3 class="benefit-heading">Reply faster with words that actually land</h3>
+              <p class="benefit-text">
+                Turn “I’ll respond later” into “posted.” Get a high-quality draft tailored to the exact comment—ready to
+                send in seconds.
+              </p>
+            </div>
+          </div>
+
+          <div class="benefit-row is-reversed">
+            <div class="benefit-copy">
+              <h3 class="benefit-heading">Stop staring at the cursor—save 10+ minutes per thread</h3>
+              <p class="benefit-text">
+                SocialReply gives you a strong first draft instantly, so you can tweak the last 10% and hit Reply—without
+                the back-and-forth.
+              </p>
+            </div>
+            <div class="benefit-media">
+              <img
+                class="benefit-illustration"
+                src="./assets/social_reply_10x.png"
+                alt="Illustration: fast reply generation"
+              />
+            </div>
+          </div>
+
+          <div class="benefit-row">
+            <div class="benefit-media">
+              <img
+                class="benefit-illustration"
+                src="./assets/social_reply_tone.png"
+                alt="Illustration: choosing tone and intent"
+              />
+            </div>
+            <div class="benefit-copy">
+              <h3 class="benefit-heading">Keep your tone consistent, everywhere you comment</h3>
+              <p class="benefit-text">
+                Choose intent, tone, and length—and get replies that match your voice across LinkedIn, YouTube, and
+                Instagram.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <a class="footer-link" href="../imprint.html">Imprint</a>
+        <a class="footer-link" href="../support.html">Support</a>
+        <a class="footer-link" href="../data-policy.html">Data Policy</a>
+      </div>
+    </footer>
+
+    <script src="./js/demo.js" defer></script>
+  </body>
+</html>
