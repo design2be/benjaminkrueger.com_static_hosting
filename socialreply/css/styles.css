@@ -1419,6 +1419,8 @@ body {
   border: 1px solid rgba(15, 22, 38, 0.12);
   box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06);
   cursor: pointer;
+  text-decoration: none;
+  color: inherit;
   transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
 }
 
