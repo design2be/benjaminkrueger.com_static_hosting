@@ -23,12 +23,6 @@ function elHTML(tag, className, html) {
   return node;
 }
 
-function titleCaseStatus(status) {
-  const raw = String(status || "").trim().toLowerCase();
-  if (!raw) return "";
-  return raw.charAt(0).toUpperCase() + raw.slice(1);
-}
-
 function formatMonthYear(raw) {
   const s = String(raw || "").trim();
   if (!s) return "";
@@ -45,34 +39,32 @@ function formatMonthYear(raw) {
   }
 }
 
-function createChevronIcon() {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", "0 0 24 24");
-  svg.setAttribute("aria-hidden", "true");
-  svg.setAttribute("focusable", "false");
-  svg.classList.add("build-card__chevron");
-
-  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("d", "M7 10l5 5 5-5");
-  path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "currentColor");
-  path.setAttribute("stroke-width", "2");
-  path.setAttribute("stroke-linecap", "round");
-  path.setAttribute("stroke-linejoin", "round");
-  svg.append(path);
-
-  return svg;
+function parseProjectDate(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return null;
+  const iso = /^\d{4}-\d{2}$/.test(s) ? `${s}-01` : s;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d;
 }
 
-function buildEyebrow(project, index) {
-  return `Product MVP Build ${String(index + 1).padStart(2, "0")}`;
+function projectSortKey(project) {
+  const d = parseProjectDate(project?.launchDate || project?.date || project?.createdAt);
+  return d ? d.getTime() : -Infinity;
 }
 
-function setExpanded(card, toggleBtn, toggleLabel, detailsEl, expanded) {
-  card.classList.toggle("is-expanded", expanded);
-  toggleBtn?.setAttribute("aria-expanded", expanded ? "true" : "false");
-  detailsEl?.setAttribute("aria-hidden", expanded ? "false" : "true");
-  if (toggleLabel) toggleLabel.textContent = expanded ? "Less" : "View Build";
+function getPrimaryHref(project) {
+  const links = Array.isArray(project?.links) ? project.links : [];
+  const primaryLink = links.find((l) => String(l?.kind || "").trim().toLowerCase() === "primary");
+  const hrefRaw =
+    typeof primaryLink?.href === "string"
+      ? primaryLink.href
+      : typeof links[0]?.href === "string"
+        ? links[0].href
+        : "";
+  const href = String(hrefRaw || "").trim();
+  if (!href || href === "#") return "";
+  return href;
 }
 
 function renderProjects(target, projects) {
@@ -84,161 +76,95 @@ function renderProjects(target, projects) {
     return;
   }
 
-  const sorted = [...projects];
+  const sorted = [...projects].sort((a, b) => projectSortKey(b) - projectSortKey(a));
   const cards = [];
 
+  const normalizeTone = (project, fallbackColor = "") => {
+    const raw = String(project?.tone || "").trim().toLowerCase();
+    if (raw === "light" || raw === "dark") return raw;
+
+    const hex = String(fallbackColor || "").trim();
+    const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex);
+    if (!m) return "dark";
+    let h = m[1].toLowerCase();
+    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+    const r = Number.parseInt(h.slice(0, 2), 16);
+    const g = Number.parseInt(h.slice(2, 4), 16);
+    const b = Number.parseInt(h.slice(4, 6), 16);
+    const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    return luma >= 0.72 ? "light" : "dark";
+  };
+
   for (const [index, project] of sorted.entries()) {
-    const card = el("article", "build-card");
-    if (index === 0) card.classList.add("build-card--feature");
-    card.classList.add("build-card--clickable");
+    const href = getPrimaryHref(project);
+    const cardEl = el("article", "project-card");
 
-    const gradient = typeof project?.gradient === "string" ? project.gradient.trim() : "";
-    if (gradient) card.style.setProperty("--build-accent", gradient);
+    const bg = typeof project?.cardColor === "string" ? project.cardColor.trim() : "";
+    if (bg) cardEl.style.setProperty("--project-card-bg", bg);
 
-    const main = el("div", "build-card__main");
-
-    const meta = el("div", "build-card__meta");
-    meta.append(el("div", "build-card__eyebrow", buildEyebrow(project, index)));
-    meta.append(el("h3", "build-card__title", project?.name || "Untitled"));
-    main.append(meta);
-
-    const side = el("div", "build-card__side");
-
-    const thumbSrc = typeof project?.thumbnail === "string" ? project.thumbnail.trim() : "";
-    if (thumbSrc) {
-      const links = Array.isArray(project?.links) ? project.links : [];
-      const primaryLink = links.find((l) => String(l?.kind || "").trim().toLowerCase() === "primary");
-      const hrefRaw = typeof primaryLink?.href === "string" ? primaryLink.href : typeof links[0]?.href === "string" ? links[0].href : "";
-      const href = String(hrefRaw || "").trim();
-
-      const img = document.createElement("img");
-      img.className = "build-card__thumb";
-      img.src = thumbSrc;
-      img.alt = project?.name ? `${project.name} thumbnail` : "Project thumbnail";
-      img.loading = "lazy";
-      img.decoding = "async";
-      img.addEventListener("error", () => img.remove());
-
-      if (href && href !== "#") {
-        const a = document.createElement("a");
-        a.className = "build-card__thumb-link";
-        a.href = href;
-        a.setAttribute("aria-label", project?.name ? `Open ${project.name}` : "Open project");
-        if (isExternalHref(href)) {
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-        }
-        a.append(img);
-        side.append(a);
-      } else {
-        side.append(img);
-      }
-    }
-
-    const statusText = titleCaseStatus(project?.status);
-    if (statusText) {
-      const statusKey = String(project.status || "")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, "-");
-      side.append(el("span", `build-card__status build-card__status--${statusKey}`, statusText));
-
-      if (statusKey === "launched") {
-        const launchText = formatMonthYear(project?.launchDate);
-        if (launchText) {
-          side.append(el("div", "build-card__launch-date", launchText));
-        }
-      }
+    const cardImageSrc = typeof project?.cardImage === "string" ? project.cardImage.trim() : "";
+    if (cardImageSrc) {
+      // Use CSS variable so we can keep other background styles in CSS.
+      const safeUrl = cardImageSrc.replace(/"/g, '\\"');
+      const urlValue = `url("${safeUrl}")`;
+      cardEl.style.setProperty("--project-card-image", urlValue);
+      // Also set directly to avoid any var()/browser edge-cases.
+      cardEl.style.backgroundImage = urlValue;
     } else {
-      side.append(el("span", "build-card__status build-card__status--unknown", "TBD"));
-    }
-    // Status column on the left, content on the right.
-    card.append(side, main);
-
-    const problemText = project?.problem || project?.oneLiner;
-    if (problemText) {
-      main.append(el("p", "build-card__summary", problemText));
+      const imageColor = typeof project?.imageColor === "string" ? project.imageColor.trim() : "";
+      if (imageColor && !bg) {
+        cardEl.style.setProperty("--project-card-bg", imageColor);
+      }
     }
 
-    const details = el("div", "build-card__details");
-    // Include index to avoid DOM id collisions if `project.id` is duplicated/missing.
-    const detailsId = `build-details-${index}-${String(project?.id || "project")}`.replace(/[^a-z0-9_-]/gi, "-");
-    details.id = detailsId;
-    details.setAttribute("aria-hidden", "true");
+    const content = el("div", "project-card__content");
+    const title = el("h3", "project-card__title", project?.name || "Untitled");
+    const descText = String(project?.shortDescription || project?.problem || project?.oneLiner || "").trim();
+    const desc = el("p", "project-card__desc", descText);
 
-    const hypothesisText = project?.hypothesis || project?.whatImTesting;
-    if (hypothesisText) {
-      details.append(el("div", "build-card__label", "Hypothesis"));
-      details.append(el("p", "build-card__detail", hypothesisText));
+    const dateText = formatMonthYear(project?.launchDate);
+    const tone = normalizeTone(project, bg);
+    const metaRow = el("div", "project-card__meta-row");
+    const eyebrowLabel = dateText ? dateText : index === 0 ? "Latest" : "Project";
+    const eyebrow = el("div", "project-card__eyebrow", eyebrowLabel);
+    if (tone === "light") eyebrow.classList.add("project-card__eyebrow--dark");
+    metaRow.append(eyebrow);
+
+    const badgeText = typeof project?.badge === "string" ? project.badge.trim() : "";
+    if (badgeText) {
+      const badge = el("div", "project-card__badge project-card__badge--blue", badgeText);
+      metaRow.append(badge);
     }
 
-    const detailsText = typeof project?.details === "string" ? project.details.trim() : "";
-    if (detailsText) {
-      details.append(el("div", "build-card__label", "Details"));
-      details.append(elHTML("p", "build-card__detail", detailsText));
+    content.append(metaRow);
+
+    const cardContent = typeof project?.cardContent === "string" ? project.cardContent.trim() : "";
+    if (cardContent) {
+      content.append(elHTML("div", "project-card__rich", cardContent));
+    } else {
+      content.append(title);
+      if (descText) content.append(desc);
     }
-    main.append(details);
+    cardEl.append(content);
 
-    const actions = el("div", "build-card__actions");
-    const toggleBtn = el("button", "build-card__toggle");
-    toggleBtn.type = "button";
-    toggleBtn.setAttribute("aria-controls", detailsId);
-    toggleBtn.setAttribute("aria-expanded", "false");
-    toggleBtn.setAttribute("aria-label", `Toggle details for ${project?.name || "this build"}`);
-    const toggleLabel = el("span", "build-card__toggle-label", "Details");
-    toggleBtn.append(toggleLabel, createChevronIcon());
-    actions.append(toggleBtn);
-
-    const links = Array.isArray(project?.links) ? project.links : [];
-    for (const link of links) {
-      const href = typeof link?.href === "string" ? link.href.trim() : "";
-      if (!href || href === "#") continue;
-      const label = typeof link?.label === "string" ? link.label.trim() : "";
-      const kind = typeof link?.kind === "string" ? link.kind.trim().toLowerCase() : "";
-
+    if (href) {
       const a = document.createElement("a");
-      a.className = `build-card__toggle build-card__link${kind === "primary" ? " build-card__link--primary" : ""}`;
+      a.className = "project-card__link";
       a.href = href;
-      a.textContent = label || "Open";
-
+      a.setAttribute("aria-label", project?.name ? `Open ${project.name}` : "Open project");
       if (isExternalHref(href)) {
         a.target = "_blank";
         a.rel = "noopener noreferrer";
       }
-
-      actions.append(a);
+      a.append(cardEl);
+      target.append(a);
+      cards.push(a);
+    } else {
+      target.append(cardEl);
+      cards.push(cardEl);
     }
-
-    main.append(actions);
-
-    setExpanded(card, toggleBtn, toggleLabel, details, false);
-    const toggleExpanded = () => {
-      setExpanded(card, toggleBtn, toggleLabel, details, !card.classList.contains("is-expanded"));
-    };
-
-    toggleBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      toggleExpanded();
-    });
-
-    card.addEventListener("click", (e) => {
-      // Make the full card clickable, but don't hijack other interactive elements.
-      const targetEl = e.target instanceof Element ? e.target : null;
-      if (targetEl?.closest("a, button, input, textarea, select, label")) return;
-      toggleExpanded();
-    });
-
-    target.append(card);
-    cards.push(card);
   }
 
-  // If the last row would have a single card (because the first one is full width),
-  // make that last "lonely" card full width as well.
-  if (cards.length > 1 && cards.length % 2 === 0) {
-    cards[cards.length - 1].classList.add("build-card--full");
-  }
-
-  // Animate cards as they appear (staggered top-to-bottom).
   registerAppearElements(cards);
   window.requestAnimationFrame(() => animateVisibleRegisteredInOrder());
 }
@@ -253,6 +179,105 @@ function formatUpdatedAt(raw) {
   }
 }
 
+function initProjectsSliderControls() {
+  const track = document.getElementById("projects-list");
+  if (!(track instanceof HTMLElement)) return;
+
+  const prev = document.getElementById("projects-prev");
+  const next = document.getElementById("projects-next");
+
+  const SNAP_DISABLED_CLASS = "projects-slider__track--snap-disabled";
+
+  const getStep = () => {
+    const first = track.querySelector(".project-card, .project-card__link");
+    const rect = first instanceof HTMLElement ? first.getBoundingClientRect() : null;
+    const style = window.getComputedStyle(track);
+    const gap = Number.parseFloat(style.columnGap || style.gap || "0") || 0;
+    const w = rect?.width || 360;
+    return w + gap;
+  };
+
+  const getMaxScrollLeft = () => Math.max(0, track.scrollWidth - track.clientWidth);
+
+  const getDisableSnapThreshold = () => {
+    // Dynamic threshold: big enough to avoid the "last snap", but small enough
+    // to preserve snapping for most of the track.
+    const step = getStep();
+    return Math.max(24, Math.min(140, step * 0.6));
+  };
+
+  const isNearEnd = () => {
+    const max = getMaxScrollLeft();
+    if (max <= 0) return false;
+    return max - track.scrollLeft <= getDisableSnapThreshold();
+  };
+
+  const updateSnapMode = () => {
+    track.classList.toggle(SNAP_DISABLED_CLASS, isNearEnd());
+  };
+
+  const scrollByCards = (dir) => {
+    track.scrollBy({ left: dir * getStep(), behavior: "smooth" });
+  };
+
+  if (prev instanceof HTMLButtonElement) prev.addEventListener("click", () => scrollByCards(-1));
+  if (next instanceof HTMLButtonElement) next.addEventListener("click", () => scrollByCards(1));
+
+  const getItems = () =>
+    Array.from(track.children).filter(
+      (node) =>
+        node instanceof HTMLElement &&
+        (node.classList.contains("project-card__link") || node.classList.contains("project-card")),
+    );
+
+  const getSnapInset = () => {
+    const style = window.getComputedStyle(track);
+    const paddingLeft = Number.parseFloat(style.paddingLeft || "0") || 0;
+    return paddingLeft;
+  };
+
+  const snapToNearest = () => {
+    updateSnapMode();
+    if (track.classList.contains(SNAP_DISABLED_CLASS)) return;
+
+    const items = getItems();
+    if (items.length === 0) return;
+
+    const inset = getSnapInset();
+    const points = items.map((el) => Math.max(0, el.offsetLeft - inset));
+    const x = track.scrollLeft;
+
+    // Find the closest snap point using midpoints between cards.
+    let idx = 0;
+    for (let i = 0; i < points.length - 1; i += 1) {
+      const mid = (points[i] + points[i + 1]) / 2;
+      if (x >= mid) idx = i + 1;
+      else break;
+    }
+
+    const targetLeft = points[idx] ?? 0;
+    track.scrollTo({ left: targetLeft, behavior: "smooth" });
+  };
+
+  // After the user stops scrolling, snap to the nearest card.
+  let scrollEndTimer = null;
+  track.addEventListener(
+    "scroll",
+    () => {
+      updateSnapMode();
+      if (scrollEndTimer) window.clearTimeout(scrollEndTimer);
+      scrollEndTimer = window.setTimeout(() => {
+        scrollEndTimer = null;
+        snapToNearest();
+      }, 140);
+    },
+    { passive: true },
+  );
+
+  updateSnapMode();
+  window.addEventListener("resize", updateSnapMode, { passive: true });
+}
+
 async function loadProjects() {
   const target = document.getElementById("projects-list");
   if (!target) return;
@@ -265,12 +290,8 @@ async function loadProjects() {
     const projects = data?.projects || [];
     const meta = document.getElementById("projects-meta");
     if (meta) {
-      const dateText = formatUpdatedAt(data?.updatedAt);
-      const count = Array.isArray(projects) ? projects.length : 0;
-      meta.textContent = dateText ? `Updated ${dateText} · ${count} builds` : `${count} builds`;
-      // Register *after* content is set so it animates in the right order,
-      // then cards will animate after it.
-      registerAppearElements([meta]);
+      // Intentionally left blank (no "Updated … · N projects" label).
+      meta.textContent = "";
     }
 
     renderProjects(target, projects);
@@ -284,6 +305,7 @@ async function loadProjects() {
 document.addEventListener("DOMContentLoaded", () => {
   initAppearAnimations();
   initStartupsMarquee();
+  initProjectsSliderControls();
   loadProjects();
   initIdeaForm();
   initImprintToggle();
@@ -614,6 +636,9 @@ function initAppearAnimations() {
     ),
   );
 
+  // Step list items (left side of "Submit idea" section).
+  registerAppearElements(document.querySelectorAll(".idea-process__item"), { fromY: 12, duration: 560 });
+
   // Ensure a deterministic top-to-bottom ordering for everything already visible.
   window.requestAnimationFrame(() => animateVisibleRegisteredInOrder());
 }
@@ -671,9 +696,10 @@ function initIdeaForm() {
 
   let latestText = "";
 
-  function setStatus(message) {
+  function setStatus(message, { variant } = {}) {
     if (!status) return;
     status.textContent = message || "";
+    status.classList.toggle("idea-form__status--error", variant === "error");
   }
 
   function buildSubmission(data) {
@@ -681,7 +707,6 @@ function initIdeaForm() {
       "Business Idea Submission",
       "========================",
       "",
-      `Name: ${data.name || ""}`,
       `Email: ${data.email || ""}`,
       `Okay to contact: ${data.okToContact ? "Yes" : "No"}`,
       "",
@@ -712,15 +737,14 @@ function initIdeaForm() {
     }
 
     const data = {
-      name: String(fd.get("name") || "").trim(),
       email: String(fd.get("email") || "").trim(),
       idea: String(fd.get("problem") || "").trim(),
       okToContact: Boolean(fd.get("okToContact")),
     };
 
-    if (!data.name || !data.email || !data.idea) {
+    if (!data.email || !data.idea) {
       e.preventDefault();
-      setStatus("Please fill in all required fields (name, email, idea).");
+      setStatus("Just add your email and idea to get started.", { variant: "error" });
       return;
     }
 

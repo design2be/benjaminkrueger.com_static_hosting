@@ -1,18 +1,59 @@
 {
-  "updatedAt": "2026-02-09",
+  "updatedAt": "2026-03-17",
   "projects": [
     {
       "id": "mvp-01",
       "name": "Smart Reply for Social Comments",
+      "shortDescription": "A lightweight assistant that helps you write better replies in comment threads—fast, thoughtful, and on-brand.",
+      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\"><span class=\"project-card__title-line\">Replying to Social Media Comments</span><span class=\"project-card__title-line\"><span class=\"project-card__title-highlight\">Made Effortless.</span></span></h3><p class=\"project-card__desc project-card__desc--dark\">A lightweight assistant that helps you write better replies in comment threads—fast, thoughtful, and on-brand.</p>",
+      "cardColor": "#fff",
+      "tone": "light",
+      "imageColor": "#f97316",
+      "cardImage": "./assets/card_social_reply.png",
       "gradient": "linear-gradient(135deg, #7c3aed 0%, #ec4899 45%, #f97316 100%)",
       "thumbnail": "./socialreply/assets/social_reply_logo.png",
       "problem": "Social Media Comment Suggestions is a lightweight assistant that helps people reply faster (and better) in comment threads.",
-      "status": "launched",
+      "status": "completed",
       "launchDate": "2026-02",
       "hypothesis": "People who actively comment on social media will use and value AI-generated, context-aware comment suggestions because it helps them reply faster while sounding more thoughtful and on-brand.",
       "details": "<b>MVP idea (auto-insert scope):</b>\nBuild a lightweight browser extension that detects when a user focuses a comment field, opens a small popover with a few reply-style options, generates 3–5 context-aware suggestions, and pastes the selected suggestion directly into the active input field.\n\n<br><br><b>User flow:</b>\n\n<br>1. User clicks the comment/reply field they want to respond to.\n\n<br>2. A popover appears next to the field with reply-style buttons and suggested replies.\n\n<br>3. The user clicks a suggestion and it’s automatically inserted into the comment field (editable before posting).\n<br/><br/>The tool removes the friction of figuring out what to say by instantly turning context into ready-to-post replies, saving time, reducing social anxiety, and helping users consistently respond with the right tone—whether they want to be thoughtful, witty, professional, or diplomatic.",
       "links": [
         { "label": "See Launched Product", "href": "./socialreply/index.html", "kind": "primary" }
+      ]
+    },
+    {
+      "id": "mvp-05",
+      "name": "AutoCut Creator - Precut Your Videos by Transcript",
+      "shortDescription": "Turn long recordings into clean clips by selecting the exact lines in your transcript—fast, precise, and ready to post.",
+      "badge": "Currently Building",
+      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\">AutoCut Creator</h3><p class=\"project-card__desc project-card__desc--dark\">Precut your videos by transcript. Turn long recordings into clean clips by selecting the exact lines—fast, precise, and ready to post.</p>",
+      "cardColor": "#bfe6ff",
+      "tone": "light",
+      "imageColor": "#60a5fa",
+      "cardImage": "./assets/card_auto_cut.png",
+      "status": "building",
+      "launchDate": "2026-03",
+      "problem": "Creators waste time scrubbing timelines. They want to cut videos by selecting text, not dragging handles."
+    },
+    {
+      "id": "mvp-02",
+      "name": "EpicPhotoAI",
+      "shortDescription": "Turn a handful of uploads into professional-looking photos for dating, social, and personal branding—no photoshoot needed.",
+      "cardContent": "<h3 class=\"project-card__title\">EpicPhotoAI</h3><p class=\"project-card__desc\">Turn a handful of uploads into professional-looking photos for dating, social, and personal branding—no photoshoot needed.</p>",
+      "cardColor": "#111827",
+      "tone": "dark",
+      "imageColor": "#ec4899",
+      "cardImage": "./assets/card_epic_photo_ai.png",
+      "gradient": "linear-gradient(135deg, #0b0b0f 0%, #7c3aed 45%, #ec4899 100%)",
+      "thumbnail": "./epicphoto/assets/epicphotoai.png",
+      "problem": "EpicPhotoAI turns a handful of uploads into professional-looking photos in different styles—ideal for dating profiles, social media, and personal branding without booking a shoot.",
+      "status": "completed",
+      "launchDate": "2026-03",
+      "hypothesis": "People who want better profile photos will prefer a fast, guided workflow (upload → pick a style → generate) because it produces multiple high-quality, on-brand options without the cost and friction of a photoshoot.",
+      "details": "<b>What it is:</b>\nA simple workflow for generating upgraded photos that still look like you.\n\n<br><br><b>User flow:</b>\n\n<br>1. Upload a small set of photos.\n\n<br>2. Choose a preset/style that matches your vibe.\n\n<br>3. Generate multiple photo options and pick your favorites for dating, social, or LinkedIn.\n\n<br><br><b>Sample visuals:</b>\n<br><img src=\"https://epicphoto.ai/assets/before.png\" alt=\"EpicPhotoAI example input photo\" loading=\"lazy\" decoding=\"async\" />\n<br><img src=\"https://epicphoto.ai/assets/presets/preset_desert_confident_portrait.png\" alt=\"EpicPhotoAI preset example: desert confident portrait\" loading=\"lazy\" decoding=\"async\" />\n<br><img src=\"https://epicphoto.ai/assets/presets/preset_studio_black_white_portrait.png\" alt=\"EpicPhotoAI preset example: studio black and white portrait\" loading=\"lazy\" decoding=\"async\" />\n\n<br><br><b>Why it works:</b>\nThe product focuses on practical outcomes (more matches, a cleaner feed, more credibility) while keeping results recognizable and consistent across platforms.",
+      "links": [
+        { "label": "Visit EpicPhotoAI", "href": "https://epicphoto.ai/", "kind": "primary" },
+        { "label": "Open the app", "href": "https://epicphoto.ai/app/", "kind": "secondary" }
       ]
     }
   ]
