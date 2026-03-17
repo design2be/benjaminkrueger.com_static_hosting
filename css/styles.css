@@ -220,9 +220,19 @@ p {
   min-width: 0;
 }
 
+.profile__startups-label {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.55);
+}
+
 .startups-marquee {
-  --startups-logo-height: 30px;
-  --startups-gap: 44px;
+  --startups-logo-height: 20px;
+  --startups-gap: 520px;
   overflow: hidden;
   width: 100%;
   min-width: 0;
@@ -261,6 +271,7 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0.4;
 }
 
 .startups-carousel__logo {
@@ -275,7 +286,7 @@ p {
 
 @media (min-width: 760px) {
   .startups-marquee {
-    --startups-gap: 56px;
+    --startups-gap: 60px;
   }
   .startups-marquee__track {
     padding: 14px 2px;
