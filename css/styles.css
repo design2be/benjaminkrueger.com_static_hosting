@@ -420,7 +420,6 @@ p {
   gap: 14px;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x proximity;
   scroll-padding-left: var(--projects-track-inset);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none; /* Firefox */
@@ -428,10 +427,6 @@ p {
   padding: 2px 0 10px;
   padding-left: var(--projects-track-inset);
   min-width: 0;
-}
-
-.projects-slider__track.projects-slider__track--snap-disabled {
-  scroll-snap-type: none;
 }
 
 .projects-slider__track:focus-visible {

@@ -186,8 +186,6 @@ function initProjectsSliderControls() {
   const prev = document.getElementById("projects-prev");
   const next = document.getElementById("projects-next");
 
-  const SNAP_DISABLED_CLASS = "projects-slider__track--snap-disabled";
-
   const getStep = () => {
     const first = track.querySelector(".project-card, .project-card__link");
     const rect = first instanceof HTMLElement ? first.getBoundingClientRect() : null;
@@ -196,32 +194,6 @@ function initProjectsSliderControls() {
     const w = rect?.width || 360;
     return w + gap;
   };
-
-  const getMaxScrollLeft = () => Math.max(0, track.scrollWidth - track.clientWidth);
-
-  const getDisableSnapThreshold = () => {
-    // Dynamic threshold: big enough to avoid the "last snap", but small enough
-    // to preserve snapping for most of the track.
-    const step = getStep();
-    return Math.max(24, Math.min(140, step * 0.6));
-  };
-
-  const isNearEnd = () => {
-    const max = getMaxScrollLeft();
-    if (max <= 0) return false;
-    return max - track.scrollLeft <= getDisableSnapThreshold();
-  };
-
-  const updateSnapMode = () => {
-    track.classList.toggle(SNAP_DISABLED_CLASS, isNearEnd());
-  };
-
-  const scrollByCards = (dir) => {
-    track.scrollBy({ left: dir * getStep(), behavior: "smooth" });
-  };
-
-  if (prev instanceof HTMLButtonElement) prev.addEventListener("click", () => scrollByCards(-1));
-  if (next instanceof HTMLButtonElement) next.addEventListener("click", () => scrollByCards(1));
 
   const getItems = () =>
     Array.from(track.children).filter(
@@ -236,17 +208,14 @@ function initProjectsSliderControls() {
     return paddingLeft;
   };
 
-  const snapToNearest = () => {
-    updateSnapMode();
-    if (track.classList.contains(SNAP_DISABLED_CLASS)) return;
-
+  const getSnapPoints = () => {
     const items = getItems();
-    if (items.length === 0) return;
-
+    if (items.length === 0) return [];
     const inset = getSnapInset();
-    const points = items.map((el) => Math.max(0, el.offsetLeft - inset));
-    const x = track.scrollLeft;
+    return items.map((el) => Math.max(0, el.offsetLeft - inset));
+  };
 
+  const getNearestSnapIndex = (x, points) => {
     // Find the closest snap point using midpoints between cards.
     let idx = 0;
     for (let i = 0; i < points.length - 1; i += 1) {
@@ -254,28 +223,37 @@ function initProjectsSliderControls() {
       if (x >= mid) idx = i + 1;
       else break;
     }
-
-    const targetLeft = points[idx] ?? 0;
-    track.scrollTo({ left: targetLeft, behavior: "smooth" });
+    return idx;
   };
 
-  // After the user stops scrolling, snap to the nearest card.
-  let scrollEndTimer = null;
-  track.addEventListener(
-    "scroll",
-    () => {
-      updateSnapMode();
-      if (scrollEndTimer) window.clearTimeout(scrollEndTimer);
-      scrollEndTimer = window.setTimeout(() => {
-        scrollEndTimer = null;
-        snapToNearest();
-      }, 140);
-    },
-    { passive: true },
-  );
+  const scrollByCards = (dir) => {
+    const points = getSnapPoints();
+    const behavior = prefersReducedMotion() ? "auto" : "smooth";
 
-  updateSnapMode();
-  window.addEventListener("resize", updateSnapMode, { passive: true });
+    if (points.length === 0) {
+      track.scrollBy({ left: dir * getStep(), behavior });
+      return;
+    }
+
+    const current = getNearestSnapIndex(track.scrollLeft, points);
+    const nextIdx = Math.max(0, Math.min(points.length - 1, current + dir));
+    const targetLeft = points[nextIdx] ?? 0;
+    track.scrollTo({ left: targetLeft, behavior });
+  };
+
+  if (prev instanceof HTMLButtonElement) prev.addEventListener("click", () => scrollByCards(-1));
+  if (next instanceof HTMLButtonElement) next.addEventListener("click", () => scrollByCards(1));
+
+  track.addEventListener("keydown", (e) => {
+    if (!(e instanceof KeyboardEvent)) return;
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      scrollByCards(-1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      scrollByCards(1);
+    }
+  });
 }
 
 async function loadProjects() {
