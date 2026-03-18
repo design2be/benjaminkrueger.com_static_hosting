@@ -587,19 +587,20 @@ p {
 
 @media (max-width: 520px) {
   .projects-slider--fullbleed {
-    padding: 0 10px;
+    padding: 0 0px;
   }
 
   .projects-slider__track {
     --projects-track-inset: 0px;
+    padding-left: 20px;
   }
 
   .project-card__link {
-    flex: 0 0 calc(var(--viewport-width) - 20px);
+    flex: 0 0 calc(var(--viewport-width) * 0.84);
   }
 
   .project-card {
-    width: calc(var(--viewport-width) - 20px);
+    width: calc(var(--viewport-width) * 0.84);
     aspect-ratio: 9 / 16;
     height: auto;
     min-height: 0;
