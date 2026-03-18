@@ -230,6 +230,24 @@ p {
   overflow-wrap: anywhere;
 }
 
+.profile__early-access {
+  margin-top: 20px;
+}
+
+.profile__early-access.btn--action-primary {
+  height: 38px;
+  padding: 0 16px;
+  font-size: 17px;
+}
+
+.profile__early-access-note {
+  margin: 2px 0 0;
+  max-width: 56ch;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: rgba(15, 23, 42, 0.60);
+}
+
 .profile__social {
   display: flex;
   gap: 10px;

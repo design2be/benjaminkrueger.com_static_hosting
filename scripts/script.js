@@ -107,6 +107,15 @@ function initWaitlistModal() {
   if (els.root.dataset.waitlistInit === "true") return;
   els.root.dataset.waitlistInit = "true";
 
+  // Open on any "Get Early Access"/waitlist trigger.
+  document.addEventListener("click", (e) => {
+    const target = e.target instanceof Element ? e.target : null;
+    const openEl = target?.closest("[data-waitlist-open]");
+    if (!openEl) return;
+    e.preventDefault();
+    openWaitlistModal();
+  });
+
   // Close on backdrop / close button.
   els.root.addEventListener("click", (e) => {
     const target = e.target instanceof Element ? e.target : null;
@@ -1458,6 +1467,8 @@ function initAppearAnimations() {
         ".profile__image",
         ".profile__name",
         ".profile__tagline",
+        ".profile__early-access",
+        ".profile__early-access-note",
         ".profile__social",
         ".profile__startups",
         ".section__title",
