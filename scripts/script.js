@@ -1,5 +1,218 @@
 const PROJECTS_JSON_URL = "./data/projects.json";
 
+let waitlistModalLastActive = null;
+let waitlistModalScrollY = 0;
+let waitlistModalScrollLocked = false;
+
+function focusNoScroll(el) {
+  if (!(el instanceof HTMLElement)) return;
+  try {
+    el.focus({ preventScroll: true });
+  } catch {
+    el.focus();
+  }
+}
+
+function lockWaitlistBackgroundScroll() {
+  if (waitlistModalScrollLocked) return;
+  waitlistModalScrollLocked = true;
+  waitlistModalScrollY = window.scrollY || window.pageYOffset || 0;
+
+  // Keep the visual scroll position stable while preventing background scroll.
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${waitlistModalScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+  document.body.dataset.waitlistScrollLock = "true";
+}
+
+function unlockWaitlistBackgroundScroll() {
+  if (!waitlistModalScrollLocked) return;
+  waitlistModalScrollLocked = false;
+
+  const y = waitlistModalScrollY;
+  waitlistModalScrollY = 0;
+
+  if (document.body.dataset.waitlistScrollLock === "true") {
+    delete document.body.dataset.waitlistScrollLock;
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+  }
+
+  window.scrollTo({ top: y, behavior: "auto" });
+}
+
+function getWaitlistModalEls() {
+  const root = document.getElementById("waitlist-modal");
+  if (!(root instanceof HTMLElement)) return null;
+  const dialog = root.querySelector(".waitlist-modal__dialog");
+  const email = root.querySelector('input[name="email"]');
+  if (!(dialog instanceof HTMLElement)) return null;
+  const emailInput = email instanceof HTMLInputElement ? email : null;
+  return { root, dialog, emailInput };
+}
+
+function isWaitlistModalOpen() {
+  const els = getWaitlistModalEls();
+  return Boolean(els && !els.root.hidden);
+}
+
+function closeWaitlistModal({ restoreFocus = true } = {}) {
+  const els = getWaitlistModalEls();
+  if (!els) return;
+  if (els.root.hidden) return;
+
+  els.root.hidden = true;
+  document.body.classList.remove("is-modal-open");
+  unlockWaitlistBackgroundScroll();
+
+  if (restoreFocus && waitlistModalLastActive instanceof HTMLElement) {
+    focusNoScroll(waitlistModalLastActive);
+  }
+  waitlistModalLastActive = null;
+}
+
+function openWaitlistModal({ focus = true } = {}) {
+  const els = getWaitlistModalEls();
+  if (!els) return;
+
+  if (!isWaitlistModalOpen()) {
+    waitlistModalLastActive = document.activeElement;
+    lockWaitlistBackgroundScroll();
+    els.root.hidden = false;
+    document.body.classList.add("is-modal-open");
+  }
+
+  if (els.emailInput) {
+    els.emailInput.value = "";
+  }
+
+  // Ensure focus happens after layout is updated.
+  if (focus) {
+    window.requestAnimationFrame(() => {
+      const { emailInput, dialog } = getWaitlistModalEls() || {};
+      if (emailInput) focusNoScroll(emailInput);
+      else if (dialog) focusNoScroll(dialog);
+    });
+  }
+}
+
+function initWaitlistModal() {
+  const els = getWaitlistModalEls();
+  if (!els) return;
+  if (els.root.dataset.waitlistInit === "true") return;
+  els.root.dataset.waitlistInit = "true";
+
+  // Close on backdrop / close button.
+  els.root.addEventListener("click", (e) => {
+    const target = e.target instanceof Element ? e.target : null;
+    if (!target) return;
+    const closeEl = target.closest("[data-waitlist-close]");
+    if (!closeEl) return;
+    e.preventDefault();
+    closeWaitlistModal();
+  });
+
+  // Escape to close + trap focus.
+  document.addEventListener("keydown", (e) => {
+    if (!(e instanceof KeyboardEvent)) return;
+    if (!isWaitlistModalOpen()) return;
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeWaitlistModal();
+      return;
+    }
+
+    if (e.key !== "Tab") return;
+
+    const { dialog } = getWaitlistModalEls() || {};
+    if (!dialog) return;
+
+    const focusables = Array.from(
+      dialog.querySelectorAll(
+        [
+          "a[href]",
+          "button:not([disabled])",
+          "input:not([disabled])",
+          "select:not([disabled])",
+          "textarea:not([disabled])",
+          '[tabindex]:not([tabindex="-1"])',
+        ].join(","),
+      ),
+    ).filter((n) => n instanceof HTMLElement && n.offsetParent !== null);
+
+    if (focusables.length === 0) {
+      e.preventDefault();
+      dialog.focus();
+      return;
+    }
+
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+
+    if (e.shiftKey) {
+      if (active === first || !dialog.contains(active)) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else if (active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+}
+
+function detectFlexGapSupport() {
+  // Older Safari/WebKit doesn't support flex gap. When missing, many layouts look "broken"
+  // (no spacing, bad wrapping). We toggle a class so CSS can provide safe fallbacks.
+  try {
+    const flex = document.createElement("div");
+    flex.style.display = "flex";
+    flex.style.flexDirection = "column";
+    flex.style.rowGap = "10px";
+    flex.style.position = "absolute";
+    flex.style.top = "-9999px";
+    flex.style.left = "-9999px";
+    const c1 = document.createElement("div");
+    const c2 = document.createElement("div");
+    // Use non-zero heights so measurement is reliable across Safari/WebKit versions.
+    c1.style.height = "10px";
+    c2.style.height = "10px";
+    flex.append(c1, c2);
+    document.body.appendChild(flex);
+    const h = flex.getBoundingClientRect().height;
+    const isSupported = Math.round(h) === 30; // 10 + 10 + 10(gap)
+    flex.remove();
+    document.documentElement.classList.toggle("no-flexgap", !isSupported);
+  } catch {
+    // If detection fails for any reason, assume "no gap" and fall back.
+    document.documentElement.classList.add("no-flexgap");
+  }
+}
+
+function updateViewportCssVars() {
+  // Safari has had multiple edge-cases with calc()/max() when mixing vw/px inside custom properties.
+  // We compute the key sizing vars in JS to keep spacing consistent across engines.
+  const root = document.documentElement;
+  const cs = window.getComputedStyle(root);
+  const contentMax = Number.parseFloat(cs.getPropertyValue("--content-max-width")) || 1200;
+  const gutter = Number.parseFloat(cs.getPropertyValue("--page-gutter")) || 20;
+
+  // Prefer layout viewport width (matches CSS vw most closely).
+  const vw = root.clientWidth || window.innerWidth || 0;
+  if (vw > 0) {
+    root.style.setProperty("--viewport-width", `${vw}px`);
+    const pageInset = Math.max(gutter, (vw - contentMax) / 2 + gutter);
+    root.style.setProperty("--page-inset", `${pageInset}px`);
+  }
+}
+
 function isExternalHref(href) {
   try {
     const url = new URL(href, window.location.href);
@@ -53,6 +266,35 @@ function projectSortKey(project) {
   return d ? d.getTime() : -Infinity;
 }
 
+function getProjectStateLabel(project) {
+  const explicit = String(project?.badge || "").trim();
+  if (explicit) return explicit;
+
+  const status = String(project?.status || "")
+    .trim()
+    .toLowerCase();
+
+  switch (status) {
+    case "building":
+      return "Currently Building";
+    case "testing":
+      return "Testing";
+    case "live":
+      return "Live";
+    case "launched":
+    case "completed":
+      return "Launched";
+    default:
+      return status ? status : "In Progress";
+  }
+}
+
+function getProjectStatusKey(project) {
+  return String(project?.status || "")
+    .trim()
+    .toLowerCase();
+}
+
 function getPrimaryHref(project) {
   const links = Array.isArray(project?.links) ? project.links : [];
   const primaryLink = links.find((l) => String(l?.kind || "").trim().toLowerCase() === "primary");
@@ -67,6 +309,604 @@ function getPrimaryHref(project) {
   return href;
 }
 
+function getVideoHref(project) {
+  const direct =
+    typeof project?.videoHref === "string"
+      ? project.videoHref
+      : typeof project?.videoUrl === "string"
+        ? project.videoUrl
+        : typeof project?.video === "string"
+          ? project.video
+          : "";
+  const directHref = String(direct || "").trim();
+  if (directHref && directHref !== "#") return directHref;
+
+  const links = Array.isArray(project?.links) ? project.links : [];
+  const videoLink = links.find((l) => String(l?.kind || "").trim().toLowerCase() === "video");
+  const href = typeof videoLink?.href === "string" ? videoLink.href.trim() : "";
+  if (!href || href === "#") return "";
+  return href;
+}
+
+function normalizeTone(project, fallbackColor = "") {
+  const raw = String(project?.tone || "").trim().toLowerCase();
+  if (raw === "light" || raw === "dark") return raw;
+
+  const hex = String(fallbackColor || "").trim();
+  const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex);
+  if (!m) return "dark";
+  let h = m[1].toLowerCase();
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  const r = Number.parseInt(h.slice(0, 2), 16);
+  const g = Number.parseInt(h.slice(2, 4), 16);
+  const b = Number.parseInt(h.slice(4, 6), 16);
+  const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return luma >= 0.72 ? "light" : "dark";
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderMarkdownToHtml(markdownRaw) {
+  const md = String(markdownRaw || "").replace(/\r\n/g, "\n");
+  const lines = md.split("\n");
+  const out = [];
+
+  let para = [];
+  let inUl = false;
+  let inOl = false;
+
+  const closeLists = () => {
+    if (inUl) out.push("</ul>");
+    if (inOl) out.push("</ol>");
+    inUl = false;
+    inOl = false;
+  };
+
+  const flushPara = () => {
+    if (para.length === 0) return;
+    closeLists();
+    out.push(`<p>${para.join("<br>")}</p>`);
+    para = [];
+  };
+
+  const inline = (text) => {
+    let s = escapeHtml(text);
+    s = s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => {
+      const safeAlt = String(alt || "");
+      const safeUrl = String(url || "");
+      return `<img src="${safeUrl}" alt="${safeAlt}" loading="lazy" decoding="async" />`;
+    });
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
+      const safeLabel = String(label || "");
+      const safeUrl = String(url || "");
+      const external = /^https?:\/\//i.test(safeUrl);
+      const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : "";
+      return `<a href="${safeUrl}"${attrs}>${safeLabel}</a>`;
+    });
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    s = s.replace(/`([^`]+)`/g, "<code>$1</code>");
+    return s;
+  };
+
+  for (const rawLine of lines) {
+    const line = rawLine.replace(/\s+$/g, "");
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      flushPara();
+      continue;
+    }
+
+    const heading = /^(#{1,4})\s+(.*)$/.exec(trimmed);
+    if (heading) {
+      flushPara();
+      closeLists();
+      const level = Math.min(6, 3 + heading[1].length); // start at h4-ish since title already exists
+      out.push(`<h${level} class="project-detail__heading">${inline(heading[2] || "")}</h${level}>`);
+      continue;
+    }
+
+    const ul = /^-\s+(.*)$/.exec(trimmed);
+    if (ul) {
+      flushPara();
+      if (inOl) {
+        out.push("</ol>");
+        inOl = false;
+      }
+      if (!inUl) {
+        out.push("<ul>");
+        inUl = true;
+      }
+      out.push(`<li>${inline(ul[1] || "")}</li>`);
+      continue;
+    }
+
+    const ol = /^(\d+)\.\s+(.*)$/.exec(trimmed);
+    if (ol) {
+      flushPara();
+      if (inUl) {
+        out.push("</ul>");
+        inUl = false;
+      }
+      if (!inOl) {
+        out.push("<ol>");
+        inOl = true;
+      }
+      out.push(`<li>${inline(ol[2] || "")}</li>`);
+      continue;
+    }
+
+    para.push(inline(trimmed));
+  }
+
+  flushPara();
+  closeLists();
+  return out.join("\n");
+}
+
+function renderProjectHtml(htmlRaw) {
+  const html = String(htmlRaw || "");
+  const tpl = document.createElement("template");
+  tpl.innerHTML = html;
+
+  const fragmentRoot = tpl.content;
+  for (const node of Array.from(fragmentRoot.querySelectorAll("script"))) {
+    node.remove();
+  }
+
+  // If a full HTML document was provided, prefer the <body> contents.
+  const body = fragmentRoot.querySelector("body");
+  return body ? body.innerHTML : tpl.innerHTML;
+}
+
+const projectDetailCache = new Map();
+
+async function fetchTextCached(url) {
+  const key = String(url || "").trim();
+  if (!key) return "";
+  if (projectDetailCache.has(key)) return projectDetailCache.get(key);
+  const res = await fetch(key, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load ${key} (${res.status})`);
+  const text = await res.text();
+  projectDetailCache.set(key, text);
+  return text;
+}
+
+function normalizeImageList(list) {
+  if (!Array.isArray(list)) return [];
+  const out = [];
+  const seen = new Set();
+  for (const item of list) {
+    const s = String(item || "").trim();
+    if (!s) continue;
+    if (seen.has(s)) continue;
+    seen.add(s);
+    out.push(s);
+  }
+  return out;
+}
+
+function createImageRotator({ images, alt = "Project preview", ariaLabel = "Project screenshots" } = {}) {
+  const items = normalizeImageList(images);
+  const root = el("div", "image-rotator");
+  root.setAttribute("role", "group");
+  root.setAttribute("aria-roledescription", "carousel");
+  root.setAttribute("aria-label", ariaLabel);
+
+  const viewport = el("div", "image-rotator__viewport");
+  const img = document.createElement("img");
+  img.className = "image-rotator__img";
+  img.alt = String(alt || "").trim() || "Project preview";
+  img.loading = "eager";
+  img.decoding = "async";
+  viewport.append(img);
+
+  const footer = el("div", "image-rotator__footer");
+  const counter = el("div", "image-rotator__counter");
+  counter.hidden = true;
+  const dots = el("div", "image-rotator__dots");
+  footer.append(counter, dots);
+
+  let index = 0;
+  let dotButtons = [];
+  let swapSeq = 0;
+  let autoRotateTimer = null;
+  let autoRotatePaused = false;
+  const AUTO_ROTATE_MS = 3000;
+
+  const clampIndex = (i) => {
+    const n = items.length;
+    if (n <= 0) return 0;
+    const normalized = ((i % n) + n) % n;
+    return normalized;
+  };
+
+  const setImageSrc = (src, { animate = false } = {}) => {
+    const nextSrc = String(src || "").trim();
+    if (!nextSrc) return;
+    if (img.src && img.src === new URL(nextSrc, window.location.href).href) return;
+
+    if (prefersReducedMotion() || !animate || typeof img.animate !== "function") {
+      img.src = nextSrc;
+      return;
+    }
+
+    swapSeq += 1;
+    const seq = swapSeq;
+
+    const fadeOut = img.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 140, easing: "ease-out" });
+    fadeOut.onfinish = () => {
+      if (seq !== swapSeq) return;
+      img.src = nextSrc;
+      const fadeIn = img.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 240, easing: "ease-out" });
+      fadeIn.onfinish = () => {
+        // no-op; keep stable opacity
+      };
+    };
+  };
+
+  const preloadNeighbors = () => {
+    if (items.length <= 1) return;
+    const nextIdx = clampIndex(index + 1);
+    const prevIdx = clampIndex(index - 1);
+    for (const i of [nextIdx, prevIdx]) {
+      const src = items[i];
+      if (!src) continue;
+      const pre = new Image();
+      pre.decoding = "async";
+      pre.src = src;
+    }
+  };
+
+  const render = ({ animate = false } = {}) => {
+    if (items.length === 0) {
+      root.dataset.hasImages = "false";
+      img.removeAttribute("src");
+      img.hidden = true;
+      counter.textContent = "";
+      dots.replaceChildren();
+      return;
+    }
+
+    root.dataset.hasImages = "true";
+    img.hidden = false;
+    setImageSrc(items[index], { animate });
+    img.loading = index === 0 ? "eager" : "lazy";
+    counter.textContent = "";
+
+    if (items.length > 1) {
+      for (const [i, btn] of dotButtons.entries()) {
+        btn.classList.toggle("is-active", i === index);
+        btn.setAttribute("aria-current", i === index ? "true" : "false");
+      }
+    }
+
+    preloadNeighbors();
+  };
+
+  const go = (next, { animate = true } = {}) => {
+    if (items.length <= 1) return;
+    index = clampIndex(next);
+    render({ animate });
+    scheduleAutoRotate();
+  };
+
+  const clearAutoRotate = () => {
+    if (autoRotateTimer) window.clearTimeout(autoRotateTimer);
+    autoRotateTimer = null;
+  };
+
+  const scheduleAutoRotate = () => {
+    if (items.length <= 1) return;
+    clearAutoRotate();
+    if (autoRotatePaused) return;
+    if (!root.isConnected) return;
+    if (document.hidden) return;
+
+    autoRotateTimer = window.setTimeout(() => {
+      autoRotateTimer = null;
+      if (!root.isConnected) return;
+      if (autoRotatePaused) return;
+      if (document.hidden) return;
+      go(index + 1, { animate: true });
+    }, AUTO_ROTATE_MS);
+  };
+
+  const setAutoRotatePaused = (paused) => {
+    autoRotatePaused = Boolean(paused);
+    if (autoRotatePaused) clearAutoRotate();
+    else scheduleAutoRotate();
+  };
+
+  if (items.length > 1) {
+    root.tabIndex = 0;
+
+    dotButtons = items.map((_, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "image-rotator__dot";
+      b.setAttribute("aria-label", `Show image ${i + 1} of ${items.length}`);
+      b.addEventListener("click", () => go(i, { animate: true }));
+      return b;
+    });
+    dots.append(...dotButtons);
+
+    root.addEventListener("keydown", (e) => {
+      if (!(e instanceof KeyboardEvent)) return;
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        go(index - 1, { animate: true });
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        go(index + 1, { animate: true });
+      }
+    });
+
+    root.addEventListener("pointerenter", () => setAutoRotatePaused(true));
+    root.addEventListener("pointerleave", () => setAutoRotatePaused(false));
+    root.addEventListener("focusin", () => setAutoRotatePaused(true));
+    root.addEventListener("focusout", () => setAutoRotatePaused(false));
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (document.hidden) clearAutoRotate();
+        else scheduleAutoRotate();
+      },
+      { passive: true },
+    );
+  } else {
+    root.classList.add("image-rotator--single");
+    footer.hidden = true;
+  }
+
+  root.append(viewport, footer);
+  render({ animate: false });
+  scheduleAutoRotate();
+  return root;
+}
+
+function renderProjectDetail(project, { cardEl } = {}) {
+  const section = document.getElementById("project-detail");
+  const inner = document.getElementById("project-detail-inner");
+  if (!(section instanceof HTMLElement)) return;
+  if (!(inner instanceof HTMLElement)) return;
+
+  if (!project) {
+    section.hidden = true;
+    inner.replaceChildren();
+    return;
+  }
+
+  const projectNameForLabel = String(project?.name || "").trim();
+  section.setAttribute("aria-label", projectNameForLabel ? `Project details for ${projectNameForLabel}` : "Project details");
+
+  const bg = typeof project?.cardColor === "string" ? project.cardColor.trim() : "";
+  const tone = normalizeTone(project, bg);
+  section.style.setProperty("--project-detail-bg", bg || "#ffffff");
+  section.classList.toggle("project-detail--tone-light", tone === "light");
+  section.classList.toggle("project-detail--tone-dark", tone === "dark");
+  if (typeof project?.id === "string" && project.id.trim()) {
+    section.dataset.projectId = project.id.trim();
+  } else {
+    delete section.dataset.projectId;
+  }
+
+  // Chevron points to the selected card.
+  if (cardEl instanceof HTMLElement) {
+    section.dataset.projectCardId = cardEl.id || "";
+    const cardRect = cardEl.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+    const x = cardRect.left + cardRect.width / 2 - sectionRect.left;
+    section.style.setProperty("--project-detail-chevron-x", `${x.toFixed(1)}px`);
+  }
+
+  const header = el("div", "project-detail__header");
+  const headerLeft = el("div", "project-detail__header-left");
+  const titleText = String(project?.name || "").trim() || "Untitled";
+  const title = el("h3", "project-detail__title", titleText);
+
+  const meta = el("div", "project-detail__meta");
+  const stateLabel = getProjectStateLabel(project);
+  const statusKey = getProjectStatusKey(project);
+  const badgeVariant =
+    statusKey === "launched" || statusKey === "completed" ? "project-card__badge--green" : "project-card__badge--blue";
+  const launch = formatMonthYear(project?.launchDate);
+  meta.append(el("span", "project-detail__meta-item", launch || "TBD"));
+  meta.append(el("div", `project-card__badge ${badgeVariant}`, stateLabel));
+
+  headerLeft.append(meta, title);
+  header.append(headerLeft);
+
+  const body = elHTML("div", "project-detail__body", "<p class=\"muted\">Loading…</p>");
+
+  const contentBox = el("div", "content");
+  const layout = el("div", "project-detail__layout");
+  const bodyCol = el("div", "project-detail__body-col");
+  const descriptionText = String(project?.shortDescription || "").trim();
+  const description = descriptionText ? el("p", "project-detail__description", descriptionText) : null;
+
+  const media = el("div", "project-detail__media");
+
+  const detailBg = typeof project?.cardColor === "string" ? project.cardColor.trim() : "";
+  const imageFallbackBg = typeof project?.imageColor === "string" ? project.imageColor.trim() : "";
+  const mediaBg = detailBg || imageFallbackBg;
+  if (mediaBg) media.style.setProperty("--project-detail-media-bg", mediaBg);
+
+  const projectName = String(project?.name || "").trim();
+  const images = normalizeImageList(project?.detailImages);
+
+  const alt = projectName ? `Screenshot of ${projectName}` : "Project screenshot";
+  const ariaLabel = projectName ? `Screenshots for ${projectName}` : "Project screenshots";
+  if (images.length > 0) {
+    media.append(createImageRotator({ images, alt, ariaLabel }));
+  } else {
+    media.classList.add("project-detail__media--empty");
+    media.append(el("div", "project-detail__media-placeholder", "No preview yet."));
+  }
+
+  layout.append(bodyCol, media);
+
+  const cta = el("div", "project-detail__cta");
+
+  const productHref = getPrimaryHref(project);
+  if (productHref) {
+    const a = document.createElement("a");
+    a.className = "btn btn--action-primary";
+    a.href = productHref;
+    a.textContent = "Try Product";
+    if (isExternalHref(productHref)) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+    cta.append(a);
+  } else {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn--action-primary";
+    btn.textContent = "Join Waitlist";
+    btn.setAttribute("aria-haspopup", "dialog");
+    btn.addEventListener("click", () => openWaitlistModal());
+    cta.append(btn);
+  }
+
+  const videoHref = getVideoHref(project);
+  if (videoHref) {
+    const a = document.createElement("a");
+    a.className = "btn btn--action";
+    a.href = videoHref;
+    a.textContent = "Watch Video";
+    if (isExternalHref(videoHref)) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+    cta.append(a);
+  } else {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn btn--action is-disabled";
+    btn.disabled = true;
+    btn.textContent = "Watch Video";
+    cta.append(btn);
+  }
+
+  bodyCol.append(header);
+  if (description) bodyCol.append(description);
+  bodyCol.append(body, cta);
+
+  contentBox.append(layout);
+
+  inner.replaceChildren(contentBox);
+  section.hidden = false;
+
+  const projectId = typeof project?.id === "string" ? project.id.trim() : "";
+  const detailHtml = typeof project?.detailHtml === "string" ? project.detailHtml.trim() : "";
+  const detailMd = typeof project?.detailMd === "string" ? project.detailMd.trim() : "";
+  const detailUrl = detailHtml || detailMd;
+  if (!detailUrl) {
+    body.innerHTML = "<p class=\"muted\">No details yet.</p>";
+    return;
+  }
+
+  fetchTextCached(detailUrl)
+    .then((text) => {
+      // Avoid race conditions if the user clicks another card quickly.
+      if (projectId && section.dataset.projectId && section.dataset.projectId !== projectId) return;
+      const looksLikeHtmlFile = /\.html?(\?|#|$)/i.test(detailUrl);
+      const shouldRenderAsHtml = Boolean(detailHtml) || looksLikeHtmlFile;
+      body.innerHTML = shouldRenderAsHtml ? renderProjectHtml(text) : renderMarkdownToHtml(text);
+    })
+    .catch(() => {
+      body.innerHTML = "<p class=\"muted\">Couldn’t load details right now.</p>";
+    });
+}
+
+let projectDetailTrackingAttached = false;
+
+function updateProjectDetailChevron() {
+  const section = document.getElementById("project-detail");
+  const track = document.getElementById("projects-list");
+  if (!(section instanceof HTMLElement)) return;
+  if (!(track instanceof HTMLElement)) return;
+  if (section.hidden) return;
+
+  const byId = () => {
+    const cardId = String(section.dataset.projectCardId || "").trim();
+    if (!cardId) return null;
+    const node = document.getElementById(cardId);
+    if (node instanceof HTMLElement && track.contains(node)) return node;
+    return null;
+  };
+
+  const escapeCssValue = (value) => {
+    const v = String(value || "");
+    if (typeof window.CSS?.escape === "function") return window.CSS.escape(v);
+    return v.replace(/["\\]/g, "\\$&");
+  };
+
+  const byProjectId = () => {
+    const projectId = String(section.dataset.projectId || "").trim();
+    if (!projectId) return null;
+    const selector = `[data-project-id="${escapeCssValue(projectId)}"]`;
+    const node = track.querySelector(selector);
+    return node instanceof HTMLElement ? node : null;
+  };
+
+  const selected = byId() || byProjectId();
+  if (!selected) return;
+
+  const cardRect = selected.getBoundingClientRect();
+  const sectionRect = section.getBoundingClientRect();
+  const x = cardRect.left + cardRect.width / 2 - sectionRect.left;
+  section.style.setProperty("--project-detail-chevron-x", `${x.toFixed(1)}px`);
+}
+
+function attachProjectDetailChevronTracking() {
+  if (projectDetailTrackingAttached) return;
+  projectDetailTrackingAttached = true;
+
+  const track = document.getElementById("projects-list");
+  if (track instanceof HTMLElement) {
+    track.addEventListener("scroll", () => updateProjectDetailChevron(), { passive: true });
+  }
+  window.addEventListener("resize", () => updateProjectDetailChevron());
+}
+
+function scrollProjectDetailIntoView({ onlyIfNeeded = true, cardEl } = {}) {
+  const section = document.getElementById("project-detail");
+  if (!(section instanceof HTMLElement)) return;
+  if (section.hidden) return;
+
+  const behavior = prefersReducedMotion() ? "auto" : "smooth";
+
+  const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+  const cardRect = cardEl instanceof HTMLElement ? cardEl.getBoundingClientRect() : null;
+  const cardPeekPxRaw = cardRect ? cardRect.height * 0.12 : 72;
+  const cardPeekPx = Math.max(56, Math.min(96, cardPeekPxRaw));
+  const desiredTop = vh > 0 ? Math.min(vh * 0.45, Math.max(72, cardPeekPx + 16)) : cardPeekPx + 16;
+
+  if (onlyIfNeeded) {
+    const rect = section.getBoundingClientRect();
+    if (vh > 0) {
+      const withinBand = rect.top >= desiredTop - 24 && rect.top <= desiredTop + 24;
+      const mostlyBelowTop = rect.bottom > desiredTop + 32;
+      if (withinBand && mostlyBelowTop) return;
+    }
+  }
+
+  const rect = section.getBoundingClientRect();
+  const currentY = window.scrollY || window.pageYOffset || 0;
+  const targetY = Math.max(0, currentY + rect.top - desiredTop);
+  window.scrollTo({ top: targetY, behavior });
+}
+
 function renderProjects(target, projects) {
   target.replaceChildren();
   target.setAttribute("aria-busy", "false");
@@ -79,25 +919,16 @@ function renderProjects(target, projects) {
   const sorted = [...projects].sort((a, b) => projectSortKey(b) - projectSortKey(a));
   const cards = [];
 
-  const normalizeTone = (project, fallbackColor = "") => {
-    const raw = String(project?.tone || "").trim().toLowerCase();
-    if (raw === "light" || raw === "dark") return raw;
-
-    const hex = String(fallbackColor || "").trim();
-    const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex);
-    if (!m) return "dark";
-    let h = m[1].toLowerCase();
-    if (h.length === 3) h = h.split("").map((c) => c + c).join("");
-    const r = Number.parseInt(h.slice(0, 2), 16);
-    const g = Number.parseInt(h.slice(2, 4), 16);
-    const b = Number.parseInt(h.slice(4, 6), 16);
-    const luma = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-    return luma >= 0.72 ? "light" : "dark";
-  };
-
   for (const [index, project] of sorted.entries()) {
-    const href = getPrimaryHref(project);
-    const cardEl = el("article", "project-card");
+    const cardEl = document.createElement("button");
+    cardEl.type = "button";
+    cardEl.className = "project-card project-card--selectable";
+    cardEl.setAttribute("aria-label", project?.name ? `Show details for ${project.name}` : "Show project details");
+    const projectId = typeof project?.id === "string" ? project.id.trim() : "";
+    if (projectId) {
+      cardEl.dataset.projectId = projectId;
+      cardEl.id = `project-card-${projectId}`;
+    }
 
     const bg = typeof project?.cardColor === "string" ? project.cardColor.trim() : "";
     if (bg) cardEl.style.setProperty("--project-card-bg", bg);
@@ -147,26 +978,34 @@ function renderProjects(target, projects) {
     }
     cardEl.append(content);
 
-    if (href) {
-      const a = document.createElement("a");
-      a.className = "project-card__link";
-      a.href = href;
-      a.setAttribute("aria-label", project?.name ? `Open ${project.name}` : "Open project");
-      if (isExternalHref(href)) {
-        a.target = "_blank";
-        a.rel = "noopener noreferrer";
-      }
-      a.append(cardEl);
-      target.append(a);
-      cards.push(a);
-    } else {
-      target.append(cardEl);
-      cards.push(cardEl);
-    }
+    cardEl.addEventListener("click", () => {
+      renderProjectDetail(project, { cardEl });
+      updateProjectDetailChevron();
+      window.requestAnimationFrame(() => scrollProjectDetailIntoView({ onlyIfNeeded: true, cardEl }));
+    });
+
+    target.append(cardEl);
+    cards.push(cardEl);
   }
 
   registerAppearElements(cards);
   window.requestAnimationFrame(() => animateVisibleRegisteredInOrder());
+
+  // Pre-open the first project on initial render so visitors immediately see a detail panel.
+  // (We avoid scrolling; this simply sets the initial selected state + detail content.)
+  const detailSection = document.getElementById("project-detail");
+  const shouldAutoOpen = detailSection instanceof HTMLElement ? detailSection.hidden : true;
+  const firstCard = cards[0];
+  const firstProject = sorted[0];
+  if (shouldAutoOpen && firstCard instanceof HTMLElement && firstProject) {
+    renderProjectDetail(firstProject, { cardEl: firstCard });
+
+    // The cards animate in, so re-measure after layout settles.
+    window.requestAnimationFrame(() => updateProjectDetailChevron());
+    if (!prefersReducedMotion()) {
+      window.setTimeout(() => updateProjectDetailChevron(), 800);
+    }
+  }
 }
 
 function formatUpdatedAt(raw) {
@@ -273,6 +1112,7 @@ async function loadProjects() {
     }
 
     renderProjects(target, projects);
+    attachProjectDetailChevronTracking();
   } catch (err) {
     target.replaceChildren();
     target.setAttribute("aria-busy", "false");
@@ -281,15 +1121,31 @@ async function loadProjects() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  detectFlexGapSupport();
+  updateViewportCssVars();
   initAppearAnimations();
   initStartupsMarquee();
   initProjectsSliderControls();
   loadProjects();
+  initWaitlistModal();
   initIdeaForm();
   initImprintToggle();
   initDataPolicyToggle();
   initPolicyDeepLinks();
 });
+
+let viewportVarsRaf = 0;
+window.addEventListener(
+  "resize",
+  () => {
+    if (viewportVarsRaf) window.cancelAnimationFrame(viewportVarsRaf);
+    viewportVarsRaf = window.requestAnimationFrame(() => {
+      viewportVarsRaf = 0;
+      updateViewportCssVars();
+    });
+  },
+  { passive: true },
+);
 
 function initStartupsMarquee() {
   const marquee = document.querySelector(".startups-marquee");
@@ -343,7 +1199,7 @@ function animateAppearById(id, { duration = 650, easing = "easeOut", fromY = 20,
   const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
   if (reduceMotion) {
     el.style.opacity = "1";
-    el.style.transform = "translate3d(0, 0, 0)";
+    el.style.transform = "";
     el.dataset.appearAnimated = "true";
     return;
   }
@@ -371,7 +1227,8 @@ function animateAppearById(id, { duration = 650, easing = "easeOut", fromY = 20,
         }
       },
       complete: () => {
-        $el.css({ transform: "translate3d(0, 0, 0)", opacity: "1", willChange: "" });
+        // Clear inline transform so CSS hover/selected transforms can apply.
+        $el.css({ transform: "", opacity: "1", willChange: "" });
       },
     },
   );
@@ -569,7 +1426,7 @@ function registerAppearElements(elements, options = {}) {
 
     if (reduceMotion) {
       el.style.opacity = "1";
-      el.style.transform = "translate3d(0, 0, 0)";
+      el.style.transform = "";
       el.style.willChange = "";
       el.dataset.appearAnimated = "true";
       continue;

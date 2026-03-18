@@ -14,11 +14,12 @@
     <link rel="icon" href="./assets/favicon.ico" />
     <link rel="manifest" href="./site.webmanifest" />
     <meta name="theme-color" content="#0a0b10" />
-    <link rel="stylesheet" href="./css/styles.css?v=20260317-3" />
+    <link rel="stylesheet" href="./css/styles.css?v=20260318-3" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <script src="https://waitlister.me/js/embed.js" defer></script>
 
     <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-W9RN3HLBTE"></script>
@@ -109,7 +110,7 @@
       
       <section class="profile__startups" aria-label="Startups">
         <div class="profile__startups-inner">
-          <p class="profile__startups-label">Previously built:</p>
+          <p class="profile__startups-label">Startups built:</p>
           <div class="startups-marquee" role="region" aria-label="Startup logos">
             <div class="startups-marquee__inner">
               <ul class="startups-marquee__track" role="list">
@@ -143,24 +144,36 @@
         <div class="section__inner projects-section__inner">
           <div class="section__header">
             <h2 class="section__title section__title--hero" id="projects-title">What I’m Building</h2>
-            <p class="section__subtitle">I build minimal viral products in public in 7 days and validate them in the market.</p>
+            <div class="projects-section__subrow">
+              <p class="section__subtitle">I build minimal viral products in public in 7 days and validate them in the market.</p>
+              <div class="projects-slider__controls" aria-hidden="false">
+                <button class="projects-slider__btn" id="projects-prev" type="button" aria-label="Scroll projects left">
+                  <span aria-hidden="true">‹</span>
+                </button>
+                <button class="projects-slider__btn" id="projects-next" type="button" aria-label="Scroll projects right">
+                  <span aria-hidden="true">›</span>
+                </button>
+              </div>
+            </div>
             <p class="section__meta" id="projects-meta"></p>
           </div>
         </div>
 
         <div class="projects-slider projects-slider--fullbleed" aria-label="Projects carousel">
-          <div class="projects-slider__controls" aria-hidden="false">
-            <button class="projects-slider__btn" id="projects-prev" type="button" aria-label="Scroll projects left">
-              <span aria-hidden="true">‹</span>
-            </button>
-            <button class="projects-slider__btn" id="projects-next" type="button" aria-label="Scroll projects right">
-              <span aria-hidden="true">›</span>
-            </button>
-          </div>
           <div class="projects-slider__track" id="projects-list" aria-live="polite" aria-busy="true" tabindex="0">
             <p class="muted">Loading projects…</p>
           </div>
         </div>
+
+        <section
+          class="project-detail"
+          id="project-detail"
+          aria-label="Project details"
+          aria-live="polite"
+          hidden
+        >
+          <div class="project-detail__inner" id="project-detail-inner"></div>
+        </section>
       </section>
       <section class="submit-idea" id="submit-idea" aria-labelledby="submit-idea-title">
         <div class="submit-idea__layout">
@@ -261,6 +274,25 @@
         </nav>
       </div>
     </footer>
+
+    <div class="waitlist-modal" id="waitlist-modal" hidden>
+      <div class="waitlist-modal__backdrop" data-waitlist-close></div>
+      <div
+        class="waitlist-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="waitlist-title"
+        aria-describedby="waitlist-desc"
+        tabindex="-1"
+      >
+        <button class="waitlist-modal__close" type="button" data-waitlist-close aria-label="Close waitlist dialog">
+          <span aria-hidden="true">×</span>
+        </button>
+        
+        <div class="waitlister-form" data-waitlist-key="-361KN1UQDPr" data-height="197px"></div>
+        
+    </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
     <script src="./scripts/script.js" defer></script>
