@@ -223,7 +223,7 @@ p {
 
 .profile__tagline {
   margin: 0;
-  max-width: 72ch;
+  max-width: 48ch;
   font-size: 20px;
   line-height: 1.65;
   color: rgba(15, 23, 42, 0.72);
