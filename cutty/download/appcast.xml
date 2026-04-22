@@ -3,12 +3,12 @@
     <channel>
         <title>cutty</title>
         <item>
-            <title>1.0.2</title>
-            <pubDate>Wed, 22 Apr 2026 17:02:07 +0200</pubDate>
-            <sparkle:version>3</sparkle:version>
-            <sparkle:shortVersionString>1.0.2</sparkle:shortVersionString>
+            <title>1.0.4</title>
+            <pubDate>Wed, 22 Apr 2026 17:07:12 +0200</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.0.4</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://benjaminkrueger.com/cutty/download/cutty-1.0.2-3.dmg" length="35524304" type="application/octet-stream" sparkle:edSignature="w8gxwyVUNGcYLtszNXpF+O96CFG39qbeRjaTTZYN+xcqpwvpOaHMobTGy1UtaT5nE1lAnndA9FMELUovwznYAA=="/>
+            <enclosure url="https://benjaminkrueger.com/cutty/download/cutty-1.0.4-4.dmg" length="35524309" type="application/octet-stream" sparkle:edSignature="YfvE6p25PG/Gh4bmZWcWI10hTRfMI4DdW5gRG8vENLtE6reZP9WD/uxYPoWJUg8BPLQCuEnvN6f39GXcRp61DQ=="/>
         </item>
     </channel>
 </rss>
