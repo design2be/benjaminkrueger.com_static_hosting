@@ -153,6 +153,11 @@
       .earlyAccessModal__actions {
         margin-top: 14px;
       }
+      .earlyAccessModal .earlyAccessOsNote {
+        margin-top: 10px;
+        justify-content: center;
+        color: #6b7280;
+      }
       .earlyAccessModal__primary {
         position: relative;
         appearance: none;
@@ -214,54 +219,6 @@
         outline: none;
         background: #242838;
       }
-      .earlyAccessModal__features {
-        display: flex;
-        align-items: stretch;
-        margin-top: 28px;
-        padding-top: 26px;
-        border-top: 1px solid #e5e7eb;
-      }
-      .earlyAccessModal__feature {
-        flex: 1;
-        min-width: 0;
-        padding: 0 10px;
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        text-align: left;
-      }
-      .earlyAccessModal__feature + .earlyAccessModal__feature {
-        border-left: 1px solid #e5e7eb;
-      }
-      .earlyAccessModal__featureIcon {
-        width: 40px;
-        height: 40px;
-        margin: 0;
-        border-radius: 999px;
-        background: #f3f4f6;
-        display: grid;
-        place-items: center;
-        color: #111827;
-        flex: 0 0 auto;
-      }
-      .earlyAccessModal__featureText {
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-      }
-      .earlyAccessModal__featureTitle {
-        margin: 0;
-        font-size: 13px;
-        font-weight: 700;
-        color: #000000;
-        letter-spacing: -0.01em;
-      }
-      .earlyAccessModal__featureDesc {
-        margin: 6px 0 0;
-        font-size: 12px;
-        line-height: 1.45;
-        color: #6b7280;
-      }
       .earlyAccessModal__privacy {
         margin: 22px 0 0;
         display: inline-flex;
@@ -284,19 +241,6 @@
         .earlyAccessModal__dialog {
           padding: 32px 20px 24px;
           border-radius: 22px;
-        }
-        .earlyAccessModal__features {
-          display: none;
-        }
-        .earlyAccessModal__features {
-          flex-direction: column;
-          gap: 18px;
-          padding-top: 22px;
-        }
-        .earlyAccessModal__feature + .earlyAccessModal__feature {
-          border-left: 0;
-          border-top: 1px solid #e5e7eb;
-          padding-top: 18px;
         }
       }
     </style>
@@ -324,19 +268,30 @@
                 Save hours of editing. Your recording instantly becomes a <br/>ready-to-use timeline. Just pick the best takes.
               </div>
             </div>
-            <a
-              class="teaserEditorCta earlyAccessCta"
-              data-teaser-editor-cta
-              data-early-access-trigger
-              href="#early-access"
-              ><svg class="cuttyDownloadIcon cuttyDownloadIcon--editor" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
-                <path
-                  class="cuttyDownloadIcon__glyph"
-                  d="M12 7.35v6.55m0 0-2.7-2.7m2.7 2.7 2.7-2.7M7.7 17.05h8.6"
-                />
-              </svg>
-              Get Early Access</a>
+            <div class="earlyAccessCtaGroup">
+              <a
+                class="teaserEditorCta earlyAccessCta"
+                data-teaser-editor-cta
+                data-early-access-trigger
+                href="#early-access"
+                ><svg class="cuttyDownloadIcon cuttyDownloadIcon--editor" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
+                  <path
+                    class="cuttyDownloadIcon__glyph"
+                    d="M12 7.35v6.55m0 0-2.7-2.7m2.7 2.7 2.7-2.7M7.7 17.05h8.6"
+                  />
+                </svg>
+                Get Early Access</a>
+              <p class="earlyAccessOsNote">
+                <svg class="earlyAccessOsNote__apple" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                  <path
+                    fill="currentColor"
+                    d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"
+                  />
+                </svg>
+                Available for macOS
+              </p>
+            </div>
             <div class="teaserStage" id="cutty-teaser" role="group" aria-label="Cutty teaser animation">
             <div class="timelineBandMask" aria-hidden="true">
               <div class="timelineBandScroll" data-timeline-band-scroll>
@@ -673,18 +628,29 @@
             <h2 class="tryCutty__title" id="try-cutty-title">Tired of cutting your videos?</h2>
             <p class="tryCutty__desc">Download Cutty.</p>
           </div>
-          <a
-            class="tryCutty__cta earlyAccessCta"
-            data-early-access-trigger
-            href="#early-access"
-            ><svg class="cuttyDownloadIcon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
-              <path
-                class="cuttyDownloadIcon__glyph"
-                d="M12 7.35v6.55m0 0-2.7-2.7m2.7 2.7 2.7-2.7M7.7 17.05h8.6"
-              />
-            </svg>
-            Get Early Access</a>
+          <div class="earlyAccessCtaGroup earlyAccessCtaGroup--footer">
+            <a
+              class="tryCutty__cta earlyAccessCta"
+              data-early-access-trigger
+              href="#early-access"
+              ><svg class="cuttyDownloadIcon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
+                <path
+                  class="cuttyDownloadIcon__glyph"
+                  d="M12 7.35v6.55m0 0-2.7-2.7m2.7 2.7 2.7-2.7M7.7 17.05h8.6"
+                />
+              </svg>
+              Get Early Access</a>
+            <p class="earlyAccessOsNote">
+              <svg class="earlyAccessOsNote__apple" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"
+                />
+              </svg>
+              Available for macOS
+            </p>
+          </div>
         </div>
       </section>
     </main>
@@ -742,43 +708,16 @@
                 </span>
               </button>
             </div>
+            <p class="earlyAccessOsNote">
+              <svg class="earlyAccessOsNote__apple" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  fill="currentColor"
+                  d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"
+                />
+              </svg>
+              Available for macOS
+            </p>
           </form>
-          <div class="earlyAccessModal__features">
-            <div class="earlyAccessModal__feature">
-              <div class="earlyAccessModal__featureIcon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="earlyAccessModal__featureText">
-                <p class="earlyAccessModal__featureTitle">Be first in line</p>
-                <p class="earlyAccessModal__featureDesc">Get early access before anyone else.</p>
-              </div>
-            </div>
-            <div class="earlyAccessModal__feature">
-              <div class="earlyAccessModal__featureIcon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="earlyAccessModal__featureText">
-                <p class="earlyAccessModal__featureTitle">Exclusive access</p>
-                <p class="earlyAccessModal__featureDesc">Secure download link when you’re approved.</p>
-              </div>
-            </div>
-            <div class="earlyAccessModal__feature">
-              <div class="earlyAccessModal__featureIcon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round" />
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </div>
-              <div class="earlyAccessModal__featureText">
-                <p class="earlyAccessModal__featureTitle">Instant updates</p>
-                <p class="earlyAccessModal__featureDesc">We’ll email you when early access opens.</p>
-              </div>
-            </div>
-          </div>
           <p class="earlyAccessModal__privacy">
             <span class="earlyAccessModal__privacyIcon" aria-hidden="true">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

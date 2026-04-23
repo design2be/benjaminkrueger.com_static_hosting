@@ -4,11 +4,11 @@
         <title>cutty</title>
         <item>
             <title>1.0.6</title>
-            <pubDate>Thu, 23 Apr 2026 14:33:45 +0200</pubDate>
+            <pubDate>Fri, 24 Apr 2026 00:05:08 +0200</pubDate>
             <sparkle:version>6</sparkle:version>
             <sparkle:shortVersionString>1.0.6</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://benjaminkrueger.com/cutty/download/cutty-1.0.6-6.dmg" length="35504077" type="application/octet-stream" sparkle:edSignature="hPSC+m2B0F2UfQhBvBuHmKNY6EbM8co4JdJhpYaD1i7CT+3Z+JMFTRXZ+olAXTT+lCqtS1cCX+Ggygd7a93vBQ=="/>
+            <enclosure url="https://benjaminkrueger.com/cutty/download/cutty-1.0.6-6.dmg" length="35504231" type="application/octet-stream" sparkle:edSignature="WEqIk/9c3eTg+Af6Bvqv91k2WijtESIknaMSmbyuoCEzLiSx6maH8O/Wec75VjREICNO+Zd73XxkXqXu2X19Ag=="/>
         </item>
     </channel>
 </rss>

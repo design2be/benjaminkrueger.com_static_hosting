@@ -694,11 +694,57 @@
       }
 
       /* Bottom CTA: align right and remove vertical margins. */
-      .tryCutty .earlyAccessCta {
+      .tryCutty .earlyAccessCtaGroup {
         margin-left: auto;
         margin-right: 0;
         margin-top: 0;
         margin-bottom: 0;
+      }
+
+      .earlyAccessCtaGroup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .earlyAccessCtaGroup--footer {
+        align-items: flex-end;
+        flex-shrink: 0;
+      }
+
+      .earlyAccessOsNote {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin: 0;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        line-height: 1.2;
+        color: rgba(44, 44, 68, 0.62);
+      }
+
+      .teaserStageWrap .earlyAccessOsNote {
+        color: rgba(92, 47, 0, 0.72);
+      }
+
+      .earlyAccessOsNote__apple {
+        flex-shrink: 0;
+        opacity: 0.92;
+      }
+
+      .teaserStageWrap:not(.is-editor) .earlyAccessOsNote {
+        display: none;
+      }
+
+      .teaserStageWrap.is-editor .earlyAccessOsNote {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .teaserStageWrap.is-editor .teaserEditorCta.teaserEditorCta--visible ~ .earlyAccessOsNote {
+        visibility: visible;
       }
 
       /* Shared “big” early-access CTA styling (used top + bottom). */
@@ -768,10 +814,14 @@
         align-items: stretch;
       }
 
-      .teaserStageWrap > .teaserEditorCta {
+      .teaserStageWrap > .earlyAccessCtaGroup {
         align-self: center;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 30px auto;
+      }
+
+      .earlyAccessCtaGroup .teaserEditorCta {
+        margin-top: 0;
+        margin-bottom: 0;
       }
 
       /* Reserve the CTA slot in editor mode so the stage does not shift when the button fades in. */
@@ -1495,14 +1545,16 @@
           text-align: left;
         }
 
-        .teaserStageWrap > .teaserEditorCta {
+        .teaserStageWrap > .earlyAccessCtaGroup {
+          margin: 20px auto;
+        }
+        .teaserStageWrap > .earlyAccessCtaGroup .teaserEditorCta {
           height: 54px;
           padding: 0 24px;
           font-size: 17px;
           gap: 10px;
-          margin: 20px 0;
         }
-        .teaserStageWrap > .teaserEditorCta .cuttyDownloadIcon--editor {
+        .teaserStageWrap > .earlyAccessCtaGroup .teaserEditorCta .cuttyDownloadIcon--editor {
           width: 24px;
           height: 24px;
         }
