@@ -160,12 +160,12 @@
         cursor: pointer;
         width: 100%;
         padding: 15px 48px 15px 18px;
-        border-radius: 12px;
+        border-radius: 999px;
         font: inherit;
         font-weight: 700;
         font-size: 15px;
         color: #ffffff;
-        background: #000000;
+        background: #1a1c2b;
       }
       .earlyAccessModal__primary.is-loading {
         cursor: progress;
@@ -212,7 +212,7 @@
       .earlyAccessModal__primary:hover,
       .earlyAccessModal__primary:focus-visible {
         outline: none;
-        background: #18181b;
+        background: #242838;
       }
       .earlyAccessModal__features {
         display: flex;
@@ -284,6 +284,9 @@
         .earlyAccessModal__dialog {
           padding: 32px 20px 24px;
           border-radius: 22px;
+        }
+        .earlyAccessModal__features {
+          display: none;
         }
         .earlyAccessModal__features {
           flex-direction: column;
@@ -522,8 +525,6 @@
                 <div class="editorTimeline" data-editor-timeline>
                   <div class="editorPlayhead" data-editor-playhead></div>
                   <div class="editorTracks">
-                    <div class="editorTrackLabel">V5</div>
-                    <div class="editorTrackLane" data-editor-lane="v5"></div>
                     <div class="editorTrackLabel">V4</div>
                     <div class="editorTrackLane" data-editor-lane="v4"></div>
                     <div class="editorTrackLabel">V3</div>
@@ -1150,13 +1151,11 @@
         }
 
         async function moveListClipsIntoEditorTimeline() {
-          const laneV5 = stage.querySelector('[data-editor-lane="v5"]');
           const laneV4 = stage.querySelector('[data-editor-lane="v4"]');
           const laneV3 = stage.querySelector('[data-editor-lane="v3"]');
           const laneV2 = stage.querySelector('[data-editor-lane="v2"]');
           const laneV1 = stage.querySelector('[data-editor-lane="v1"]');
           const floating = stage.querySelector("[data-floating-clips]");
-          if (!(laneV5 instanceof HTMLElement)) return;
           if (!(laneV4 instanceof HTMLElement)) return;
           if (!(laneV3 instanceof HTMLElement)) return;
           if (!(laneV2 instanceof HTMLElement)) return;
@@ -1235,7 +1234,6 @@
           const laneRectV2 = laneV2.getBoundingClientRect();
           const laneRectV3 = laneV3.getBoundingClientRect();
           const laneRectV4 = laneV4.getBoundingClientRect();
-          const laneRectV5 = laneV5.getBoundingClientRect();
 
           const readPct = (name) => Number.parseFloat(vars.getPropertyValue(name)) || 0;
           // NOTE: --scene2L/--scene3L are calc(...) which parseFloat() can't read reliably.
@@ -1264,7 +1262,6 @@
             if (key === "v2") return laneRectV2;
             if (key === "v3") return laneRectV3;
             if (key === "v4") return laneRectV4;
-            if (key === "v5") return laneRectV5;
             return laneRectV1;
           };
 
@@ -1272,7 +1269,6 @@
             if (key === "v2") return laneV2;
             if (key === "v3") return laneV3;
             if (key === "v4") return laneV4;
-            if (key === "v5") return laneV5;
             return laneV1;
           };
 
@@ -1431,7 +1427,6 @@
             editorTimelineCallout.style.transform = "translate3d(0, 0, 0)";
             editorTimelineCallout.setAttribute("aria-hidden", "false");
           }
-          const laneV5 = stage.querySelector('[data-editor-lane="v5"]');
           const laneV4 = stage.querySelector('[data-editor-lane="v4"]');
           const laneV3 = stage.querySelector('[data-editor-lane="v3"]');
           const laneV2 = stage.querySelector('[data-editor-lane="v2"]');
@@ -1440,8 +1435,7 @@
             laneV1 instanceof HTMLElement &&
             laneV2 instanceof HTMLElement &&
             laneV3 instanceof HTMLElement &&
-            laneV4 instanceof HTMLElement &&
-            laneV5 instanceof HTMLElement
+            laneV4 instanceof HTMLElement
           ) {
             const staticFinal = {
               "1": "Editing takes forever—and honestly, it kills your momentum.",
