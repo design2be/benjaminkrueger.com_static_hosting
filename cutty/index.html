@@ -1,0 +1,1559 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>cutty</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/fav-icon-512.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
+
+    <style>
+      .earlyAccessModal {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(6px);
+      }
+      .earlyAccessModal.is-open {
+        display: flex;
+      }
+      .earlyAccessModal__dialog {
+        position: relative;
+        width: min(640px, 100%);
+        border-radius: 28px;
+        background: #ffffff;
+        color: #000000;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.08),
+          0 24px 48px -12px rgba(0, 0, 0, 0.18);
+        padding: 36px 32px 32px;
+      }
+      .earlyAccessModal__close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        appearance: none;
+        border: 0;
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        background: #f3f4f6;
+        color: #374151;
+        cursor: pointer;
+        border-radius: 10px;
+        line-height: 1;
+        font-size: 18px;
+        font-weight: 500;
+      }
+      .earlyAccessModal__close:hover,
+      .earlyAccessModal__close:focus-visible {
+        outline: none;
+        background: #e5e7eb;
+      }
+      .earlyAccessModal__body {
+        text-align: center;
+      }
+      .earlyAccessModal__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #92400e;
+        background: #fef3c7;
+        letter-spacing: 0.01em;
+      }
+      .earlyAccessModal__badgeIcon {
+        width: 1em;
+        height: 1em;
+        display: block;
+        flex: 0 0 auto;
+      }
+      .earlyAccessModal__title {
+        margin: 18px 0 0;
+        /* Match the teaser main headline scale. */
+        font-size: clamp(38px, 6vw, 50px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .earlyAccessModal__desc {
+        margin: 12px auto 0;
+        max-width: 52ch;
+        font-size: 20px;
+        line-height: 1.55;
+        color: #6b7280;
+      }
+      .earlyAccessModal__fieldRow {
+        margin-top: 24px;
+      }
+      .earlyAccessModal__inputWrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #ffffff;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+      .earlyAccessModal__inputWrap:focus-within {
+        border-color: #d1d5db;
+        box-shadow: 0 0 0 3px rgba(146, 64, 14, 0.12);
+      }
+      .earlyAccessModal__inputIcon {
+        flex-shrink: 0;
+        color: #9ca3af;
+      }
+      .earlyAccessModal__input {
+        flex: 1;
+        min-width: 0;
+        box-sizing: border-box;
+        padding: 14px 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: #111827;
+        font: inherit;
+        font-size: 15px;
+      }
+      .earlyAccessModal__input::placeholder {
+        color: #9ca3af;
+      }
+      .earlyAccessModal__input:focus-visible {
+        outline: none;
+      }
+      .earlyAccessModal__error {
+        margin: 8px 0 0 0;
+        font-size: 13px;
+        color: #dc2626;
+        min-height: 1.2em;
+        text-align: left;
+      }
+      .earlyAccessModal__actions {
+        margin-top: 14px;
+      }
+      .earlyAccessModal__primary {
+        position: relative;
+        appearance: none;
+        border: 0;
+        cursor: pointer;
+        width: 100%;
+        padding: 15px 48px 15px 18px;
+        border-radius: 12px;
+        font: inherit;
+        font-weight: 700;
+        font-size: 15px;
+        color: #ffffff;
+        background: #000000;
+      }
+      .earlyAccessModal__primary.is-loading {
+        cursor: progress;
+        opacity: 0.92;
+      }
+      .earlyAccessModal__primary:disabled {
+        cursor: not-allowed;
+        opacity: 0.72;
+      }
+      .earlyAccessModal__primary.is-loading .earlyAccessModal__primaryArrow {
+        opacity: 0;
+      }
+      .earlyAccessModal__primary.is-loading::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        width: 16px;
+        height: 16px;
+        margin-top: -8px;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 255, 255, 0.35);
+        border-top-color: rgba(255, 255, 255, 0.95);
+        animation: earlyAccessSpin 0.8s linear infinite;
+      }
+      @keyframes earlyAccessSpin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .earlyAccessModal__primaryLabel {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+      .earlyAccessModal__primaryArrow {
+        position: absolute;
+        right: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.95;
+        pointer-events: none;
+      }
+      .earlyAccessModal__primary:hover,
+      .earlyAccessModal__primary:focus-visible {
+        outline: none;
+        background: #18181b;
+      }
+      .earlyAccessModal__features {
+        display: flex;
+        align-items: stretch;
+        margin-top: 28px;
+        padding-top: 26px;
+        border-top: 1px solid #e5e7eb;
+      }
+      .earlyAccessModal__feature {
+        flex: 1;
+        min-width: 0;
+        padding: 0 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        text-align: left;
+      }
+      .earlyAccessModal__feature + .earlyAccessModal__feature {
+        border-left: 1px solid #e5e7eb;
+      }
+      .earlyAccessModal__featureIcon {
+        width: 40px;
+        height: 40px;
+        margin: 0;
+        border-radius: 999px;
+        background: #f3f4f6;
+        display: grid;
+        place-items: center;
+        color: #111827;
+        flex: 0 0 auto;
+      }
+      .earlyAccessModal__featureText {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .earlyAccessModal__featureTitle {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: #000000;
+        letter-spacing: -0.01em;
+      }
+      .earlyAccessModal__featureDesc {
+        margin: 6px 0 0;
+        font-size: 12px;
+        line-height: 1.45;
+        color: #6b7280;
+      }
+      .earlyAccessModal__privacy {
+        margin: 22px 0 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #6b7280;
+        flex-wrap: wrap;
+      }
+      .earlyAccessModal__privacyIcon {
+        flex-shrink: 0;
+        color: #9ca3af;
+      }
+      .earlyAccessModal__privacyHighlight {
+        color: #92400e;
+        font-weight: 600;
+      }
+      @media (max-width: 520px) {
+        .earlyAccessModal__dialog {
+          padding: 32px 20px 24px;
+          border-radius: 22px;
+        }
+        .earlyAccessModal__features {
+          flex-direction: column;
+          gap: 18px;
+          padding-top: 22px;
+        }
+        .earlyAccessModal__feature + .earlyAccessModal__feature {
+          border-left: 0;
+          border-top: 1px solid #e5e7eb;
+          padding-top: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <a class="cuttyPageLogo" href="#top" aria-label="Back to top">
+      <img
+        class="cuttyPageLogo__img"
+        src="assets/logo.png"
+        alt=""
+        decoding="async"
+        draggable="false"
+      />
+    </a>
+    <main>
+      <section class="teaser" aria-label="Cutty">
+        <div class="teaser__inner">
+          <div class="teaserStageWrap">
+            <div class="teaserEditorHeadlines" data-teaser-editor-headlines aria-hidden="true">
+              <div class="teaserEditorLabel" data-teaser-editor-label aria-hidden="true">
+                
+                Your video automatically <br/>organized by script.
+              </div>
+              <div class="teaserEditorSubLabel" data-teaser-editor-sub-label aria-hidden="true">
+                Save hours of editing. Your recording instantly becomes a <br/>ready-to-use timeline. Just pick the best takes.
+              </div>
+            </div>
+            <a
+              class="teaserEditorCta earlyAccessCta"
+              data-teaser-editor-cta
+              data-early-access-trigger
+              href="#early-access"
+              ><svg class="cuttyDownloadIcon cuttyDownloadIcon--editor" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
+                <path
+                  class="cuttyDownloadIcon__glyph"
+                  d="M12 7.35v6.55m0 0-2.7-2.7m2.7 2.7 2.7-2.7M7.7 17.05h8.6"
+                />
+              </svg>
+              Get Early Access</a>
+            <div class="teaserStage" id="cutty-teaser" role="group" aria-label="Cutty teaser animation">
+            <div class="timelineBandMask" aria-hidden="true">
+              <div class="timelineBandScroll" data-timeline-band-scroll>
+                <div class="timelineBand" aria-hidden="true">
+                  <div class="baseFilmstrip" data-base-filmstrip></div>
+                  <div class="timelineOverlay" data-timeline-overlay></div>
+                </div>
+              </div>
+            </div>
+            <div class="teaserTrack" data-teaser-track>
+              <div class="clipLayer" data-clip-layer aria-hidden="true">
+                <div class="clipStripLong" data-strip-long aria-hidden="true">
+                  <div class="clipStripLong__preview" aria-hidden="true">
+                    <img
+                      class="clipStripLong__previewImg"
+                      src="assets/film_content.jpg"
+                      alt=""
+                      decoding="async"
+                      draggable="false"
+                    />
+                  </div>
+                </div>
+                <div class="clip" data-clip="1">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>Editing takes forever—and honestly, it kills your momentum.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="2">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>What if you didn’t have to edit at all?</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="3">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>That’s exactly what this tool is built for.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="4">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>Editing just takes way too long. It slows everything down.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="5">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>Imagine skipping editing completely.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="6">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>That’s where this comes in.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="7">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>The worst part? Editing eats up all your time.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="8">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>And that’s what this solves.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+                <div class="clip" data-clip="9">
+                  <div class="clip__rect" data-clip-rect aria-hidden="true"></div>
+                  <div class="clip__head" data-clip-head>
+                    <div class="clip__label" data-clip-label>Same moment—one more time, trimmed a little tighter.</div>
+                    <div class="clip__preview" data-clip-preview aria-hidden="true">
+                      <img
+                        class="clip__previewImg"
+                        src="assets/film_content.jpg"
+                        alt=""
+                        decoding="async"
+                        draggable="false"
+                      />
+                    </div>
+                  </div>
+                  <div class="clip__thumb"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="editorUI" data-editor-ui aria-hidden="true">
+              <div class="editorTopbar">
+                <div class="editorTopbar__traffic" aria-hidden="true">
+                  <span class="editorTopbar__dot editorTopbar__dot--red"></span>
+                  <span class="editorTopbar__dot editorTopbar__dot--yellow"></span>
+                  <span class="editorTopbar__dot editorTopbar__dot--green"></span>
+                </div>
+                <div class="editorTopbar__title">&nbsp;</div>
+                <div></div>
+              </div>
+              <div class="editorTimelineCallout" data-editor-timeline-callout aria-hidden="true">
+                <img class="editorTimelineCallout__arrow" src="assets/arrow.png" alt="" decoding="async" draggable="false" />
+                <div class="editorTimelineCallout__text">Organized Timeline</div>
+              </div>
+              <div class="editorBody">
+                <div class="editorTimeline" data-editor-timeline>
+                  <div class="editorPlayhead" data-editor-playhead></div>
+                  <div class="editorTracks">
+                    <div class="editorTrackLabel">V5</div>
+                    <div class="editorTrackLane" data-editor-lane="v5"></div>
+                    <div class="editorTrackLabel">V4</div>
+                    <div class="editorTrackLane" data-editor-lane="v4"></div>
+                    <div class="editorTrackLabel">V3</div>
+                    <div class="editorTrackLane" data-editor-lane="v3"></div>
+                    <div class="editorTrackLabel">V2</div>
+                    <div class="editorTrackLane" data-editor-lane="v2"></div>
+                    <div class="editorTrackLabel">V1</div>
+                    <div class="editorTrackLane" data-editor-lane="v1">
+                      <div class="editorV1LongClip" data-long-v1-clip aria-hidden="true">
+                        <div class="editorV1LongClip__label" aria-hidden="true">&nbsp;</div>
+                        <div class="editorV1LongClip__preview" aria-hidden="true">
+                          <img
+                            class="editorV1LongClip__previewImg"
+                            src="assets/film_content.jpg"
+                            alt=""
+                            decoding="async"
+                            draggable="false"
+                          />
+                        </div>
+                        <div class="editorV1LongClip__thumb" aria-hidden="true"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="floatingClips" data-floating-clips aria-hidden="true"></div>
+            </div>
+          </div>
+            <a class="cuttyCorner" href="#top" aria-label="Back to top">
+              <img
+                class="cuttyCorner__img"
+                data-cutty-blink
+                src="assets/CuttyVector_Standing_Eyes_Open.svg"
+                alt=""
+                aria-hidden="true"
+                decoding="async"
+                draggable="false"
+              />
+            </a>
+          </div>
+        </div>
+      </section>
+      <section class="benefits benefits--compact" aria-label="Key benefits">
+        <div class="benefits__inner">
+          <ul class="benefitsList benefitsList--withHeadlines">
+            <li>
+              <strong>Save hours on editing.</strong>
+              No more time spend scrubbing through footage. Its already cut.
+            </li>
+            <li>
+              <strong>All your takes. Ready to edit.</strong>
+              Simply select the best takes for your video.
+            </li>
+            <li>
+              <strong>Keep using your favourite editor</strong>
+              The timeline is ready for your favorite editor: DaVinci Resolve, Final Cut, or Premiere.
+            </li>
+          </ul>
+        </div>
+      </section>
+      <section class="builtForSection" aria-labelledby="built-for-title">
+        <div class="builtFor">
+          <div class="builtFor__content">
+            <div class="builtForSplit">
+              <div class="builtForCopy">
+                <h2 class="builtFor__title" id="built-for-title">Built for creators<br>who shoot multiple takes.</h2>
+                <p class="builtForStatement">
+                  Record all takes in one go. Cutty automatically <br/>organizes them in your timeline.
+                  
+                </p>
+              </div>
+              <div class="builtForVisual" role="group" aria-label="Editing timeline preview">
+                <div class="builtForAnnot">
+                  <figure class="builtForAnnot__figure">
+                    <div class="builtForAnnot__window">
+                      <div class="builtForAnnot__windowTopbar" aria-hidden="true">
+                        <div class="builtForAnnot__windowTraffic">
+                          <span class="builtForAnnot__windowDot builtForAnnot__windowDot--red"></span>
+                          <span class="builtForAnnot__windowDot builtForAnnot__windowDot--yellow"></span>
+                          <span class="builtForAnnot__windowDot builtForAnnot__windowDot--green"></span>
+                        </div>
+                        <div class="builtForAnnot__windowTitle">&nbsp;</div>
+                        <div></div>
+                      </div>
+                      <div class="builtForAnnot__windowBody builtForAnnot__stage">
+                        <img
+                          class="builtForAnnot__img"
+                          src="assets/screenshot.jpg"
+                          alt="Cutty timeline with takes organized into tracks."
+                          loading="lazy"
+                          width="2029"
+                          height="1342"
+                        />
+                        <div class="builtForAnnot__cuttyStand" aria-hidden="true">
+                          <img
+                            class="builtForAnnot__cuttyStand-img"
+                            data-cutty-blink
+                            src="assets/CuttyVector_Standing_Eyes_Open.svg"
+                            alt=""
+                            decoding="async"
+                            draggable="false"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </figure>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="howItWorksSection" aria-labelledby="how-it-works-title">
+        <div class="howItWorks">
+          <h2 class="howItWorks__title" id="how-it-works-title">Keep your workflow. <br/>Start with an organized timeline.</h2>
+          <div class="howItWorks__grid">
+            <article class="howStep">
+              <div class="howStep__media">
+                <img class="howStep__image" src="assets/cutty_explain_1.jpg" alt="A long recording imported into Cutty." loading="lazy" />
+              </div>
+              <h3 class="howStep__title">Drop your long video</h3>
+              <p class="howStep__desc">Record a long video, no interruptions, starting over again with as many takes as needed.</p>
+            </article>
+            <article class="howStep">
+              <div class="howStep__media">
+                <img class="howStep__image" src="assets/cutty_explain_2.jpg" alt="Cutty automatically detects and groups takes." loading="lazy" />
+              </div>
+              <h3 class="howStep__title">Cutty.AI finds your takes</h3>
+              <p class="howStep__desc">Automatically finds &amp; organizes all takes in your footage.</p>
+            </article>
+            <article class="howStep">
+              <div class="howStep__media">
+                <img class="howStep__image" src="assets/cutty_explain_3.jpg" alt="A ready-to-edit timeline exported to a video editor." loading="lazy" />
+              </div>
+              <h3 class="howStep__title">Export a ready timeline</h3>
+              <p class="howStep__desc">Export the timeline and choose the perfect take in your favourite editor: DaVinci Resolve, Final Cut, or Premiere.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section class="tryCuttySection" aria-labelledby="try-cutty-title">
+        <div class="tryCutty">
+          <div class="tryCutty__copy">
+            <h2 class="tryCutty__title" id="try-cutty-title">Tired of cutting your videos?</h2>
+            <p class="tryCutty__desc">Download Cutty.</p>
+          </div>
+          <a
+            class="tryCutty__cta earlyAccessCta"
+            data-early-access-trigger
+            href="#early-access"
+            ><svg class="cuttyDownloadIcon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
+              <path
+                class="cuttyDownloadIcon__glyph"
+                d="M12 7.35v6.55m0 0-2.7-2.7m2.7 2.7 2.7-2.7M7.7 17.05h8.6"
+              />
+            </svg>
+            Get Early Access</a>
+        </div>
+      </section>
+    </main>
+
+    <div class="earlyAccessModal" data-early-access-modal aria-hidden="true">
+      <div class="earlyAccessModal__dialog" role="dialog" aria-modal="true" aria-labelledby="early-access-title">
+        <button class="earlyAccessModal__close" type="button" aria-label="Close" data-early-access-close>×</button>
+        <div class="earlyAccessModal__body">
+          <span class="earlyAccessModal__badge"
+            ><svg
+              class="earlyAccessModal__badgeIcon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                fill="currentColor"
+                d="M12 2.25l2.91 6.09 6.72.58-5.08 4.4 1.53 6.56L12 16.6 5.92 19.88l1.53-6.56-5.08-4.4 6.72-.58L12 2.25z"
+              /></svg
+            >Early Access</span
+          >
+          <h2 class="earlyAccessModal__title" id="early-access-title">Get Early Access</h2>
+          <p class="earlyAccessModal__desc">
+            Be the first to try it out. We'll send you a download link when you're approved.
+          </p>
+          <form data-early-access-form novalidate>
+            <div class="earlyAccessModal__fieldRow">
+              <label class="earlyAccessModal__inputWrap">
+                <span class="earlyAccessModal__inputIcon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                    <path d="M4 6h16v12H4V6z" stroke-linejoin="round" />
+                    <path d="M4 7l8 6 8-6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <input
+                  class="earlyAccessModal__input"
+                  data-early-access-email
+                  type="email"
+                  inputmode="email"
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                  required
+                  aria-label="Email address"
+                />
+              </label>
+            </div>
+            <p class="earlyAccessModal__error" data-early-access-error aria-live="polite"></p>
+            <div class="earlyAccessModal__actions">
+              <button class="earlyAccessModal__primary" type="submit">
+                <span class="earlyAccessModal__primaryLabel">Request Your Download</span>
+                <span class="earlyAccessModal__primaryArrow" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </form>
+          <div class="earlyAccessModal__features">
+            <div class="earlyAccessModal__feature">
+              <div class="earlyAccessModal__featureIcon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="earlyAccessModal__featureText">
+                <p class="earlyAccessModal__featureTitle">Be first in line</p>
+                <p class="earlyAccessModal__featureDesc">Get early access before anyone else.</p>
+              </div>
+            </div>
+            <div class="earlyAccessModal__feature">
+              <div class="earlyAccessModal__featureIcon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="earlyAccessModal__featureText">
+                <p class="earlyAccessModal__featureTitle">Exclusive access</p>
+                <p class="earlyAccessModal__featureDesc">Secure download link when you’re approved.</p>
+              </div>
+            </div>
+            <div class="earlyAccessModal__feature">
+              <div class="earlyAccessModal__featureIcon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <div class="earlyAccessModal__featureText">
+                <p class="earlyAccessModal__featureTitle">Instant updates</p>
+                <p class="earlyAccessModal__featureDesc">We’ll email you when early access opens.</p>
+              </div>
+            </div>
+          </div>
+          <p class="earlyAccessModal__privacy">
+            <span class="earlyAccessModal__privacyIcon" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke-linejoin="round" />
+                <path d="M8 11V8a4 4 0 012.6-3.76M16 11V8a4 4 0 00-2.6-3.76" stroke-linecap="round" />
+              </svg>
+            </span>
+            We respect your <span class="earlyAccessModal__privacyHighlight">privacy</span>. No spam, ever.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <footer
+      class="cuttyLegalFooter"
+      aria-label="Footer"
+      style="
+        padding: 28px 16px;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.82;
+      "
+    >
+      <a href="../imprint.html" style="color: inherit; text-decoration: underline;">Imprint</a>
+      <span aria-hidden="true" style="padding: 0 10px;">·</span>
+      <a href="../data-policy.html" style="color: inherit; text-decoration: underline;">Privacy Policy</a>
+    </footer>
+
+    <script>
+      (() => {
+        const CUTTY_DOWNLOAD_MAC = "https://cutty.ai/download?platform=mac";
+        const CUTTY_DOWNLOAD_WIN = "https://cutty.ai/download?platform=windows";
+        const CUTTY_DOWNLOAD_DEFAULT = "https://cutty.ai/download";
+
+        function cuttyDownloadHrefForVisitor() {
+          const ua = navigator.userAgent || "";
+          const uaPlatform = navigator.userAgentData?.platform;
+          if (uaPlatform === "Windows") return CUTTY_DOWNLOAD_WIN;
+          if (uaPlatform === "macOS") return CUTTY_DOWNLOAD_MAC;
+          if (/Windows/i.test(ua)) return CUTTY_DOWNLOAD_WIN;
+          if (/Macintosh|Mac OS X/i.test(ua)) return CUTTY_DOWNLOAD_MAC;
+          return CUTTY_DOWNLOAD_DEFAULT;
+        }
+
+        const href = cuttyDownloadHrefForVisitor();
+        for (const el of document.querySelectorAll("[data-cutty-download]")) {
+          if (el instanceof HTMLAnchorElement) el.href = href;
+        }
+      })();
+    </script>
+
+    <script>
+      (() => {
+        const EARLY_ACCESS_BASE = "https://a3kaduequn.eu-central-1.awsapprunner.com/early-access?email=";
+
+        const modal = document.querySelector("[data-early-access-modal]");
+        const form = document.querySelector("[data-early-access-form]");
+        const emailEl = document.querySelector("[data-early-access-email]");
+        const errorEl = document.querySelector("[data-early-access-error]");
+        const submitBtn = form instanceof HTMLElement ? form.querySelector('button[type="submit"]') : null;
+        const submitLabel = submitBtn instanceof HTMLElement ? submitBtn.querySelector(".earlyAccessModal__primaryLabel") : null;
+        const submitLabelDefault =
+          submitLabel instanceof HTMLElement ? (submitLabel.textContent || "").trim() : "";
+
+        const isValidEmail = (value) => {
+          const email = (value || "").trim();
+          if (!email) return false;
+          // Practical client-side validation; server should still validate.
+          if (email.length > 254) return false;
+          return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
+        };
+
+        const setError = (msg) => {
+          if (errorEl instanceof HTMLElement) errorEl.textContent = msg || "";
+        };
+
+        const setLoading = (isLoading) => {
+          if (!(submitBtn instanceof HTMLButtonElement)) return;
+          submitBtn.disabled = !!isLoading;
+          submitBtn.classList.toggle("is-loading", !!isLoading);
+          submitBtn.setAttribute("aria-busy", isLoading ? "true" : "false");
+          if (submitLabel instanceof HTMLElement) {
+            submitLabel.textContent = isLoading ? "Requesting…" : submitLabelDefault || "Request Your Download";
+          }
+        };
+
+        const openModal = () => {
+          if (!(modal instanceof HTMLElement)) return;
+          modal.classList.add("is-open");
+          modal.setAttribute("aria-hidden", "false");
+          setError("");
+          setLoading(false);
+          if (emailEl instanceof HTMLInputElement) {
+            emailEl.value = "";
+            window.setTimeout(() => emailEl.focus(), 0);
+          }
+        };
+
+        const closeModal = () => {
+          if (!(modal instanceof HTMLElement)) return;
+          modal.classList.remove("is-open");
+          modal.setAttribute("aria-hidden", "true");
+          setError("");
+          setLoading(false);
+        };
+
+        for (const el of document.querySelectorAll("[data-early-access-trigger]")) {
+          el.addEventListener("click", (e) => {
+            e.preventDefault();
+            openModal();
+          });
+        }
+
+        document.querySelector("[data-early-access-close]")?.addEventListener("click", () => closeModal());
+
+        modal?.addEventListener("click", (e) => {
+          if (e.target === modal) closeModal();
+        });
+
+        window.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeModal();
+        });
+
+        form?.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const email =
+            emailEl instanceof HTMLInputElement ? (emailEl.value || "").trim() : "";
+
+          if (!isValidEmail(email)) {
+            setError("Please enter a valid email address.");
+            emailEl?.focus?.();
+            return;
+          }
+
+          const target = EARLY_ACCESS_BASE + encodeURIComponent(email);
+          setError("");
+          setLoading(true);
+          // Give the browser a chance to paint the loading state.
+          window.requestAnimationFrame(() => {
+            window.location.assign(target);
+          });
+        });
+      })();
+    </script>
+
+    <script>
+      (() => {
+        const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+        if (!prefersReducedMotion) {
+          const openSrc = "assets/CuttyVector_Standing_Eyes_Open.svg";
+          const closedSrc = "assets/CuttyVector_Standing_Eyes_Closed.svg";
+          for (const cutty of document.querySelectorAll("[data-cutty-blink]")) {
+            if (!(cutty instanceof HTMLImageElement)) continue;
+            const blinkOnce = () => {
+              cutty.src = closedSrc;
+              window.setTimeout(() => {
+                cutty.src = openSrc;
+              }, 140);
+            };
+            const schedule = () => {
+              const delay = 2000 + Math.random() * 2000;
+              window.setTimeout(() => {
+                blinkOnce();
+                schedule();
+              }, delay);
+            };
+            schedule();
+          }
+        }
+
+        const stage = document.getElementById("cutty-teaser");
+        if (!(stage instanceof HTMLElement)) return;
+
+        const editorUI = stage.querySelector("[data-editor-ui]");
+        const editorPlayhead = stage.querySelector("[data-editor-playhead]");
+        const editorTimelineCallout = stage.querySelector("[data-editor-timeline-callout]");
+
+        const stageWrap = stage.closest(".teaserStageWrap");
+        const track = stage.querySelector("[data-teaser-track]");
+        const timelineBandScroll = stage.querySelector("[data-timeline-band-scroll]");
+        const editorLabel =
+          stageWrap instanceof HTMLElement ? stageWrap.querySelector("[data-teaser-editor-label]") : null;
+        const editorSubLabel =
+          stageWrap instanceof HTMLElement ? stageWrap.querySelector("[data-teaser-editor-sub-label]") : null;
+        const editorCta =
+          stageWrap instanceof HTMLElement ? stageWrap.querySelector("[data-teaser-editor-cta]") : null;
+        const clips = Array.from(stage.querySelectorAll(".clip[data-clip]"));
+
+        const TAKE_COUNT = 9;
+        const TAKE_MARKS_COUNT = 4; // how many take marks to show before animation
+
+        let editorLabelAnim = Promise.resolve();
+        let editorSubLabelAnim = Promise.resolve();
+        let editorCtaAnim = Promise.resolve();
+
+        if (!(track instanceof HTMLElement)) return;
+        if (!(timelineBandScroll instanceof HTMLElement)) return;
+        if (!(editorUI instanceof HTMLElement)) return;
+
+        // Prevent any initial-frame "jump" before we set pixel-perfect transforms.
+        stage.style.visibility = "hidden";
+
+        const sleep = (ms) => new Promise((r) => window.setTimeout(r, ms));
+        const animate = (el, keyframes, options) => {
+          if (!(el instanceof HTMLElement)) return { finished: Promise.resolve() };
+          const anim = el.animate(keyframes, options);
+          return anim;
+        };
+
+        function readStagePct(name) {
+          const raw = getComputedStyle(stage).getPropertyValue(name).trim();
+          return Number.parseFloat(raw) || 0;
+        }
+
+        /** Each take’s position/size as % of the long-clip box (from --longSeg*; irregular gaps). */
+        function getTakeLayoutInLongClipPct() {
+          const longL = readStagePct("--longClipLaneL");
+          const longW = readStagePct("--longClipLaneW");
+          const out = [];
+          for (let n = 1; n <= TAKE_COUNT; n++) {
+            const leftLane = readStagePct(`--longSeg${n}L`);
+            const widthLane = readStagePct(`--longSeg${n}W`);
+            out.push({
+              id: String(n),
+              leftPct: longW > 0 ? ((leftLane - longL) / longW) * 100 : 0,
+              widthPct: longW > 0 ? (widthLane / longW) * 100 : 0,
+            });
+          }
+          return out;
+        }
+
+        /** Pixel rects for each take on the long raw clip. */
+        function segmentRectsFromLongClip(longRect) {
+          const layout = getTakeLayoutInLongClipPct();
+          const map = new Map();
+          for (const row of layout) {
+            const left = longRect.left + (longRect.width * row.leftPct) / 100;
+            const width = (longRect.width * row.widthPct) / 100;
+            map.set(row.id, {
+              left,
+              top: longRect.top,
+              width,
+              height: longRect.height,
+              right: left + width,
+              bottom: longRect.bottom,
+            });
+          }
+          return map;
+        }
+
+        async function markTakesOnLongClip() {
+          const longClipEl = stage.querySelector("[data-long-v1-clip]");
+          if (!(longClipEl instanceof HTMLElement)) return;
+
+          stage.classList.add("is-showing-take-marks");
+          for (const el of longClipEl.querySelectorAll("[data-editor-v1-take]")) {
+            el.remove();
+          }
+
+          const layout = getTakeLayoutInLongClipPct().slice(0, TAKE_MARKS_COUNT);
+          const clipById = new Map(clips.map((c) => [c.getAttribute("data-clip") || "", c]));
+          const takeWidthAdjustPxByIndex = [10, -10, 0, 20];
+
+          const markers = [];
+          for (let i = 0; i < layout.length; i++) {
+            const row = layout[i];
+            const { id } = row;
+            const widthPct = Math.min(100, row.widthPct * 2);
+            const slotW = 100 / Math.max(1, layout.length);
+            const center = (i + 0.5) * slotW;
+            const leftPct = Math.max(0, Math.min(100 - widthPct, center - widthPct / 2));
+            const widthAdjustPx = takeWidthAdjustPxByIndex[i] ?? 0;
+            const seg = document.createElement("div");
+            seg.className = "editorV1Take";
+            seg.setAttribute("data-editor-v1-take", id);
+            // Keep the same slot centering logic, but add organic per-clip pixel adjustments.
+            seg.style.left = widthAdjustPx ? `calc(${leftPct}% - ${widthAdjustPx / 2}px)` : `${leftPct}%`;
+            seg.style.width = widthAdjustPx ? `calc(${widthPct}% + ${widthAdjustPx}px)` : `${widthPct}%`;
+
+            const frame = document.createElement("div");
+            frame.className = "editorV1Take__frame";
+            const head = document.createElement("div");
+            head.className = "editorV1Take__head";
+            const label = document.createElement("div");
+            label.className = "editorV1Take__label";
+            const clipEl = clipById.get(id);
+            const src = clipEl instanceof HTMLElement ? clipEl.querySelector("[data-clip-label]") : null;
+            label.textContent =
+              src instanceof HTMLElement && (src.textContent || "").trim() ? (src.textContent || "").trim() : `Take ${id}`;
+
+            const preview = document.createElement("div");
+            preview.className = "editorV1Take__preview";
+            preview.setAttribute("aria-hidden", "true");
+            const previewImg = document.createElement("img");
+            previewImg.className = "editorV1Take__previewImg";
+            previewImg.src = "assets/film_content.jpg";
+            previewImg.alt = "";
+            previewImg.decoding = "async";
+            previewImg.draggable = false;
+            preview.appendChild(previewImg);
+            head.appendChild(label);
+            head.appendChild(preview);
+            seg.appendChild(head);
+            seg.appendChild(frame);
+            longClipEl.appendChild(seg);
+            markers.push({ frame, head });
+          }
+
+          const done = markers.flatMap((m, i) => {
+            const delay = i * 36;
+            return [
+              animate(
+                m.frame,
+                [{ opacity: 0, transform: "scale(0.97)" }, { opacity: 1, transform: "scale(1)" }],
+                { duration: 440, delay, easing: "cubic-bezier(0.2, 0.9, 0.2, 1)", fill: "forwards" }
+              ).finished,
+              animate(
+                m.head,
+                [{ opacity: 0, transform: "translate3d(0, -6px, 0)" }, { opacity: 1, transform: "translate3d(0, 0, 0)" }],
+                { duration: 440, delay, easing: "cubic-bezier(0.2, 0.9, 0.2, 1)", fill: "forwards" }
+              ).finished,
+            ];
+          });
+          await Promise.all(done);
+          await sleep(200);
+        }
+
+        async function slideInEditorLabel() {
+          if (!(editorLabel instanceof HTMLElement)) return;
+          // Override CSS-gated display so we can start animating as soon as the editor UI appears.
+          editorLabel.style.display = "block";
+          await animate(
+            editorLabel,
+            [
+              // Simple pop-in: scale to 1 (no overshoot).
+              { opacity: 0, transform: "translate3d(0, 0, 0) scale(0.92)" },
+              { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)", textShadow: "0 1px 0 rgba(255, 255, 255, 0.35)" },
+            ],
+            { duration: 700, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }
+          ).finished;
+        }
+
+        async function slideInEditorSubLabel() {
+          if (!(editorSubLabel instanceof HTMLElement)) return;
+          editorSubLabel.style.display = "block";
+          await animate(
+            editorSubLabel,
+            [
+              // No pause: animate in immediately; keep it subtle.
+              { opacity: 0, transform: "translate3d(0, 8px, 0) scale(0.98)" },
+              { opacity: 1, transform: "translate3d(0, 0, 0) scale(1)" },
+            ],
+            { duration: 650, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }
+          ).finished;
+        }
+
+        async function slideInEditorCta() {
+          if (!(editorCta instanceof HTMLElement)) return;
+          editorCta.classList.add("teaserEditorCta--visible");
+          const anim = animate(
+            editorCta,
+            [{ opacity: 0, transform: "translateY(12px)" }, { opacity: 1, transform: "translateY(0)" }],
+            { duration: 520, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "both" }
+          );
+          await anim.finished;
+          // Commit final styles so hover/focus CSS can take over (WAAPI fill would override it).
+          editorCta.style.opacity = "1";
+          editorCta.style.transform = "";
+          anim.cancel();
+        }
+
+        async function moveListClipsIntoEditorTimeline() {
+          const laneV5 = stage.querySelector('[data-editor-lane="v5"]');
+          const laneV4 = stage.querySelector('[data-editor-lane="v4"]');
+          const laneV3 = stage.querySelector('[data-editor-lane="v3"]');
+          const laneV2 = stage.querySelector('[data-editor-lane="v2"]');
+          const laneV1 = stage.querySelector('[data-editor-lane="v1"]');
+          const floating = stage.querySelector("[data-floating-clips]");
+          if (!(laneV5 instanceof HTMLElement)) return;
+          if (!(laneV4 instanceof HTMLElement)) return;
+          if (!(laneV3 instanceof HTMLElement)) return;
+          if (!(laneV2 instanceof HTMLElement)) return;
+          if (!(laneV1 instanceof HTMLElement)) return;
+          if (!(floating instanceof HTMLElement)) return;
+
+          const CLIP_FINAL_LABELS = {
+            "1": "Editing takes forever—and honestly, it kills your momentum.",
+            "2": "What if you didn’t have to edit at all?",
+            "3": "That’s exactly what this tool is built for.",
+            "4": "Editing just takes way too long. It slows everything down.",
+            "5": "Imagine skipping editing completely.",
+            "6": "That’s where this comes in.",
+            "7": "The worst part? Editing eats up all your time.",
+            "8": "And that’s what this solves.",
+            "9": "Same moment—one more time, trimmed a little tighter.",
+          };
+
+          stage.classList.remove("is-showing-take-marks");
+
+          const longClipEl = stage.querySelector("[data-long-v1-clip]");
+          const first = new Map();
+          if (longClipEl instanceof HTMLElement) {
+            const longRect = longClipEl.getBoundingClientRect();
+            const byId = segmentRectsFromLongClip(longRect);
+            for (const el of clips) {
+              if (!(el instanceof HTMLElement)) continue;
+              const id = el.getAttribute("data-clip") || "";
+              const seg = byId.get(id);
+              if (seg) first.set(el, seg);
+            }
+            longClipEl.style.opacity = "0";
+            window.setTimeout(() => {
+              longClipEl.remove();
+            }, 320);
+          } else {
+            for (const el of clips) {
+              if (!(el instanceof HTMLElement)) continue;
+              first.set(el, el.getBoundingClientRect());
+            }
+          }
+
+          for (const el of clips) {
+            if (!(el instanceof HTMLElement)) continue;
+            const id = el.getAttribute("data-clip") || "";
+            const lab = el.querySelector("[data-clip-label]");
+            const text = CLIP_FINAL_LABELS[id];
+            if (lab instanceof HTMLElement && text) lab.textContent = text;
+          }
+
+          const stageRect = stage.getBoundingClientRect();
+          for (const el of clips) {
+            if (!(el instanceof HTMLElement)) continue;
+            const f = first.get(el);
+            if (!f) continue;
+            el.style.opacity = "1";
+            el.style.position = "absolute";
+            el.style.left = `${f.left - stageRect.left}px`;
+            el.style.top = `${f.top - stageRect.top}px`;
+            el.style.width = `${f.width}px`;
+            el.style.height = `${f.height}px`;
+            el.style.margin = "0";
+            el.style.transform = "none";
+            floating.appendChild(el);
+          }
+
+          stage.classList.add("is-editor-front");
+          stage.classList.remove("is-vertical");
+          stage.classList.add("is-editor");
+
+          await new Promise((r) => window.requestAnimationFrame(() => r()));
+
+          const vars = getComputedStyle(stage);
+          const lanePad = Number.parseFloat(vars.getPropertyValue("--lanePad")) || 0;
+          const laneRectV1 = laneV1.getBoundingClientRect();
+          const laneRectV2 = laneV2.getBoundingClientRect();
+          const laneRectV3 = laneV3.getBoundingClientRect();
+          const laneRectV4 = laneV4.getBoundingClientRect();
+          const laneRectV5 = laneV5.getBoundingClientRect();
+
+          const readPct = (name) => Number.parseFloat(vars.getPropertyValue(name)) || 0;
+          // NOTE: --scene2L/--scene3L are calc(...) which parseFloat() can't read reliably.
+          // Compute numeric positions from the base + widths so FLIP lands where CSS ends.
+          const sceneStart = readPct("--sceneStartL");
+          const scene1W = readPct("--scene1W");
+          const scene2W = readPct("--scene2W");
+          const scene3W = readPct("--scene3W");
+          const scene1 = sceneStart;
+          const scene2 = scene1 + scene1W;
+          const scene3 = scene2 + scene2W;
+
+          const clipTargets = {
+            "1": { laneKey: "v1", leftPct: scene1, widthPct: scene1W },
+            "2": { laneKey: "v1", leftPct: scene2, widthPct: scene2W },
+            "3": { laneKey: "v1", leftPct: scene3, widthPct: scene3W },
+            "4": { laneKey: "v2", leftPct: scene1, widthPct: scene1W, widthPxAdjust: -20 },
+            "5": { laneKey: "v2", leftPct: scene2, widthPct: scene2W, widthPxAdjust: -10 },
+            "6": { laneKey: "v2", leftPct: scene3, widthPct: scene3W, widthPxAdjust: -10 },
+            "7": { laneKey: "v3", leftPct: scene1, widthPct: scene1W, widthPxAdjust: -10 },
+            "8": { laneKey: "v3", leftPct: scene3, widthPct: scene3W, widthPxAdjust: -30 },
+            "9": { laneKey: "v4", leftPct: scene1, widthPct: scene1W, widthPxAdjust: -20 },
+          };
+
+          const laneRectFor = (key) => {
+            if (key === "v2") return laneRectV2;
+            if (key === "v3") return laneRectV3;
+            if (key === "v4") return laneRectV4;
+            if (key === "v5") return laneRectV5;
+            return laneRectV1;
+          };
+
+          const laneParentFor = (key) => {
+            if (key === "v2") return laneV2;
+            if (key === "v3") return laneV3;
+            if (key === "v4") return laneV4;
+            if (key === "v5") return laneV5;
+            return laneV1;
+          };
+
+          const anims = [];
+
+          // Label/sub-label are handled in run() (before clips move).
+
+          function measureAutoHeightAtWidth(el, widthPx) {
+            const prevWidth = el.style.width;
+            const prevHeight = el.style.height;
+            // Measure "auto" height at the target width.
+            el.style.width = `${widthPx}px`;
+            el.style.height = "auto";
+            const h = el.getBoundingClientRect().height;
+            el.style.width = prevWidth;
+            el.style.height = prevHeight;
+            return h || 0;
+          }
+
+          function pushAnim(el, f, laneRect, leftPct, widthPct, widthPxAdjust = 0) {
+            const targetLeft = (laneRect.left - stageRect.left) + (laneRect.width * (leftPct / 100));
+            const targetTop = (laneRect.top - stageRect.top) + lanePad;
+            const targetWidth = Math.max(0, (laneRect.width * (widthPct / 100)) + widthPxAdjust);
+            const targetHeight = Math.max(0, measureAutoHeightAtWidth(el, targetWidth));
+
+            const fromLeft = f.left - stageRect.left;
+            const fromTop = f.top - stageRect.top;
+            const fromWidth = f.width;
+            const fromHeight = f.height;
+
+            el.style.left = `${targetLeft}px`;
+            el.style.top = `${targetTop}px`;
+            el.style.width = `${targetWidth}px`;
+            el.style.height = `${targetHeight}px`;
+
+            const dx = fromLeft - targetLeft;
+            const dy = fromTop - targetTop;
+            const sx = targetWidth ? fromWidth / targetWidth : 1;
+            const sy = targetHeight ? fromHeight / targetHeight : 1;
+
+            el.style.transformOrigin = "0 0";
+            el.style.transform = `translate3d(${dx}px, ${dy}px, 0) scale(${sx}, ${sy})`;
+
+            anims.push(
+              animate(
+                el,
+                [{ transform: el.style.transform }, { transform: "none" }],
+                { duration: 980, easing: "cubic-bezier(0.2, 0.9, 0.2, 1)", fill: "both" }
+              ).finished.then(() => {
+                el.style.transformOrigin = "";
+                el.style.transform = "";
+              })
+            );
+          }
+
+          for (const el of clips) {
+            if (!(el instanceof HTMLElement)) continue;
+            const id = el.getAttribute("data-clip") || "";
+            const f = first.get(el);
+            const t = clipTargets[id];
+            if (!f || !t) continue;
+
+            const lr = laneRectFor(t.laneKey);
+            pushAnim(el, f, lr, t.leftPct, t.widthPct, t.widthPxAdjust || 0);
+          }
+
+          await Promise.all(anims);
+
+          for (const el of clips) {
+            if (!(el instanceof HTMLElement)) continue;
+            const id = el.getAttribute("data-clip") || "";
+            const t = clipTargets[id];
+            if (!t) continue;
+            laneParentFor(t.laneKey).appendChild(el);
+            el.style.position = "";
+            el.style.left = "";
+            el.style.top = "";
+            el.style.width = "";
+            el.style.height = "";
+            el.style.margin = "";
+          }
+
+          floating.replaceChildren();
+        }
+
+        async function run() {
+          const stageW = stage.clientWidth || stage.getBoundingClientRect().width || 0;
+          const trackW = track.offsetWidth || track.getBoundingClientRect().width || 0;
+          const endPx = stageW > 0 && trackW > 0 ? stageW - trackW : 0;
+          track.style.transform = `translate3d(${endPx}px, 0, 0)`;
+          timelineBandScroll.style.transform = `translate3d(${endPx}px, 0, 0)`;
+
+          stage.classList.add("is-editor", "is-editor-front");
+          if (stageWrap instanceof HTMLElement) stageWrap.classList.add("is-editor");
+          if (editorUI instanceof HTMLElement) {
+            editorUI.setAttribute("aria-hidden", "false");
+          }
+          if (editorPlayhead instanceof HTMLElement) {
+            editorPlayhead.style.display = "block";
+            editorPlayhead.style.opacity = "0.3";
+          }
+
+          stage.style.visibility = "visible";
+          await new Promise((r) => window.requestAnimationFrame(() => r()));
+
+          await sleep(520);
+          // Let headline, subtitle, and download CTA finish before editor animations begin.
+          await Promise.all([slideInEditorLabel(), slideInEditorSubLabel()]);
+          await slideInEditorCta();
+          await markTakesOnLongClip();
+          await sleep(200);
+          await moveListClipsIntoEditorTimeline();
+          if (editorTimelineCallout instanceof HTMLElement) {
+            editorTimelineCallout.setAttribute("aria-hidden", "false");
+            await animate(
+              editorTimelineCallout,
+              [{ opacity: 0, transform: "translate3d(0, -6px, 0)" }, { opacity: 1, transform: "translate3d(0, 0, 0)" }],
+              { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" }
+            ).finished;
+          }
+        }
+
+        if (prefersReducedMotion) {
+          // Reduced-motion: skip all transitions; show editor timeline directly.
+          stage.classList.add("is-editor");
+          stage.classList.add("is-editor-front");
+          if (stageWrap instanceof HTMLElement) stageWrap.classList.add("is-editor");
+          stage.style.visibility = "visible";
+          const longClipRm = stage.querySelector("[data-long-v1-clip]");
+          if (longClipRm instanceof HTMLElement) longClipRm.remove();
+          if (editorUI instanceof HTMLElement) {
+            editorUI.style.opacity = "1";
+            editorUI.setAttribute("aria-hidden", "false");
+          }
+          if (editorPlayhead instanceof HTMLElement) {
+            editorPlayhead.style.display = "block";
+            editorPlayhead.style.opacity = "0.3";
+          }
+          if (editorLabel instanceof HTMLElement) {
+            editorLabel.style.display = "block";
+            editorLabel.style.opacity = "1";
+            editorLabel.style.transform = "translate3d(0, 0, 0) scale(1)";
+          }
+          if (editorSubLabel instanceof HTMLElement) {
+            editorSubLabel.style.display = "block";
+            editorSubLabel.style.opacity = "1";
+            editorSubLabel.style.transform = "translate3d(0, 0, 0)";
+          }
+          if (editorCta instanceof HTMLElement) {
+            editorCta.classList.add("teaserEditorCta--visible");
+            editorCta.style.opacity = "1";
+            editorCta.style.transform = "";
+          }
+          if (editorTimelineCallout instanceof HTMLElement) {
+            editorTimelineCallout.style.opacity = "1";
+            editorTimelineCallout.style.transform = "translate3d(0, 0, 0)";
+            editorTimelineCallout.setAttribute("aria-hidden", "false");
+          }
+          const laneV5 = stage.querySelector('[data-editor-lane="v5"]');
+          const laneV4 = stage.querySelector('[data-editor-lane="v4"]');
+          const laneV3 = stage.querySelector('[data-editor-lane="v3"]');
+          const laneV2 = stage.querySelector('[data-editor-lane="v2"]');
+          const laneV1 = stage.querySelector('[data-editor-lane="v1"]');
+          if (
+            laneV1 instanceof HTMLElement &&
+            laneV2 instanceof HTMLElement &&
+            laneV3 instanceof HTMLElement &&
+            laneV4 instanceof HTMLElement &&
+            laneV5 instanceof HTMLElement
+          ) {
+            const staticFinal = {
+              "1": "Editing takes forever—and honestly, it kills your momentum.",
+              "2": "What if you didn’t have to edit at all?",
+              "3": "That’s exactly what this tool is built for.",
+              "4": "Editing just takes way too long. It slows everything down.",
+              "5": "Imagine skipping editing completely.",
+              "6": "That’s where this comes in.",
+              "7": "The worst part? Editing eats up all your time.",
+              "8": "And that’s what this solves.",
+              "9": "Same moment—one more time, trimmed a little tighter.",
+            };
+
+            const clipById = new Map();
+            for (const el of clips) {
+              if (!(el instanceof HTMLElement)) continue;
+              el.style.opacity = "1";
+              const id = el.getAttribute("data-clip") || "";
+              clipById.set(id, el);
+              const lab = el.querySelector("[data-clip-label]");
+              const txt = staticFinal[id];
+              if (lab instanceof HTMLElement && txt) lab.textContent = txt;
+            }
+
+            for (const id of ["1", "2", "3"]) {
+              const c = clipById.get(id);
+              if (c) laneV1.appendChild(c);
+            }
+            for (const id of ["4", "5", "6"]) {
+              const c = clipById.get(id);
+              if (c) laneV2.appendChild(c);
+            }
+            for (const id of ["7", "8"]) {
+              const c = clipById.get(id);
+              if (c) laneV3.appendChild(c);
+            }
+            for (const id of ["9"]) {
+              const c = clipById.get(id);
+              if (c) laneV4.appendChild(c);
+            }
+          }
+          return;
+        }
+
+        // Start after layout settles.
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", () => run(), { once: true });
+        } else {
+          run();
+        }
+      })();
+    </script>
+
+    <script>
+      (() => {
+        const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+
+        const candidates = Array.from(
+          document.querySelectorAll(
+            [
+              // Everything below the teaser (the teaser has its own, bespoke animations).
+              // Bottom CTA / legal-adjacent block: show immediately, no scroll-in animation.
+              "main section:not(.teaser):not(.tryCuttySection) :is(h2,h3,p,li,article,figure,img,video,a,button)",
+            ].join(",")
+          )
+        ).filter((el) => el instanceof HTMLElement);
+
+        // De-dupe and skip empty/hidden-ish nodes.
+        const els = Array.from(new Set(candidates)).filter((el) => {
+          if (!(el instanceof HTMLElement)) return false;
+          if (!el.isConnected) return false;
+          if (el.closest(".teaser")) return false;
+          if (el.closest("footer")) return false;
+          if (el.closest("script, style, noscript")) return false;
+          const txt = (el.textContent || "").trim();
+          if (!txt && !(el instanceof HTMLImageElement) && el.querySelector("img, svg, video") == null) return false;
+          return true;
+        });
+
+        for (const el of els) {
+          el.classList.add("cuttyAppear");
+          const idx = Array.prototype.indexOf.call(el.parentElement?.children || [], el);
+          const delay = Math.max(0, Math.min(180, idx * 30));
+          el.style.setProperty("--appear-delay", `${delay}ms`);
+        }
+
+        if (prefersReducedMotion) {
+          for (const el of els) el.classList.add("is-inview");
+          return;
+        }
+
+        if (!("IntersectionObserver" in window)) {
+          for (const el of els) el.classList.add("is-inview");
+          return;
+        }
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target;
+              if (el instanceof HTMLElement) el.classList.add("is-inview");
+              io.unobserve(el);
+            }
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
+        );
+
+        for (const el of els) io.observe(el);
+      })();
+    </script>
+  </body>
+</html>
+
+

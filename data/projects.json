@@ -25,19 +25,23 @@
     },
     {
       "id": "mvp-05",
-      "name": "AutoCut Creator - Precut Your Videos by Transcript",
+      "name": "Your video automatically organized by script.",
       "shortDescription": "Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect take and you’re done.",
       "badge": "Currently Building",
-      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\">AutoCut Creator</h3><p class=\"project-card__desc project-card__desc--dark\">Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect take and you’re done.</p>",
+      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\">Your video automatically organized by script.</h3><p class=\"project-card__desc project-card__desc--dark\">Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect takes.</p>",
       "cardColor": "#FEE2B9",
       "tone": "light",
       "imageColor": "#60a5fa",
       "cardImage": "./assets/card_auto_cut.jpg",
-      "detailImages": ["./assets/screenshot_creatorcut_1.jpg"],
+      "detailImages": ["./assets/screenshot_cuttyai_1.jpg", "./assets/screenshot_cuttyai_2.jpg", "./assets/screenshot_cuttyai_3.jpg"],
       "status": "building",
       "launchDate": "2026-03",
       "problem": "Creators waste time scrubbing timelines. They want to cut videos by selecting text, not dragging handles.",
-      "detailHtml": "./content/projects/mvp-05.html"
+      "detailHtml": "./content/projects/mvp-05.html",
+      "primaryCtaLabel": "Try cutty",
+      "links": [
+        { "href": "./cutty/", "kind": "primary" }
+      ]
     },
     {
       "id": "mvp-02",

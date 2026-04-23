@@ -318,6 +318,11 @@ function getPrimaryHref(project) {
   return href;
 }
 
+function getPrimaryCtaLabel(project) {
+  const raw = typeof project?.primaryCtaLabel === "string" ? project.primaryCtaLabel.trim() : "";
+  return raw;
+}
+
 function getVideoHref(project) {
   const direct =
     typeof project?.videoHref === "string"
@@ -770,7 +775,7 @@ function renderProjectDetail(project, { cardEl } = {}) {
     const a = document.createElement("a");
     a.className = "btn btn--action-primary";
     a.href = productHref;
-    a.textContent = "Try Product";
+    a.textContent = getPrimaryCtaLabel(project) || "Try Product";
     if (isExternalHref(productHref)) {
       a.target = "_blank";
       a.rel = "noopener noreferrer";

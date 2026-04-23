@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Access requested · Cutty</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="assets/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="assets/fav-icon-512.png" />
+    <link rel="manifest" href="site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
+
+    <style>
+      body {
+        background: linear-gradient(to top, #deb272, #fee2b9);
+      }
+      .cuttySuccess {
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 56px 16px;
+      }
+      .cuttySuccess__card {
+        width: min(760px, 100%);
+        border-radius: 18px;
+        padding: 24px;
+        border: 1px solid rgba(44, 44, 68, 0.12);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
+      }
+      .cuttySuccess__belowHeadline {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-top: 8px;
+      }
+      .cuttySuccess__content {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .cuttySuccess__kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 650;
+        opacity: 0.92;
+      }
+      .cuttySuccess__kickerDot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: #33d17a;
+        box-shadow: 0 0 0 4px rgba(51, 209, 122, 0.18);
+      }
+      .cuttySuccess__title {
+        margin: 14px 0 20px 0;
+        font-size: clamp(22px, 3.6vw, 38px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+      .cuttySuccess__brand {
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        opacity: 0.78;
+      }
+      .cuttySuccess__desc {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.65;
+        opacity: 0.86;
+      }
+      .cuttySuccess__desc + .cuttySuccess__desc {
+        margin-top: 12px;
+      }
+      .cuttySuccess__actions {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .cuttySuccess__cta {
+        text-decoration: none;
+      }
+      .cuttySuccess__mascot {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+      }
+      .cuttySuccess__mascotImg {
+        height: 220px;
+        width: auto;
+        display: block;
+        filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.18));
+        user-select: none;
+        pointer-events: none;
+      }
+      @media (max-width: 720px) {
+        .cuttySuccess__belowHeadline {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .cuttySuccess__mascot {
+          width: 100%;
+          justify-content: flex-end;
+        }
+      }
+      @media (max-width: 520px) {
+        .cuttySuccess__mascotImg {
+          height: 180px;
+        }
+      }
+    </style>
+  </head>
+  <body id="top">
+    <a class="cuttyPageLogo" href="./" aria-label="Back to Cutty home">
+      <img class="cuttyPageLogo__img" src="assets/logo.png" alt="" decoding="async" draggable="false" />
+    </a>
+
+    <main class="cuttySuccess" aria-label="Access requested">
+      <section class="cuttySuccess__card">
+        <div class="cuttySuccess__brand">cutty</div>
+        <h1 class="cuttySuccess__title">🎉 You’re receiving a download link!</h1>
+
+        <div class="cuttySuccess__belowHeadline">
+          <div class="cuttySuccess__content">
+            <p class="cuttySuccess__desc">Thanks for requesting early access to Cutty.</p>
+            <p class="cuttySuccess__desc">
+              We’ve sent you an <b>email with your download link</b> and next steps.<br />
+              Please check your inbox (and your spam/promotions folder, just in case).
+            </p>
+            <p class="cuttySuccess__desc">
+              If you don’t see it within a few minutes, feel free to request access again or reach out to our support team.
+            </p>
+            <p class="cuttySuccess__desc">We’re excited to have you try Cutty!</p>
+
+            <div class="cuttySuccess__actions">
+              <a class="teaserEditorCta cuttySuccess__cta" href="./">
+                Back to Cutty
+              </a>
+            </div>
+          </div>
+
+          <div class="cuttySuccess__mascot" aria-hidden="true">
+            <img
+              class="cuttySuccess__mascotImg"
+              data-cutty-blink
+              src="assets/CuttyVector_Standing_Eyes_Open.svg"
+              alt=""
+              decoding="async"
+              draggable="false"
+            />
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer
+      class="cuttyLegalFooter"
+      aria-label="Footer"
+      style="
+        padding: 28px 16px;
+        text-align: center;
+        font-size: 14px;
+        opacity: 0.82;
+      "
+    >
+      <a href="../imprint.html" style="color: inherit; text-decoration: underline;">Imprint</a>
+      <span aria-hidden="true" style="padding: 0 10px;">·</span>
+      <a href="../data-policy.html" style="color: inherit; text-decoration: underline;">Privacy Policy</a>
+    </footer>
+
+    <script>
+      (() => {
+        const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+        if (prefersReducedMotion) return;
+
+        const openSrc = "assets/CuttyVector_Standing_Eyes_Open.svg";
+        const closedSrc = "assets/CuttyVector_Standing_Eyes_Closed.svg";
+        for (const cutty of document.querySelectorAll("[data-cutty-blink]")) {
+          if (!(cutty instanceof HTMLImageElement)) continue;
+          const blinkOnce = () => {
+            cutty.src = closedSrc;
+            window.setTimeout(() => {
+              cutty.src = openSrc;
+            }, 140);
+          };
+          const schedule = () => {
+            const delay = 2000 + Math.random() * 2000;
+            window.setTimeout(() => {
+              blinkOnce();
+              schedule();
+            }, delay);
+          };
+          schedule();
+        }
+      })();
+    </script>
+  </body>
+</html>
+

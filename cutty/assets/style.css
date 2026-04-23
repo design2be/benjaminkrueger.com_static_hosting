@@ -1,0 +1,1975 @@
+      :root {
+        --ink: #2c2c44;
+        --bg: #ffffff;
+        --editorBg: #0b0c10;
+        --editorUIBg:
+          radial-gradient(1200px 520px at 40% 12%, rgba(75, 91, 255, 0.12), transparent 55%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 18%),
+          var(--editorBg);
+      }
+
+      html {
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        overflow-x: hidden;
+      }
+
+      .cuttyPageLogo {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 100;
+        display: block;
+        line-height: 0;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .cuttyPageLogo:focus-visible {
+        outline: 3px solid rgba(44, 44, 68, 0.35);
+        outline-offset: 4px;
+        border-radius: 8px;
+      }
+
+      .cuttyPageLogo__img {
+        height: 35px;
+        width: auto;
+        display: block;
+        user-select: none;
+      }
+
+      .teaser {
+        width: 100%;
+        background: linear-gradient(to top, #deb272, #fee2b9);
+        overflow-x: hidden;
+      }
+
+      .teaser__inner {
+        min-height: 320px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        padding: 64px 20px 0;
+      }
+
+      .cuttyCorner {
+        position: absolute;
+        left: 100%;
+        bottom: 0;
+        height: 200px;
+        width: auto;
+        display: inline-flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        text-decoration: none;
+        z-index: 20;
+        transform: translate(24px, 0);
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .cuttyCorner:focus-visible {
+        outline: 3px solid rgba(255, 255, 255, 0.24);
+        outline-offset: 4px;
+        border-radius: 14px;
+      }
+
+      .cuttyCorner__img {
+        height: 200px;
+        width: auto;
+        display: block;
+        pointer-events: none;
+        user-select: none;
+        filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.26));
+      }
+
+      .cuttyDownloadIcon {
+        flex-shrink: 0;
+        display: block;
+        width: 26px;
+        height: 26px;
+      }
+
+      .cuttyDownloadIcon__ring {
+        stroke: none;
+        fill: rgb(245, 214, 166);
+      }
+
+      .teaserEditorCta .cuttyDownloadIcon__ring {
+        fill: #ffffff;
+      }
+
+      .teaserEditorCta .cuttyDownloadIcon__glyph {
+        stroke: #1a1c2b;
+      }
+
+      .cuttyDownloadIcon__glyph {
+        fill: none;
+        stroke: #ffffff;
+        stroke-width: 1.35;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      @media (max-width: 560px) {
+        .cuttyCorner {
+          left: 100%;
+          bottom: 0;
+          height: 160px;
+          transform: translate(18px, 0);
+        }
+        .cuttyCorner__img {
+          height: 160px;
+        }
+      }
+
+      .builtForSection {
+        width: 100%;
+        background: var(--bg);
+        padding: 68px 20px 68px;
+      }
+
+      .builtFor {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .builtFor__title {
+        margin: 0 0 14px;
+        color: var(--ink);
+        font-size: 66px;
+        font-weight: 750;
+        letter-spacing: -0.02em;
+        text-align: left;
+      }
+
+      .builtFor__content {
+        margin-top: 0;
+      }
+
+      .builtForSplit {
+        display: grid;
+        grid-template-columns: 1fr;
+        row-gap: 18px;
+        align-items: start;
+      }
+
+      .builtForCopy {
+        width: 70%;
+        max-width: none;
+      }
+
+      .builtForVisual {
+        position: relative;
+        margin-top: 50px;
+      }
+
+      .builtForStatement {
+        margin: 0;
+        font-size: clamp(20px, 2.4vw, 32px);
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        font-weight: 500;
+        color: rgba(44, 44, 68, 0.86);
+      }
+
+      .builtForAnnot {
+        position: relative;
+        width: 100%;
+      }
+
+      .builtForAnnot__figure {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        width: 100%;
+      }
+
+      .builtForAnnot__stage {
+        position: relative;
+        container-type: inline-size;
+        container-name: bfstage;
+      }
+
+      .builtForAnnot__lenses {
+        --lensScale: 0.6;
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .builtForAnnot__lens {
+        --bf-shot-h: calc(100cqw * 1342 / 2029);
+        --zoomMul: calc(2 * var(--lensScale, 1));
+        position: absolute;
+        left: calc(var(--fx) * 100%);
+        top: calc(var(--fy) * 100%);
+        width: calc(var(--lw) * var(--lensScale, 1) * 1cqw);
+        margin: 0;
+        transform: translate(-50%, -50%);
+        pointer-events: auto;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .builtForAnnot__lensClip {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid rgba(255, 255, 255, 0.95);
+        box-shadow:
+          0 10px 28px rgba(0, 0, 0, 0.42),
+          inset 0 0 0 1px rgba(0, 0, 0, 0.28),
+          inset 0 16px 32px rgba(255, 255, 255, 0.16);
+        background: #0b0c10;
+      }
+
+      .builtForAnnot__lensZoom {
+        position: absolute;
+        width: calc(var(--zoomMul) * 100cqw);
+        height: auto;
+        max-width: none;
+        /* Allow decoupling zoom focal point from bubble center via optional --fxZoom/--fyZoom. */
+        left: calc(
+          -1 * var(--zoomMul) * var(--fxZoom, var(--fx)) * 100cqw + var(--lw) * 0.5 * 1cqw * var(--lensScale, 1)
+        );
+        top: calc(
+          -1 * var(--zoomMul) * var(--fyZoom, var(--fy)) * var(--bf-shot-h) + var(--lw) * 0.5 * 1cqw * var(--lensScale, 1)
+        );
+        display: block;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .builtForAnnot__lensCaption {
+        margin: 6px 0 0;
+        padding: 0;
+        max-width: min(26ch, 62vw);
+        font-size: clamp(14px, 4.6cqw, 18px);
+        font-weight: 750;
+        line-height: 1.25;
+        text-align: center;
+        letter-spacing: -0.015em;
+        color: rgba(255, 255, 255, 0.95);
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        text-shadow:
+          0 2px 12px rgba(0, 0, 0, 0.9),
+          0 6px 26px rgba(0, 0, 0, 0.75);
+      }
+
+
+      /* Teaser-style app window chrome around the screenshot */
+      .builtForAnnot__window {
+        --bf-editorRadius: 20px;
+        --bf-editorBg: #0b0c10;
+        --bf-editorPanel: #12141b;
+        --bf-editorPanel2: #171a23;
+        --bf-editorStroke: rgba(255, 255, 255, 0.08);
+        --bf-editorText: rgba(255, 255, 255, 0.9);
+        border-radius: var(--bf-editorRadius);
+        overflow: hidden;
+        box-shadow:
+          0 18px 42px rgba(0, 0, 0, 0.2),
+          0 6px 14px rgba(0, 0, 0, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.38);
+      }
+
+      .builtForAnnot__windowTopbar {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        height: 38px;
+        padding: 0 14px;
+        background: linear-gradient(180deg, var(--bf-editorPanel2), var(--bf-editorPanel));
+        border-bottom: 1px solid var(--bf-editorStroke);
+        color: var(--bf-editorText);
+        font-weight: 650;
+        letter-spacing: 0.01em;
+        font-size: 13px;
+      }
+
+      .builtForAnnot__windowTraffic {
+        justify-self: start;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 100%;
+      }
+
+      .builtForAnnot__windowDot {
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.08);
+        opacity: 0.95;
+      }
+
+      .builtForAnnot__windowDot--red {
+        background: #ff5f57;
+      }
+
+      .builtForAnnot__windowDot--yellow {
+        background: #febc2e;
+      }
+
+      .builtForAnnot__windowDot--green {
+        background: #28c840;
+      }
+
+      .builtForAnnot__windowTitle {
+        justify-self: center;
+        font-weight: 750;
+      }
+
+      .builtForAnnot__windowBody {
+        background: var(--bf-editorBg);
+        line-height: 0;
+      }
+
+      .builtForAnnot__img {
+        display: block;
+        width: 100%;
+        height: auto;
+        opacity: 1;
+      }
+
+      .builtForAnnot__cuttyStand {
+        position: absolute;
+        left: 50px;
+        bottom: 0;
+        z-index: 2;
+        height: 200px;
+        width: auto;
+        pointer-events: none;
+        line-height: 0;
+      }
+
+      .builtForAnnot__cuttyStand-img {
+        display: block;
+        height: 200px;
+        width: auto;
+        max-width: none;
+      }
+
+      @media (max-width: 720px) {
+        .builtForCopy {
+          width: 100%;
+        }
+
+        .builtForSplit {
+          align-items: start;
+        }
+
+        .builtFor__title {
+          font-size: clamp(34px, 9vw, 42px);
+          line-height: 1.06;
+        }
+
+        .builtForStatement {
+          font-size: clamp(18px, 4.6vw, 24px);
+          line-height: 1.3;
+        }
+
+        .teaserEditorSubLabel {
+          font-size: clamp(16px, 4.6vw, 22px);
+          line-height: 1.3;
+        }
+
+        .builtForAnnot__lens {
+          --lw: 22;
+        }
+
+        .builtForAnnot__lensCaption {
+          font-size: clamp(10px, 3.6vw, 12px);
+          max-width: min(20ch, 88vw);
+        }
+
+        /* Built for section: make the Cutty character half-size on mobile. */
+        .builtForAnnot__cuttyStand {
+          height: 100px;
+          left: 25px;
+        }
+        .builtForAnnot__cuttyStand-img {
+          height: 100px;
+        }
+      }
+
+      .howItWorksSection {
+        width: 100%;
+        background: var(--editorUIBg);
+        padding: 80px 20px 120px;
+        overflow-x: hidden;
+      
+      }
+
+      .howItWorks {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .howItWorks__title {
+        margin: 0 0 28px;
+        color: var(--ink);
+        font-size: 66px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-transform: none;
+        text-align: left;
+        color: #efefef;
+        margin-bottom: 20px;
+      }
+
+      .howItWorks__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(16px, 3.2vw, 28px);
+        align-items: start;
+        counter-reset: how-step;
+      }
+
+      .howStep {
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        counter-increment: how-step;
+      }
+
+      .howStep__media {
+        position: relative;
+      }
+
+      .howStep__image {
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        display: block;
+        margin-top: 50px;
+        object-fit: cover;
+        border-radius: 14px;
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        border: 1px solid #4a4a4a;
+      }
+
+      .howStep__media::before {
+        content: counter(how-step);
+        position: absolute;
+        left: calc(14px - 30px);
+        top: calc(14px + 50px - 30px);
+        width: clamp(34px, 4.2vw, 44px);
+        height: clamp(34px, 4.2vw, 44px);
+        border-radius: 999px;
+        display: grid;
+        place-items: center;
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        font-size: clamp(14px, 1.7vw, 18px);
+        background: rgba(255, 234, 202, 0.92);
+        color: rgba(20, 20, 28, 0.95);
+        border: 1px solid rgba(255, 234, 202, 0.32);
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.38);
+        backdrop-filter: blur(8px);
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      .howStep__title {
+        margin: 0;
+        font-size: clamp(24px, 2.2vw, 30px);
+        font-weight: 850;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+        color: #ffffff;
+      }
+
+      .howStep__desc {
+        margin: 0;
+        font-size: clamp(14px, 1.35vw, 16px);
+        line-height: 1.45;
+        color: #c9c9c9;
+      }
+
+      @media (max-width: 720px) {
+        .howItWorks__title {
+          font-size: clamp(34px, 9vw, 42px);
+          line-height: 1.06;
+          margin-bottom: 34px;
+        }
+
+        .howStep__title {
+          font-size: clamp(24px, 6.4vw, 30px);
+          line-height: 1.1;
+        }
+
+        .howItWorks__grid {
+          grid-template-columns: 1fr;
+          gap: 26px;
+        }
+      }
+
+      .benefits {
+        width: 100%;
+        background: var(--bg);
+        padding: 80px 20px 96px;
+        border-bottom:1px solid #e6e6e6;
+      }
+
+      .benefits--compact {
+        padding: 44px 20px;
+        background: #f3f4f6;
+      }
+
+      .benefits__inner {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+      }
+
+      .benefits__title {
+        margin: 0 0 18px;
+        color: var(--ink);
+        font-size: 66px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-align: left;
+      }
+
+      .benefitsList {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .benefitsList li {
+        position: relative;
+        padding-left: 34px;
+        color: var(--ink);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      .benefitsList li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        top: calc(0.18em + 10px);
+        font-weight: 900;
+        font-size: 22px;
+        line-height: 1;
+        color: rgba(44, 44, 68, 0.95);
+      }
+
+      .benefitsList--withHeadlines li strong {
+        display: block;
+        margin: 0 0 2px;
+        font-size: 30px;
+        font-weight: 850;
+        letter-spacing: -0.01em;
+        color: rgba(44, 44, 68, 0.95);
+      }
+
+      @media (max-width: 560px) {
+        .benefitsList--withHeadlines li strong {
+          font-size: clamp(24px, 7.4vw, 27px);
+          line-height: 1.08;
+        }
+      }
+
+      @media (min-width: 820px) {
+        .benefitsList {
+          grid-template-columns: 1fr 1fr;
+          gap: 14px 26px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .benefits--compact .benefitsList {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 14px 22px;
+        }
+      }
+
+      .tryCuttySection {
+        width: 100%;
+        padding: 44px 20px 108px;
+        background: var(--bg);
+      }
+
+      .tryCutty {
+        width: min(1200px, 100%);
+        margin: 0 auto;
+        border-radius: 22px;
+        padding: 22px 20px;
+        border: 1px solid rgba(44, 44, 68, 0.12);
+        background: linear-gradient(180deg, rgba(222, 178, 114, 0.22), rgba(255, 255, 255, 0.4));
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.10);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .tryCutty__title {
+        margin: 0;
+        font-size: 30px;
+        font-weight: 850;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+
+      .tryCutty__desc {
+        margin: 6px 0 0;
+        font-size: 24px;
+        line-height: 1.45;
+        color: rgba(44, 44, 68, 0.78);
+      }
+
+      .tryCutty__cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 42px;
+        padding: 0 16px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        box-shadow: 0 12px 28px rgba(44, 44, 68, 0.22);
+        transition: transform 140ms ease, background-color 140ms ease, box-shadow 140ms ease;
+        -webkit-tap-highlight-color: transparent;
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
+
+      .tryCutty__cta:hover {
+        transform: translateY(-1px);
+        background: rgba(44, 44, 68, 0.92);
+        box-shadow: 0 16px 34px rgba(44, 44, 68, 0.26);
+      }
+
+      .tryCutty__cta:focus-visible {
+        outline: 3px solid rgba(44, 44, 68, 0.22);
+        outline-offset: 4px;
+      }
+
+      /* Bottom CTA: align right and remove vertical margins. */
+      .tryCutty .earlyAccessCta {
+        margin-left: auto;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+
+      /* Shared “big” early-access CTA styling (used top + bottom). */
+      .earlyAccessCta {
+        display: inline-flex;
+        margin: 0;
+        opacity: 1;
+        transform: none;
+
+        height: auto;
+        padding: 12px 30px 12px 16px;
+        gap: 16px;
+        background: #1a1c2b;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow:
+          0 14px 36px rgba(0, 0, 0, 0.28),
+          0 6px 14px rgba(0, 0, 0, 0.14);
+        font-size: clamp(22px, 3.8vw, 34px);
+        letter-spacing: -0.02em;
+      }
+      .earlyAccessCta .cuttyDownloadIcon {
+        width: 62px;
+        height: 62px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 999px;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+        box-sizing: border-box;
+      }
+      .earlyAccessCta .cuttyDownloadIcon__ring {
+        display: none;
+      }
+      .earlyAccessCta .cuttyDownloadIcon__glyph {
+        transform-box: view-box;
+        transform-origin: 12px 12px;
+        transform: scale(1.26);
+        stroke-width: 2.35;
+        stroke: #1a1c2b;
+      }
+
+      @media (max-width: 720px) {
+        .tryCutty {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      .teaser__screenshot {
+        display: block;
+        width: min(1200px, 100%);
+        aspect-ratio: 5 / 3;
+        height: auto;
+        margin-top: 28px;
+        margin-bottom: 0;
+        border-radius: 16px 16px 0 0;
+        object-fit: cover;
+        object-position: center top;
+        box-shadow: 0 14px 38px rgba(0, 0, 0, 0.18);
+      }
+
+      .teaserStageWrap {
+        position: relative;
+        width: min(1200px, 100%);
+        margin-top: 28px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .teaserStageWrap > .teaserEditorCta {
+        align-self: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* Reserve the CTA slot in editor mode so the stage does not shift when the button fades in. */
+      .teaserStageWrap.is-editor .teaserEditorCta {
+        display: inline-flex;
+      }
+
+      .teaserStageWrap.is-editor .teaserEditorCta:not(.teaserEditorCta--visible) {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .teaserEditorHeadlines {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 0 16px 8px;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .teaserStageWrap.is-editor .teaserEditorHeadlines {
+        display: flex;
+      }
+
+      .teaserStage {
+        --stage-w: min(1200px, 100%);
+        --stage-radius: 16px;
+
+        /* Timeline band alignment (tweak these to align overlays). */
+        --timelineTop: 62%;
+        /* Single source of truth for strip clip height. */
+        --clipH: calc(var(--clipPreviewH) + 27px);
+        /* Keep the strip layer the same height as a clip. */
+        --timelineH: var(--clipH);
+        --timelineOffsetY: -100px;
+
+        /* Resolve-ish editor layout. */
+        --editorRadius: 25px;
+        --editorPanel: #12141b;
+        --editorPanel2: #171a23;
+        --editorStroke: rgba(255, 255, 255, 0.08);
+        --editorStroke2: rgba(255, 255, 255, 0.12);
+        --editorText: rgba(255, 255, 255, 0.9);
+        --editorTextDim: rgba(255, 255, 255, 0.68);
+        /* Clips (from scratch). */
+        --scene1Clip: #BD6B2B;
+        --scene2Clip: #5E8133;
+        --scene3Clip: #2B5570;
+        /* Gradients matched to the scene solids (used by strip clips + final V1 takes). */
+        --scene1ClipGrad: linear-gradient(180deg, rgb(232, 136, 58), rgb(165, 88, 35));
+        --scene2ClipGrad: linear-gradient(180deg, rgb(126, 168, 82), rgb(75, 104, 45));
+        --scene3ClipGrad: linear-gradient(180deg, rgb(58, 105, 138), rgb(30, 58, 78));
+        --clipBorder: 1px solid rgba(0, 0, 0, 0.6);
+        --clipRadius: 5px;
+        --clipPad: 2px;
+        --clipPreviewH: 70px;
+        /* Long raw clip: same gradient treatment as takes, neutral slate (no filmstrip). */
+        --longClipFillA: #454b5e;
+        --longClipFillB: #2a2e3a;
+        /* Legacy clip vars (no longer used): kept so older CSS edits don't break if referenced. */
+        --trackHeaderW: 86px;
+        /* Inset the lane column (V1–V4) from the editor’s right edge. */
+        --editorLaneInsetEnd: 20px;
+        /* Make V1–V5 lane height match clip height. */
+        --trackH: var(--clipH);
+        --tracksGap: 1px;
+        --lanePad: 0px;
+
+        /* Nine cuts on the long footage (lane %); gaps vary. */
+        --longSeg1L: 6%;
+        --longSeg1W: 8%;
+        --longSeg2L: 15%;
+        --longSeg2W: 8%;
+        --longSeg3L: 23.8%;
+        --longSeg3W: 7.5%;
+        --longSeg4L: 33.8%;
+        --longSeg4W: 8%;
+        --longSeg5L: 42.8%;
+        --longSeg5W: 8%;
+        --longSeg6L: 51.8%;
+        --longSeg6W: 8%;
+        --longSeg7L: 60.8%;
+        --longSeg7W: 8%;
+        --longSeg8L: 69.8%;
+        --longSeg8W: 8%;
+        --longSeg9L: 78.8%;
+        --longSeg9W: 8%;
+
+        /* Long raw clip (same horizontal band as V1); segments above are positioned in this band. */
+        --longClipLaneL: 6%;
+        --longClipLaneW: 88%;
+
+        /* Final editor layout (no gaps on V1; same-scene X aligns across lanes). */
+        --sceneStartL: 6%;
+        --scene1W: 30%;
+        /* Scene 2 narrower */
+        --scene2W: 24%;
+        /* Scene 3 slightly wider */
+        --scene3W: 34%;
+        --scene1L: var(--sceneStartL);
+        --scene2L: calc(var(--scene1L) + var(--scene1W));
+        --scene3L: calc(var(--scene2L) + var(--scene2W));
+
+        /* Clip geometry (percentages within the track). */
+        /* Note: the filmstrip scroll ends with the track's RIGHT edge aligned to the stage,
+           so clips must live in the right-most portion of the track to remain visible. */
+        --clip1X: 40%;
+        --clip1W: 4.5%;
+        --clip2X: 45%;
+        --clip2W: 4.5%;
+        --clip3X: 50%;
+        --clip3W: 4.5%;
+        --clip4X: 55%;
+        --clip4W: 4.5%;
+        --clip5X: 60%;
+        --clip5W: 4.5%;
+        --clip6X: 65%;
+        --clip6W: 4.5%;
+        --clip7X: 71%;
+        --clip7W: 4.5%;
+        --clip8X: 77%;
+        --clip8W: 4.5%;
+        --clip9X: 82%;
+        --clip9W: 4.5%;
+
+        width: var(--stage-w);
+        aspect-ratio: 5 / 3;
+        margin-top: 0;
+        border-radius: var(--stage-radius) var(--stage-radius) 0 0;
+        /*box-shadow: 0 14px 38px rgba(0, 0, 0, 0.18);
+        background: linear-gradient(0deg,rgb(31, 5, 59) 0%, rgb(49, 15, 151) 100%);*/
+        overflow: hidden;
+        position: relative;
+     
+      }
+
+      .teaserStage.is-showing-take-marks {
+        overflow: visible;
+      }
+
+      .teaserStage::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        /*box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.35),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.08);*/
+        opacity: 0.9;
+      }
+
+      .teaserTrack {
+        position: absolute;
+        inset: 0;
+        width: 220%;
+        height: 100%;
+        transform: translate3d(0, 0, 0);
+        will-change: transform;
+        z-index: 2;
+      }
+
+      .editorUI {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-rows: 38px auto;
+        padding-bottom: 40px;
+        opacity: 0;
+        pointer-events: none;
+        will-change: transform, opacity;
+        transform-origin: 50% 100%;
+        z-index: 1; /* behind clips until they move into the editor */
+        border-radius: var(--editorRadius) var(--editorRadius) 0 0;
+        overflow: hidden;
+      }
+
+      .editorTimelineCallout {
+        position: absolute;
+        right: 118px;
+        top: 54px; /* just under the topbar */
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        opacity: 0;
+        transform: translate3d(0, -6px, 0);
+        pointer-events: none;
+        z-index: 6;
+      }
+
+      .editorTimelineCallout__arrow {
+        width: 92px;
+        height: auto;
+        display: block;
+        transform: rotate(-15deg);
+        transform-origin: 70% 50%;
+        filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.35));
+        user-select: none;
+      }
+
+      .editorTimelineCallout__text {
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 850;
+        letter-spacing: -0.015em;
+        font-size: 30px;
+        line-height: 1;
+        white-space: nowrap;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);
+      }
+
+      .floatingClips {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 4; /* always above during transition */
+      }
+
+      .floatingClips .clip {
+        opacity: 1 !important;
+      }
+
+      .floatingClips .clip [data-clip-head] {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .editorTopbar {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: 0 14px;
+        background: linear-gradient(180deg, var(--editorPanel2), var(--editorPanel));
+        border-bottom: 1px solid var(--editorStroke);
+        color: var(--editorText);
+        font-weight: 650;
+        letter-spacing: 0.01em;
+        font-size: 13px;
+      }
+
+      .editorTopbar__traffic {
+        justify-self: start;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 100%;
+      }
+
+      .editorTopbar__dot {
+        width: 13px;
+        height: 13px;
+        border-radius: 999px;
+        box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 0 rgba(255, 255, 255, 0.08);
+        opacity: 0.95;
+      }
+
+      .editorTopbar__dot--red {
+        background: #ff5f57;
+      }
+      .editorTopbar__dot--yellow {
+        background: #febc2e;
+      }
+      .editorTopbar__dot--green {
+        background: #28c840;
+      }
+
+      .editorTopbar__title {
+        color: var(--editorText);
+        font-weight: 750;
+        justify-self: center;
+      }
+
+      .editorBody {
+        display: block;
+        min-height: 0;
+        background: var(--editorUIBg);
+      }
+
+      .editorTimeline {
+        position: relative;
+        display: grid;
+        grid-template-columns: var(--trackHeaderW) 1fr;
+        gap: 0;
+        padding: 0;
+        padding-right: var(--editorLaneInsetEnd);
+        overflow: hidden;
+      }
+
+      .editorTracks {
+        position: relative;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        display: grid;
+        grid-column: 1 / -1;
+        grid-template-columns: var(--trackHeaderW) 1fr;
+        row-gap: var(--tracksGap);
+        padding: 8px 0 0;
+      }
+
+      .editorTrackLabel {
+        height: var(--trackH);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--editorTextDim);
+        background: rgba(255, 255, 255, 0.03);
+        border-top: 1px solid var(--editorStroke);
+        border-bottom: 1px solid var(--editorStroke);
+        border-right: 1px solid var(--editorStroke);
+        font-size: 16px;
+        font-weight: 750;
+        letter-spacing: 0.04em;
+      }
+
+      .editorTrackLane {
+        position: relative;
+        height: var(--trackH);
+        border-top: 1px solid var(--editorStroke);
+        border-bottom: 1px solid var(--editorStroke);
+        background:
+          linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.05) 0px,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px,
+            transparent 44px
+          );
+        overflow: hidden;
+      }
+
+      .editorTrackLane::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+        pointer-events: none;
+      }
+
+      .editorPlayhead {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 62%;
+        width: 2px;
+        display: none !important;
+        background: transparent;
+        box-shadow: none;
+        opacity: 0;
+      }
+
+      .teaserStage.is-editor .editorPlayhead {
+        display: none;
+      }
+
+      /* Single continuous “raw footage” clip on V1 before takes are cut apart. */
+      .editorV1LongClip {
+        position: absolute;
+        left: var(--longClipLaneL);
+        width: var(--longClipLaneW);
+        top: var(--lanePad);
+        height: calc(100% - (var(--lanePad) * 2));
+        box-sizing: border-box;
+        border: var(--clipBorder);
+        border-radius: var(--clipRadius);
+        padding: var(--clipPad);
+        background: #d7dbe3;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1;
+        transition: opacity 0.25s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .editorV1LongClip__thumb {
+        display: none;
+      }
+
+      .editorV1LongClip__label {
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        padding: 3px 5px;
+        line-height: 1.25;
+        min-height: calc((16px * 1.25) + 6px); /* preserve label row even when blank */
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .editorV1LongClip__preview {
+        width: 100%;
+        height: var(--clipPreviewH);
+        border: var(--clipBorder);
+        border-radius: var(--clipRadius);
+        overflow: hidden;
+        box-sizing: border-box;
+      }
+
+      .editorV1LongClip__previewImg {
+        display: block;
+        height: 100%;
+        width: auto;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      /* Allow take labels to sit above clips / lanes (mark step + final timeline). */
+      .teaserStage.is-showing-take-marks .editorTimeline,
+      .teaserStage.is-editor .editorTimeline {
+        overflow: visible;
+      }
+
+      .teaserStage.is-showing-take-marks [data-editor-lane="v1"],
+      .teaserStage.is-editor [data-editor-lane] {
+        overflow: visible;
+      }
+
+      .teaserStage.is-showing-take-marks .editorV1LongClip {
+        overflow: visible;
+      }
+
+      .editorV1Take {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 5px;
+        padding-left: 3px;
+        padding-right: 3px;
+        pointer-events: none;
+        z-index: 2;
+        overflow: hidden;
+      }
+
+      .editorV1Take__frame {
+        position: absolute;
+        inset: 0;
+        width: auto;
+        height: auto;
+        border-radius: 5px;
+        border: none;
+        box-shadow: none;
+        opacity: 0;
+        transform: scale(0.98);
+        will-change: transform, opacity;
+        z-index: 1;
+      }
+
+      /* Long-clip take highlights: scene1 orange / scene2 green / scene3 blue (matches .clip mapping). */
+      .editorV1Take[data-editor-v1-take="1"] .editorV1Take__frame,
+      .editorV1Take[data-editor-v1-take="4"] .editorV1Take__frame,
+      .editorV1Take[data-editor-v1-take="7"] .editorV1Take__frame,
+      .editorV1Take[data-editor-v1-take="9"] .editorV1Take__frame {
+        background-image: var(--scene1ClipGrad);
+      }
+
+      .editorV1Take[data-editor-v1-take="2"] .editorV1Take__frame,
+      .editorV1Take[data-editor-v1-take="5"] .editorV1Take__frame {
+        background-image: var(--scene2ClipGrad);
+      }
+
+      .editorV1Take[data-editor-v1-take="3"] .editorV1Take__frame,
+      .editorV1Take[data-editor-v1-take="6"] .editorV1Take__frame,
+      .editorV1Take[data-editor-v1-take="8"] .editorV1Take__frame {
+        background-image: var(--scene3ClipGrad);
+      }
+
+      .editorV1Take__head {
+        position: absolute;
+        left: 3px;
+        right: 3px;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 3px;
+        box-sizing: border-box;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate3d(0, -6px, 0);
+        transform-origin: 50% 0%;
+        will-change: transform, opacity;
+      }
+
+      .editorV1Take__label {
+        position: static;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 3px 5px 0px 5px;
+        margin: 0;
+        font-size: 16px;
+        font-weight: 750;
+        letter-spacing: 0.01em;
+        color: #ffffff;
+        background: none;
+        border: none;
+        border-bottom: none;
+        border-radius: 0;
+        text-shadow: none;
+        white-space: nowrap;
+        line-height: 1.25;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+      }
+
+      .editorV1Take__preview {
+        position: relative;
+        width: 100%;
+        height: var(--clipPreviewH);
+        flex-shrink: 0;
+        margin-top: 1px;
+        overflow: hidden;
+        border: none;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .editorV1Take__previewImg {
+        display: block;
+        height: 100%;
+        width: auto;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .timelineBandMask {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        top: calc(var(--timelineTop) + var(--timelineOffsetY));
+        height: var(--timelineH);
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 1; /* below the scrolling track/clips */
+
+        /* Fade the filmstrip band at left/right edges (fixed to stage). */
+        --filmstripEdgeFade: 7%;
+        -webkit-mask-image: linear-gradient(
+          90deg,
+          transparent 0%,
+          #000 var(--filmstripEdgeFade),
+          #000 calc(100% - var(--filmstripEdgeFade)),
+          transparent 100%
+        );
+        mask-image: linear-gradient(
+          90deg,
+          transparent 0%,
+          #000 var(--filmstripEdgeFade),
+          #000 calc(100% - var(--filmstripEdgeFade)),
+          transparent 100%
+        );
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-size: 100% 100%;
+        mask-size: 100% 100%;
+      }
+
+      .timelineBandScroll {
+        position: absolute;
+        inset: 0;
+        width: 220%;
+        height: 100%;
+        transform: translate3d(0, 0, 0);
+        will-change: transform;
+      }
+
+      .timelineBand {
+        position: absolute;
+        inset: 0;
+      }
+
+      .teaserEditorLabel {
+        display: block;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        transform: translate3d(0, 0, 0) scale(1);
+        opacity: 0;
+        color: #1a1c2b;
+        font-size: clamp(44px, 6.4vw, 78px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1;
+        pointer-events: none;
+        white-space: nowrap;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+        will-change: transform, opacity;
+      }
+
+      .teaserEditorSubLabel {
+        display: block;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        text-align: center;
+        transform: translate3d(0, 8px, 0);
+        opacity: 0;
+        color: #5c2f00;
+        font-size: clamp(18px, 2.4vw, 30px);
+        font-weight: 500;
+        letter-spacing: -0.02em;
+        line-height: 1.25;
+        pointer-events: none;
+        white-space: nowrap;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.28);
+        will-change: transform, opacity;
+        margin-top: 10px;
+      }
+
+      .teaserEditorCta {
+        display: none; /* toggled in JS when editor mode runs */
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        opacity: 0;
+        z-index: 7;
+        pointer-events: auto;
+        margin: 30px 0;
+
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        height: 60px;
+        padding: 0 32px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        font-size: 18px;
+        line-height: 1;
+        color: #ffffff;
+        background: #1a1c2b;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        box-shadow:
+          0 14px 36px rgba(0, 0, 0, 0.28),
+          0 6px 14px rgba(0, 0, 0, 0.14);
+        transition: transform 140ms ease, background-color 140ms ease, box-shadow 140ms ease, border-color 140ms ease, filter 140ms ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Make the teaser CTA match the big bottom CTA (wins over .teaserEditorCta defaults above).
+         Scope to editor mode so it doesn't flash on initial page load. */
+      .teaserStageWrap.is-editor .teaserEditorCta.earlyAccessCta {
+        height: auto;
+        padding: 12px 30px 12px 16px;
+        gap: 16px;
+        font-size: clamp(22px, 3.8vw, 34px);
+        letter-spacing: -0.02em;
+      }
+      .teaserStageWrap.is-editor .teaserEditorCta.earlyAccessCta .cuttyDownloadIcon {
+        width: 62px;
+        height: 62px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 999px;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+        box-sizing: border-box;
+      }
+      .teaserStageWrap.is-editor .teaserEditorCta.earlyAccessCta .cuttyDownloadIcon__ring {
+        display: none;
+      }
+      .teaserStageWrap.is-editor .teaserEditorCta.earlyAccessCta .cuttyDownloadIcon__glyph {
+        transform-box: view-box;
+        transform-origin: 12px 12px;
+        transform: scale(1.26);
+        stroke-width: 2.35;
+      }
+
+      .teaserEditorCta:hover {
+        background: #242838;
+        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.22);
+        filter: brightness(1.04);
+      }
+
+      .teaserEditorCta:visited {
+        color: #ffffff;
+      }
+
+      .teaserEditorCta:focus-visible {
+        outline: 3px solid rgba(255, 255, 255, 0.45);
+        outline-offset: 4px;
+      }
+
+      @media (max-width: 560px) {
+        .teaserEditorLabel {
+          font-size: clamp(38px, 10vw, 48px);
+          line-height: 1.03;
+          white-space: normal;
+          text-align: left;
+        }
+
+        .teaserEditorSubLabel {
+          font-size: clamp(14px, 4.4vw, 18px);
+          line-height: 1.3;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          hyphens: auto;
+          text-align: left;
+        }
+
+        .teaserStageWrap > .teaserEditorCta {
+          height: 54px;
+          padding: 0 24px;
+          font-size: 17px;
+          gap: 10px;
+          margin: 20px 0;
+        }
+        .teaserStageWrap > .teaserEditorCta .cuttyDownloadIcon--editor {
+          width: 24px;
+          height: 24px;
+        }
+
+        /* Keep the teaser animation proportionate on small screens. */
+        .teaserStage {
+          /* Scale down the whole “timeline” system together (keeps proportions). */
+          --clipPreviewH: 60px;
+          --timelineOffsetY: -78px;
+          --stage-radius: 14px;
+          --editorRadius: 20px;
+          --editorLaneInsetEnd: 14px;
+          /* Lane label column (V1–V4): halve width on mobile. */
+          --trackHeaderW: 43px;
+        }
+
+        .editorUI {
+          padding-bottom: 28px;
+        }
+
+        .editorTimelineCallout {
+          right: 18px; /* was 118px; move 100px right on mobile */
+        }
+
+        .editorTimelineCallout__text {
+          font-size: 24px; /* 30px - 6px */
+        }
+
+        /* If vertical mode is ever enabled, avoid an overly tall stack. */
+        .teaserStage.is-vertical .clipLayer {
+          top: calc(16% + 38px);
+          gap: 10px;
+          padding: 14px 14px 0;
+        }
+
+        .teaserStage.is-vertical .clip {
+          min-height: 102px;
+        }
+      }
+
+      .teaserStage.is-editor .timelineBandMask {
+        opacity: 0;
+      }
+
+      .baseFilmstrip,
+      .timelineOverlay {
+        position: absolute;
+        inset: 0;
+        background-image: url("filmstrip.jpg");
+        background-repeat: repeat;
+        background-size: auto 100%;
+        background-position: left center;
+        image-rendering: -webkit-optimize-contrast;
+      }
+
+      .baseFilmstrip {
+        opacity: 1;
+        filter: saturate(0.9) contrast(1.05);
+      }
+
+      .timelineOverlay {
+        opacity: 0;
+        filter: saturate(1.1) contrast(1.1);
+      }
+
+      .timelineOverlay::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.24));
+        pointer-events: none;
+      }
+
+      .clipLayer {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        top: calc(var(--timelineTop) + var(--timelineOffsetY));
+        height: auto;
+        pointer-events: none;
+      }
+
+      /* Neutral “raw” strip clip behind the takes (first layer). */
+      .clipStripLong {
+        position: absolute;
+        top: 0;
+        height: auto;
+        left: var(--clip1X);
+        width: calc((var(--clip9X) + var(--clip9W)) - var(--clip1X));
+        box-sizing: border-box;
+        border: var(--clipBorder);
+        border-radius: var(--clipRadius);
+        padding: var(--clipPad);
+        background: #d7dbe3;
+        opacity: 1;
+        z-index: 1;
+        overflow: hidden;
+        pointer-events: none;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .clipStripLong__preview {
+        width: 100%;
+        height: var(--clipPreviewH);
+        overflow: hidden;
+        border: var(--clipBorder);
+        border-radius: var(--clipRadius);
+        box-sizing: border-box;
+      }
+
+      .clipStripLong__previewImg {
+        display: block;
+        height: 100%;
+        width: auto;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .clip {
+        position: absolute;
+        top: 0;
+        height: auto;
+        box-sizing: border-box;
+        border: var(--clipBorder);
+        border-radius: var(--clipRadius);
+        padding: var(--clipPad);
+        overflow: hidden;
+        transform: translateZ(0);
+        will-change: transform, opacity;
+        opacity: 0;
+        z-index: 2;
+      }
+
+      /* Scene-colored main clip box (same palette as editor V1 takes). */
+      .clip[data-clip="1"],
+      .clip[data-clip="4"],
+      .clip[data-clip="7"],
+      .clip[data-clip="9"] {
+        background: var(--scene1ClipGrad);
+      }
+      .clip[data-clip="2"],
+      .clip[data-clip="5"] {
+        background: var(--scene2ClipGrad);
+      }
+      .clip[data-clip="3"],
+      .clip[data-clip="6"],
+      .clip[data-clip="8"] {
+        background: var(--scene3ClipGrad);
+      }
+
+      /* Kept in DOM for JS mapping, but visually unused. */
+      .clip__thumb {
+        display: none;
+      }
+
+      .clip__rect {
+        display: none;
+      }
+
+      .clip[data-clip="1"] {
+        left: var(--clip1X);
+        width: var(--clip1W);
+      }
+      .clip[data-clip="2"] {
+        left: var(--clip2X);
+        width: var(--clip2W);
+      }
+      .clip[data-clip="3"] {
+        left: var(--clip3X);
+        width: var(--clip3W);
+      }
+      .clip[data-clip="4"] {
+        left: var(--clip4X);
+        width: var(--clip4W);
+      }
+      .clip[data-clip="5"] {
+        left: var(--clip5X);
+        width: var(--clip5W);
+      }
+      .clip[data-clip="6"] {
+        left: var(--clip6X);
+        width: var(--clip6W);
+      }
+      .clip[data-clip="7"] {
+        left: var(--clip7X);
+        width: var(--clip7W);
+      }
+      .clip[data-clip="8"] {
+        left: var(--clip8X);
+        width: var(--clip8W);
+      }
+      .clip[data-clip="9"] {
+        left: var(--clip9X);
+        width: var(--clip9W);
+      }
+
+      .clip__head {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        box-sizing: border-box;
+        pointer-events: none;
+        opacity: 1;
+        transform: none;
+        white-space: normal;
+      }
+
+      .clip__label {
+        position: static;
+        width: 100%;
+        margin: 0;
+        text-align: left;
+        font-weight: 700;
+        color: #fff;
+        font-size: 16px;
+        padding: 3px 5px;
+        display: block;
+        box-sizing: border-box;
+        white-space: nowrap;
+        line-height: 1.25;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .clip__preview {
+        position: relative;
+        width: 100%;
+        height: var(--clipPreviewH);
+        flex-shrink: 0;
+        overflow: hidden;
+        border: var(--clipBorder);
+        border-radius: var(--clipRadius);
+        box-sizing: border-box;
+      }
+
+      .clip__previewImg {
+        display: block;
+        height: 100%;
+        width: auto;
+        max-width: none;
+        object-fit: cover;
+        object-position: center;
+        pointer-events: none;
+        user-select: none;
+      }
+
+      .teaserStage.is-editor {
+        background: var(--editorBg);
+        overflow: visible;
+        aspect-ratio: auto;
+        height: auto;
+        border-radius: var(--editorRadius) var(--editorRadius) 0 0;
+      }
+
+      .teaserStage.is-editor::after {
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.06),
+          inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+      }
+
+      .teaserStage.is-editor .teaserTrack {
+        opacity: 0;
+      }
+
+      .teaserStage.is-editor .editorUI {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        height: auto;
+        opacity: 1;
+      }
+
+      .teaserStage.is-editor-front .editorUI {
+        z-index: 3; /* in front once clips start moving into timeline */
+      }
+
+      .teaserStage.is-editor-front .teaserTrack {
+        z-index: 2;
+      }
+
+      .teaserStage.is-editor.is-editor-entering .teaserTrack {
+        opacity: 1; /* keep list visible until clips land */
+      }
+
+      .teaserStage.is-editor .clip {
+        pointer-events: none;
+      }
+
+      .teaserStage.is-editor .clip__thumb {
+        display: none;
+      }
+
+      .teaserStage.is-editor .clip__head {
+        opacity: 1 !important;
+        transform: none !important;
+        z-index: 4;
+      }
+
+      .teaserStage.is-editor .clip__label {
+        font-weight: 700;
+      }
+
+      .teaserStage.is-editor .clip__preview {
+        height: var(--clipPreviewH);
+      }
+
+      /*
+        Scene 1: 4 takes · Scene 2: 2 takes · Scene 3: 3 takes
+        V5: (empty) | V4: S1T4 | V1: S1T1, S2T1, S3T1 | V2: S1T2, S2T2, S3T2 | V3: S1T3, (S2 empty), S3T3
+      */
+      .teaserStage.is-editor [data-editor-lane="v1"] > .clip[data-clip="1"],
+      .teaserStage.is-editor [data-editor-lane="v2"] > .clip[data-clip="4"],
+      .teaserStage.is-editor [data-editor-lane="v3"] > .clip[data-clip="7"] {
+        left: var(--scene1L);
+        width: var(--scene1W);
+      }
+      .teaserStage.is-editor [data-editor-lane="v4"] > .clip[data-clip="9"] {
+        left: var(--scene1L);
+        width: calc(var(--scene1W) - 20px);
+      }
+      .teaserStage.is-editor [data-editor-lane="v1"] > .clip[data-clip="2"],
+      .teaserStage.is-editor [data-editor-lane="v2"] > .clip[data-clip="5"] {
+        left: var(--scene2L);
+        width: var(--scene2W);
+      }
+      .teaserStage.is-editor [data-editor-lane="v1"] > .clip[data-clip="3"],
+      .teaserStage.is-editor [data-editor-lane="v2"] > .clip[data-clip="6"],
+      .teaserStage.is-editor [data-editor-lane="v3"] > .clip[data-clip="8"] {
+        left: var(--scene3L);
+        width: var(--scene3W);
+      }
+
+      /* Per-take trims (px) on finished editor layout. */
+      .teaserStage.is-editor [data-editor-lane="v2"] > .clip[data-clip="4"] {
+        width: calc(var(--scene1W) - 20px);
+      }
+      .teaserStage.is-editor [data-editor-lane="v3"] > .clip[data-clip="7"] {
+        width: calc(var(--scene1W) - 10px);
+      }
+      .teaserStage.is-editor [data-editor-lane="v2"] > .clip[data-clip="5"] {
+        width: calc(var(--scene2W) - 10px);
+      }
+      .teaserStage.is-editor [data-editor-lane="v2"] > .clip[data-clip="6"] {
+        width: calc(var(--scene3W) - 10px);
+      }
+      .teaserStage.is-editor [data-editor-lane="v3"] > .clip[data-clip="8"] {
+        width: calc(var(--scene3W) - 30px);
+      }
+
+      .teaserStage.is-vertical .clipLayer {
+        top: calc(16% + 50px);
+        height: 70%;
+        display: grid;
+        grid-template-columns: 1fr;
+        align-content: start;
+        justify-items: center;
+        gap: 14px;
+        padding: 18px 22px 0;
+      }
+
+      .teaserStage.is-vertical .teaserTrack {
+        width: 100%;
+        transform: translate3d(0, 0, 0) !important;
+      }
+
+      .teaserStage.is-vertical .timelineBandMask {
+        display: none;
+      }
+
+      .teaserStage.is-vertical .clip {
+        position: relative;
+        left: auto !important;
+        width: min(560px, 100%) !important;
+        top: auto;
+        min-height: 114px;
+        height: auto;
+        max-width: 100%;
+      }
+
+      .teaserStage.is-vertical .clip__thumb {
+        display: none;
+      }
+
+      .teaserStage.is-vertical .clip__head {
+        position: relative;
+      }
+
+      .teaserStage.is-vertical .clip__label {
+        font-size: 16px;
+        margin: 3px 0;
+        color: #ffffff;
+        text-shadow: none;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .teaserTrack {
+          /* Approximate the "aligned stop" (220% track => ~-120% end). */
+          transform: translate3d(-120%, 0, 0);
+        }
+        .timelineBandScroll {
+          /* Match the track's resting position so filmstrip aligns. */
+          transform: translate3d(-120%, 0, 0);
+        }
+        .timelineOverlay {
+          opacity: 1;
+        }
+        .clip__head {
+          opacity: 1;
+          transform: none;
+        }
+        .baseFilmstrip {
+          opacity: 0.3;
+        }
+        .timelineBandMask {
+          opacity: 1;
+        }
+        .clip {
+          opacity: 1;
+        }
+        .teaserStage {
+          scroll-behavior: auto;
+        }
+      }
+
+      /* Scroll-into-view appear animation (matches teaser headline feel) */
+      @keyframes cuttyAppear {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 30px, 0);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      .cuttyAppear {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0);
+        will-change: transform, opacity;
+      }
+
+      .cuttyAppear.is-inview {
+        animation: cuttyAppear 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        animation-delay: var(--appear-delay, 0ms);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cuttyAppear {
+          opacity: 1;
+          transform: none;
+          will-change: auto;
+        }
+        .cuttyAppear.is-inview {
+          animation: none;
+        }
+      }
