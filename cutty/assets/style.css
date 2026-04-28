@@ -807,7 +807,9 @@
 
       .teaserStageWrap {
         position: relative;
-        width: min(1100px, 100%);
+        /* Caps teaser width; overridden on laptop-ish viewports (see media query below). */
+        --teaser-max-w: 1100px;
+        width: min(var(--teaser-max-w), 100%);
         margin-top: 28px;
         display: flex;
         flex-direction: column;
@@ -849,13 +851,21 @@
       }
 
       .teaserStage {
-        --stage-w: min(1100px, 100%);
+        --stage-w: min(var(--teaser-max-w), 100%);
         --stage-radius: 16px;
 
         /* Timeline band alignment (tweak these to align overlays). */
         --timelineTop: 62%;
-        /* Single source of truth for strip clip height. */
-        --clipH: calc(var(--clipPreviewH) + 27px);
+        /* Single source of truth for strip clip height.
+           IMPORTANT: this must match the *outer* .clip box (content + padding + border)
+           so editor lanes and clips align pixel-perfect. */
+        --clipHeadBand: 27px;
+        --clipH: calc(
+          var(--clipPreviewH) +
+          var(--clipHeadBand) +
+          (var(--clipPad) * 2) +
+          (var(--clipBorderW) * 2)
+        );
         /* Keep the strip layer the same height as a clip. */
         --timelineH: var(--clipH);
         --timelineOffsetY: -100px;
@@ -876,7 +886,8 @@
         --scene1ClipGrad: linear-gradient(180deg, rgb(232, 136, 58), rgb(165, 88, 35));
         --scene2ClipGrad: linear-gradient(180deg, rgb(126, 168, 82), rgb(75, 104, 45));
         --scene3ClipGrad: linear-gradient(180deg, rgb(58, 105, 138), rgb(30, 58, 78));
-        --clipBorder: 1px solid rgba(0, 0, 0, 0.6);
+        --clipBorderW: 1px;
+        --clipBorder: var(--clipBorderW) solid rgba(0, 0, 0, 0.6);
         --clipRadius: 5px;
         --clipPad: 2px;
         --clipPreviewH: 70px;
@@ -886,7 +897,7 @@
         /* Legacy clip vars (no longer used): kept so older CSS edits don't break if referenced. */
         --trackHeaderW: 86px;
         /* Inset the lane column (V1–V4) from the editor’s right edge. */
-        --editorLaneInsetEnd: 20px;
+        --editorLaneInsetEnd: 6px;
         /* Make V1–V5 lane height match clip height. */
         --trackH: var(--clipH);
         --tracksGap: 1px;
@@ -913,16 +924,15 @@
         --longSeg9W: 8%;
 
         /* Long raw clip (same horizontal band as V1); segments above are positioned in this band. */
-        --longClipLaneL: 6%;
-        --longClipLaneW: 88%;
+        --longClipLaneL: 0%;
+        --longClipLaneW: 100%;
 
         /* Final editor layout (no gaps on V1; same-scene X aligns across lanes). */
-        --sceneStartL: 4%;
-        --scene1W: 30%;
-        /* Scene 2 narrower */
-        --scene2W: 24%;
-        /* Scene 3 slightly wider */
-        --scene3W: 38%;
+        --sceneStartL: 0%;
+        /* Widths sum to 100% of the lane so clips span edge-to-edge (was 4% + 92%). */
+        --scene1W: 32.61%;
+        --scene2W: 26.09%;
+        --scene3W: 41.3%;
         --scene1L: var(--sceneStartL);
         --scene2L: calc(var(--scene1L) + var(--scene1W));
         --scene3L: calc(var(--scene2L) + var(--scene2W));
@@ -1243,7 +1253,7 @@
       .editorV1LongClip__previewImg {
         display: block;
         height: 100%;
-        width: auto;
+        width: 100%;
         max-width: none;
         object-fit: cover;
         object-position: center;
@@ -1368,7 +1378,7 @@
       .editorV1Take__previewImg {
         display: block;
         height: 100%;
-        width: auto;
+        width: 100%;
         max-width: none;
         object-fit: cover;
         object-position: center;
@@ -1528,6 +1538,29 @@
         outline-offset: 4px;
       }
 
+      /* ~15" MacBook and similar: narrower stage (−100px cap) and shorter lanes / V1 track. */
+      @media (max-width: 1728px) and (min-width: 561px) {
+        .teaserStageWrap {
+          --teaser-max-w: 1000px;
+        }
+
+        .teaserEditorHeadlines {
+          gap: 4px;
+          padding-bottom: 4px;
+        }
+
+        .teaserEditorSubLabel {
+          margin-top: 6px;
+          transform: translate3d(0, 6px, 0);
+        }
+
+        .teaserStage {
+          --clipPreviewH: 52px;
+          /* ~label row for 16px/1.25 copy + padding; keeps V1/clips aligned with --trackH / --clipH. */
+          --clipHeadBand: 26px;
+        }
+      }
+
       @media (max-width: 560px) {
         .teaserEditorLabel {
           font-size: clamp(38px, 9vw, 48px);
@@ -1566,7 +1599,7 @@
           --timelineOffsetY: -78px;
           --stage-radius: 14px;
           --editorRadius: 20px;
-          --editorLaneInsetEnd: 14px;
+          --editorLaneInsetEnd: 8px;
           /* Lane label column (V1–V4): halve width on mobile. */
           --trackHeaderW: 43px;
         }
@@ -1677,7 +1710,7 @@
       .clipStripLong__previewImg {
         display: block;
         height: 100%;
-        width: auto;
+        width: 100%;
         max-width: none;
         object-fit: cover;
         object-position: center;
@@ -1808,7 +1841,7 @@
       .clip__previewImg {
         display: block;
         height: 100%;
-        width: auto;
+        width: 100%;
         max-width: none;
         object-fit: cover;
         object-position: center;

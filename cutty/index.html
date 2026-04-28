@@ -265,7 +265,7 @@
                 Your video automatically <br/>organized by script.
               </div>
               <div class="teaserEditorSubLabel" data-teaser-editor-sub-label aria-hidden="true">
-                Save hours of editing. Your recording instantly becomes a <br/>ready-to-use timeline. Just pick the best takes.
+                Save hours of editing. Pick your best take from a ready-to-edit timeline.
               </div>
             </div>
             <div class="earlyAccessCtaGroup">
@@ -1227,11 +1227,22 @@
             return h || 0;
           }
 
-          function pushAnim(el, f, laneRect, leftPct, widthPct, widthPxAdjust = 0) {
+          function innerLaneHeightPx(laneEl, laneRect, lanePadPx) {
+            if (!(laneEl instanceof HTMLElement)) return Math.max(0, laneRect.height - lanePadPx);
+            const cs = getComputedStyle(laneEl);
+            const bt = Number.parseFloat(cs.borderTopWidth) || 0;
+            const bb = Number.parseFloat(cs.borderBottomWidth) || 0;
+            // Clip top is offset by lanePad; clamp to the remaining inner space.
+            return Math.max(0, laneRect.height - bt - bb - lanePadPx);
+          }
+
+          function pushAnim(el, f, laneEl, laneRect, leftPct, widthPct, widthPxAdjust = 0) {
             const targetLeft = (laneRect.left - stageRect.left) + (laneRect.width * (leftPct / 100));
             const targetTop = (laneRect.top - stageRect.top) + lanePad;
             const targetWidth = Math.max(0, (laneRect.width * (widthPct / 100)) + widthPxAdjust);
-            const targetHeight = Math.max(0, measureAutoHeightAtWidth(el, targetWidth));
+            const measuredHeight = Math.max(0, measureAutoHeightAtWidth(el, targetWidth));
+            const maxLaneHeight = innerLaneHeightPx(laneEl, laneRect, lanePad);
+            const targetHeight = maxLaneHeight > 0 ? Math.min(measuredHeight, maxLaneHeight) : measuredHeight;
 
             const fromLeft = f.left - stageRect.left;
             const fromTop = f.top - stageRect.top;
@@ -1270,8 +1281,9 @@
             const t = clipTargets[id];
             if (!f || !t) continue;
 
+            const laneEl = laneParentFor(t.laneKey);
             const lr = laneRectFor(t.laneKey);
-            pushAnim(el, f, lr, t.leftPct, t.widthPct, t.widthPxAdjust || 0);
+            pushAnim(el, f, laneEl, lr, t.leftPct, t.widthPct, t.widthPxAdjust || 0);
           }
 
           await Promise.all(anims);
