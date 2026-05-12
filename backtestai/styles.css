@@ -632,8 +632,6 @@ button.btn-secondary .btn-secondary__icon {
   border: 1px solid rgb(220, 220, 220);
   border-radius: 8px;
   background: #ffffff;
-  max-height: 420px;
-  overflow-y: auto;
 }
 table.trades-table {
   width: 100%;
