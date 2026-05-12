@@ -628,34 +628,29 @@ button.btn-secondary .btn-secondary__icon {
   color: #1f2328;
 }
 .trades-wrap {
-  overflow-x: auto;
   border: 1px solid rgb(220, 220, 220);
   border-radius: 8px;
   background: #ffffff;
-  max-height: 420px;
-  overflow-y: auto;
 }
 table.trades-table {
   width: 100%;
   border-collapse: collapse;
   font-size: calc(0.78rem + 2px);
   color: #24292f;
+  table-layout: auto;
 }
 table.trades-table th,
 table.trades-table td {
   padding: 0.9rem 0.65rem;
   text-align: left;
   border-bottom: 1px solid #eaeef2;
-  white-space: nowrap;
   vertical-align: top;
+  word-break: break-word;
 }
 table.trades-table th {
-  position: sticky;
-  top: 0;
   background: #f6f8fa;
   color: #57606a;
   font-weight: 600;
-  z-index: 1;
 }
 table.trades-table tbody tr:hover td {
   background: #f6f8fa;
