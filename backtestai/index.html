@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BTC strategy backtest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      font-family: "Manrope", system-ui, sans-serif;
+      background: #ffffff;
+      color: #1f2328;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    button,
+    input,
+    textarea,
+    select {
+      font-family: inherit;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem;
+      width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
+    }
+    .site-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 2.5rem;
+      background: #ffffff;
+    }
+    .site-header__logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.01em;
+      color: #1f2328;
+      text-decoration: none;
+    }
+    .site-header__nav {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+    .site-header__link {
+      font-size: 1.05rem;
+      color: #24292f;
+      text-decoration: none;
+    }
+    .site-header__link:hover {
+      color: #0969da;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 5.5rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      text-align: center;
+      margin-top: 5rem;
+      margin-bottom: 5rem;
+    }
+    .strategy-block {
+      width: 75%;
+      max-width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    .time-range-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-shrink: 0;
+      margin: 0;
+      min-height: 0;
+    }
+    .time-range-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .time-range-btn {
+      margin: 0;
+      padding: 0.2rem 0.55rem;
+      border: none;
+      background: transparent;
+      color: #57606a;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 6px;
+      line-height: 1.3;
+      text-decoration: none;
+    }
+    .time-range-btn:hover {
+      color: #0969da;
+      background: rgba(9, 105, 218, 0.06);
+    }
+    .time-range-btn.is-active {
+      color: #0969da;
+      font-weight: 600;
+    }
+    .time-range-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .strategy-row {
+      padding: 1rem 1.2rem 1rem 1.2rem;
+      display: flex;
+      align-items: stretch;
+      gap: 0.75rem;
+      position: relative;
+      width: 100%;
+      margin: 0 auto;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      background: #ffffff;
+    }
+    .asset-pill {
+      flex: 0 0 auto;
+      align-self: center;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      height: 2.25rem;
+      margin: 0;
+      padding: 0 0.8rem;
+      border-radius: 999px;
+      border: 1px solid rgba(208, 215, 222, 0.95);
+      background: rgba(9, 105, 218, 0.04);
+      color: #1f2328;
+      font-size: 0.95rem;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .asset-pill:hover {
+      background: rgba(9, 105, 218, 0.08);
+      border-color: rgba(175, 184, 193, 0.95);
+    }
+    .asset-pill:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+      border-color: #0969da;
+    }
+    .asset-pill__icon {
+      width: 1.05rem;
+      height: 1.05rem;
+      border-radius: 50%;
+      background: #f6f8fa;
+      border: 1px solid rgba(208, 215, 222, 0.9);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.7rem;
+      line-height: 1;
+      color: #57606a;
+      flex: 0 0 auto;
+    }
+    .asset-pill__chev {
+      color: #57606a;
+      font-size: 0.9rem;
+      line-height: 1;
+    }
+    .asset-popover {
+      position: absolute;
+      top: calc(100% + 10px);
+      left: 1rem;
+      width: min(560px, calc(100vw - 2rem));
+      background: #ffffff;
+      border: 1px solid #d0d7de;
+      border-radius: 14px;
+      box-shadow: 0 16px 44px rgba(31, 35, 40, 0.18);
+      overflow: hidden;
+      z-index: 40;
+    }
+    .asset-search {
+      width: 100%;
+      box-sizing: border-box;
+      border: none;
+      border-bottom: 1px solid #d0d7de;
+      padding: 0.75rem 0.9rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: #1f2328;
+      outline: none;
+      background: #ffffff;
+    }
+    .asset-search::placeholder {
+      color: #8c959f;
+    }
+    .asset-list {
+      max-height: 340px;
+      overflow: auto;
+      background: #ffffff;
+    }
+    .asset-row {
+      display: grid;
+      grid-template-columns: 26px 110px 1fr;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 0.65rem 0.9rem;
+      cursor: pointer;
+    }
+    .asset-row:hover,
+    .asset-row.is-active {
+      background: rgba(9, 105, 218, 0.06);
+    }
+    .asset-row__icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      line-height: 1;
+      color: #ffffff;
+      background: #0969da;
+      flex: 0 0 auto;
+    }
+    .asset-row__icon--btc {
+      background: linear-gradient(145deg, #f7931a 0%, #e8830d 100%);
+    }
+    .asset-row__icon--eth {
+      background: linear-gradient(145deg, #627eea 0%, #4c6ae6 100%);
+    }
+    .asset-row__icon--sol {
+      background: linear-gradient(145deg, #14f195 0%, #9945ff 100%);
+    }
+    .asset-row__sym {
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: #1f2328;
+      font-variant-numeric: tabular-nums;
+    }
+    .asset-row__desc {
+      color: #57606a;
+      font-size: 0.92rem;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .asset-empty {
+      padding: 0.85rem 0.9rem;
+      color: #57606a;
+      font-size: 0.92rem;
+    }
+    .strategy-row__input-col {
+      flex: 1 1 auto;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.35rem;
+    }
+    .strategy-sample-below-row {
+      margin-top: 0.45rem;
+      padding-left: 1.2rem;
+    }
+    .strategy-sample-link {
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0 0 0.1rem;
+      font: inherit;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      color: #0969da;
+      cursor: pointer;
+      text-align: left;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .strategy-sample-link:hover:not(:disabled) {
+      color: #0550ae;
+    }
+    .strategy-sample-link:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .strategy-row textarea {
+      flex: 1 1 auto;
+      width: auto;
+      margin: 0;
+      padding: 0;
+      min-height: calc(3em);
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      background: transparent;
+      resize: none;
+      overflow: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .strategy-row textarea::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+    .strategy-row textarea:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+    .strategy-row .submit-primary {
+      flex: 0 0 auto;
+      margin-top: 0;
+      align-self: center;
+      width: 3rem;
+      height: 3rem;
+      min-width: 3rem;
+      min-height: 3rem;
+      padding: 0;
+      border-radius: 50%;
+      font-size: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    .strategy-row .submit-primary .submit-primary__icon {
+      display: block;
+      width: 1.35rem;
+      height: 1.35rem;
+      flex-shrink: 0;
+    }
+    .strategy-row .submit-primary .submit-primary__spinner {
+      display: none;
+      width: 1.35rem;
+      height: 1.35rem;
+      flex-shrink: 0;
+      animation: submit-primary-spin 0.65s linear infinite;
+    }
+    .strategy-row .submit-primary.is-loading .submit-primary__icon {
+      display: none;
+    }
+    .strategy-row .submit-primary.is-loading .submit-primary__spinner {
+      display: block;
+    }
+    @keyframes submit-primary-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    textarea {
+      display: block;
+      width: 60%;
+      margin: 0 auto;
+      min-height: calc(3em);
+      box-sizing: border-box;
+      padding: 0;
+      border-radius: 20px;
+      border: 1px solid #d0d7de;
+      background: #ffffff;
+      color: #1f2328;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #0969da;
+      box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15);
+    }
+    button {
+      margin-top: 0.75rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 8px;
+      border: 1px solid #068069;
+      background: #068069;
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    button.btn-secondary {
+      border-color: #d0d7de;
+      background: #ffffff;
+      color: #24292f;
+    }
+    button.btn-secondary:hover:not(:disabled) {
+      background: #f6f8fa;
+      border-color: #afb8c1;
+    }
+    button.btn-secondary.btn-secondary--with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+    button.btn-secondary .btn-secondary__icon {
+      width: 1.1em;
+      height: 1.1em;
+      flex-shrink: 0;
+    }
+    .results-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .results-actions button {
+      margin-top: 0;
+    }
+    .chart-panel {
+      margin-top: 0.65rem;
+      background: #ffffff;
+      border: 1px solid rgb(220, 220, 220);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .overview-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem 1.75rem;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0.85rem 1rem;
+      background: #ffffff;
+      border: none;
+      border-radius: 0;
+      border-bottom: 1px solid #d0d7de;
+      align-items: flex-start;
+    }
+    .overview-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    .overview-item--asset {
+      flex: 0 0 auto;
+      min-width: 0;
+    }
+    .overview-asset {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #f7931a 0%, #e8830d 100%);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      line-height: 1;
+      box-shadow: 0 1px 2px rgba(31, 35, 40, 0.12);
+    }
+    .overview-label {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #57606a;
+    }
+    .overview-value {
+      font-size: 1.85rem;
+      line-height: 1.15;
+      font-variant-numeric: tabular-nums;
+      color: #1f2328;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .overview-value--up {
+      color: #068069;
+    }
+    .overview-value--down {
+      color: #cf222e;
+    }
+    .chart-wrap {
+      margin-top: 0;
+      position: relative;
+      height: 380px;
+      background: #ffffff;
+      border: none;
+      border-radius: 0;
+      padding: 0.75rem;
+    }
+    /* Custom Chart.js hover card (see resultsEquityExternalTooltip in app.js) */
+    .results-chart-tooltip {
+      position: absolute;
+      z-index: 30;
+      min-width: 9.5rem;
+      max-width: 16rem;
+      padding: 0.55rem 0.75rem 0.65rem;
+      border-radius: 6px;
+      background: #3c3c3c;
+      color: #f6f8fa;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      text-align: center;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.08s ease-out;
+    }
+    .results-chart-tooltip__price {
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 0.2rem;
+    }
+    .results-chart-tooltip__muted {
+      color: #b7bdc4;
+      font-weight: 400;
+      font-size: 0.76rem;
+    }
+    .results-chart-tooltip__capital {
+      margin-top: 0.35rem;
+      padding-top: 0.35rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e6eaef;
+      font-size: 0.76rem;
+    }
+    .results-chart-tooltip__trade {
+      margin-top: 0.45rem;
+      padding-top: 0.45rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .results-chart-tooltip__trade-action {
+      font-weight: 700;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      color: #ff8a8a;
+      margin-bottom: 0.15rem;
+    }
+    .results-chart-tooltip__pnl {
+      margin-top: 0.1rem;
+      font-weight: 600;
+      font-size: 0.76rem;
+    }
+    .results-chart-tooltip__pnl--up {
+      color: #56d4b8;
+    }
+    .results-chart-tooltip__pnl--down {
+      color: #ff8a8a;
+    }
+    .results-chart-tooltip__pnl--flat {
+      color: #b7bdc4;
+    }
+    .strategy-description {
+      padding: 0.85rem 1rem;
+      border-top: 1px solid #d0d7de;
+      background: #ffffff;
+      color: #24292f;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .strategy-description h2 {
+      margin: 0 0 0.45rem 0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #1f2328;
+    }
+    #strategy-description-body {
+      white-space: pre-wrap;
+      margin: 0;
+      word-break: break-word;
+    }
+    .error {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      background: #ffebe9;
+      border: 1px solid #ff8182;
+      color: #82071e;
+      white-space: pre-wrap;
+      font-size: 0.85rem;
+      max-height: 280px;
+      overflow: auto;
+    }
+    .hidden {
+      display: none;
+    }
+    .alignment-note {
+      margin-top: 0.75rem;
+      font-size: 0.82rem;
+      color: #9a6700;
+    }
+    .strategy-explanation {
+      margin-top: 1rem;
+      margin-bottom: 1.25rem;
+      padding: 0.85rem 1rem;
+      background: #ffffff;
+      border: 1px solid rgb(220, 220, 220);
+      border-radius: 8px;
+      color: #24292f;
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+    .strategy-explanation h2 {
+      margin: 0 0 0.6rem 0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #1f2328;
+    }
+    #explanation-body {
+      white-space: pre-wrap;
+      margin: 0;
+      word-break: break-word;
+    }
+    .trades-section {
+      margin-top: 1.25rem;
+    }
+    .trades-section h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #1f2328;
+    }
+    .trades-wrap {
+      overflow-x: auto;
+      border: 1px solid rgb(220, 220, 220);
+      border-radius: 8px;
+      background: #ffffff;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+    table.trades-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: calc(0.78rem + 2px);
+      color: #24292f;
+    }
+    table.trades-table th,
+    table.trades-table td {
+      padding: 0.9rem 0.65rem;
+      text-align: left;
+      border-bottom: 1px solid #eaeef2;
+      white-space: nowrap;
+      vertical-align: top;
+    }
+    table.trades-table th {
+      position: sticky;
+      top: 0;
+      background: #f6f8fa;
+      color: #57606a;
+      font-weight: 600;
+      z-index: 1;
+    }
+    table.trades-table tbody tr:hover td {
+      background: #f6f8fa;
+    }
+    table.trades-table tbody tr.trades-row--profit td {
+      background: rgba(26, 127, 55, 0.07);
+    }
+    table.trades-table tbody tr.trades-row--loss td {
+      background: rgba(207, 34, 46, 0.07);
+    }
+    table.trades-table tbody tr.trades-row--profit:hover td {
+      background: rgba(26, 127, 55, 0.12);
+    }
+    table.trades-table tbody tr.trades-row--loss:hover td {
+      background: rgba(207, 34, 46, 0.12);
+    }
+    table.trades-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    table.trades-table td.trade-pnl--profit {
+      color: #1a7f37;
+      font-weight: 600;
+    }
+    table.trades-table td.trade-pnl--loss {
+      color: #cf222e;
+      font-weight: 600;
+    }
+    table.trades-table td.trade-pnl--flat {
+      color: #57606a;
+    }
+    .trades-empty {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #57606a;
+    }
+    /* Temporarily hide curated successful strategies; markup and preset loaders unchanged. */
+    #successful-strategies {
+      display: none !important;
+    }
+    .site-header__nav a[href="#successful-strategies"] {
+      display: none !important;
+    }
+    .successful-section {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid #eaeef2;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .successful-section__heading {
+      margin: 0 0 0.4rem 0;
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #1f2328;
+      text-align: center;
+    }
+    .successful-section__intro {
+      margin: 0 auto 1.5rem auto;
+      max-width: 640px;
+      font-size: 0.95rem;
+      color: #57606a;
+      text-align: center;
+    }
+    .success-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    @media (max-width: 820px) {
+      .success-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .success-card {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      padding: 0.85rem;
+      background: #ffffff;
+      border: 1px solid rgb(220, 220, 220);
+      border-radius: 8px;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .success-card__head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .success-card__title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1f2328;
+    }
+    .success-card__return {
+      font-size: 0.95rem;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: #57606a;
+    }
+    .success-card__return--up {
+      color: #068069;
+    }
+    .success-card__return--down {
+      color: #cf222e;
+    }
+    .success-card__chart {
+      position: relative;
+      height: 180px;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .success-card__chart canvas {
+      display: block;
+      max-width: 100%;
+    }
+    .success-card__status {
+      font-size: 0.82rem;
+      color: #57606a;
+      text-align: center;
+      padding: 1.5rem 0;
+    }
+    .success-card__status--error {
+      color: #82071e;
+    }
+    .site-footer {
+      text-align: center;
+      font-size: 11px;
+      margin-top: 200px;
+      padding: 1.5rem 1rem 2rem;
+      color: #666;
+    }
+    .site-footer a {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a href="/" class="site-header__logo">backtestAI</a>
+    <nav class="site-header__nav">
+      <a href="#successful-strategies" class="site-header__link">Successful Strategies</a>
+    </nav>
+  </header>
+
+  <main class="container">
+  <h1>Your trading strategy<br/>validated by AI.</h1>
+
+  <div class="strategy-block">
+  <form id="form">
+    <div class="strategy-row">
+      <button
+        type="button"
+        id="asset-btn"
+        class="asset-pill"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="asset-popover"
+        title="Select asset"
+      >
+        <span class="asset-pill__icon" aria-hidden="true">$</span>
+        <span id="asset-pill-label">BTCUSDT</span>
+        <span class="asset-pill__chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="strategy-row__input-col">
+        <textarea id="strategy" name="strategy" rows="2" placeholder="Enter your strategy here: Buy when the 20-day moving average crosses above the 50-day moving average and sell when it crosses back below." aria-label="Strategy description"></textarea>
+      </div>
+      <button type="submit" id="submit" class="submit-primary" aria-label="Test my strategy">
+        <svg
+          class="submit-primary__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M12 20V4m0 0l6 6m-6-6l-6 6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <svg class="submit-primary__spinner" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="44 60" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div id="asset-popover" class="asset-popover hidden" role="dialog" aria-label="Select asset">
+        <input id="asset-search" class="asset-search" type="text" placeholder="Search assets…" autocomplete="off" />
+        <div id="asset-list" class="asset-list" role="listbox" aria-label="Assets"></div>
+        <div id="asset-empty" class="asset-empty hidden">No matches.</div>
+      </div>
+    </div>
+    <div class="strategy-sample-below-row">
+      <button
+        type="button"
+        id="strategy-sample-idea"
+        class="strategy-sample-link"
+        aria-label="Type the demo strategy into the description"
+      >
+        No idea yet? Try the demo strategy.
+      </button>
+    </div>
+  </form>
+  </div>
+
+  <div id="error" class="error hidden"></div>
+
+  <div id="chart-section" class="hidden">
+    <div class="results-actions">
+      <button type="button" id="test-again" class="btn-secondary btn-secondary--with-icon">
+        <svg
+          class="btn-secondary__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M15 18l-6-6 6-6"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Change Strategy
+      </button>
+      <div class="time-range-toolbar">
+        <div
+          class="time-range-selector"
+          id="time-range-selector"
+          role="group"
+          aria-label="Backtest period"
+        >
+          <button type="button" class="time-range-btn" data-lookback="1m">1M</button>
+          <button type="button" class="time-range-btn" data-lookback="1y">1Y</button>
+          <button type="button" class="time-range-btn" data-lookback="2y">2Y</button>
+          <button type="button" class="time-range-btn" data-lookback="5y">5Y</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart-panel">
+    <div id="overview-bar" class="overview-bar hidden" aria-label="Backtest overview">
+      <div class="overview-item overview-item--asset">
+        <span id="overview-asset" class="overview-asset" role="img"></span>
+      </div>
+      <div class="overview-item">
+        <span class="overview-label">Profit</span>
+        <span id="overview-profit" class="overview-value"></span>
+      </div>
+      <div class="overview-item">
+        <span class="overview-label">Start capital</span>
+        <span id="overview-start" class="overview-value"></span>
+      </div>
+      <div class="overview-item">
+        <span class="overview-label">End capital</span>
+        <span id="overview-end" class="overview-value"></span>
+      </div>
+      <div class="overview-item">
+        <span class="overview-label">Capital deployed</span>
+        <span id="overview-factor" class="overview-value"></span>
+      </div>
+      <div class="overview-item">
+        <span class="overview-label">Max drawdown</span>
+        <span id="overview-drawdown" class="overview-value"></span>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart"></canvas>
+    </div>
+    <section id="strategy-description-section" class="strategy-description hidden" aria-labelledby="strategy-description-heading">
+      <h2 id="strategy-description-heading">Strategy description</h2>
+      <p id="strategy-description-body"></p>
+    </section>
+    </div>
+    <section id="explanation-section" class="strategy-explanation hidden" aria-labelledby="explanation-heading">
+      <h2 id="explanation-heading">Your strategy, explained</h2>
+      <p id="explanation-body"></p>
+    </section>
+    <p id="alignment-note" class="alignment-note hidden"></p>
+    <section id="trades-section" class="trades-section hidden" aria-labelledby="trades-heading">
+      <h2 id="trades-heading">Trades</h2>
+      <div id="trades-wrap" class="trades-wrap hidden"></div>
+      <p id="trades-empty" class="trades-empty hidden">No closed trades in this window.</p>
+    </section>
+  </div>
+
+  <section id="successful-strategies" class="successful-section" aria-labelledby="successful-heading">
+    <h2 id="successful-heading" class="successful-section__heading">Successful strategies</h2>
+    <p class="successful-section__intro">Curated strategies backtested on the last year of BTCUSDT, starting from $1,000.</p>
+    <div class="success-grid">
+      <article class="success-card" data-preset="success1">
+        <div class="success-card__head">
+          <h3 class="success-card__title">Strategy 1</h3>
+          <span class="success-card__return" data-role="return">—</span>
+        </div>
+        <div class="success-card__chart">
+          <canvas data-role="chart"></canvas>
+        </div>
+        <div class="success-card__status" data-role="status">Loading…</div>
+      </article>
+      <article class="success-card" data-preset="success2">
+        <div class="success-card__head">
+          <h3 class="success-card__title">Strategy 2</h3>
+          <span class="success-card__return" data-role="return">—</span>
+        </div>
+        <div class="success-card__chart">
+          <canvas data-role="chart"></canvas>
+        </div>
+        <div class="success-card__status" data-role="status">Loading…</div>
+      </article>
+      <article class="success-card" data-preset="success3">
+        <div class="success-card__head">
+          <h3 class="success-card__title">Strategy 3</h3>
+          <span class="success-card__return" data-role="return">—</span>
+        </div>
+        <div class="success-card__chart">
+          <canvas data-role="chart"></canvas>
+        </div>
+        <div class="success-card__status" data-role="status">Loading…</div>
+      </article>
+    </div>
+  </section>
+  </main>
+
+  <footer class="site-footer">
+    <a href="https://benjaminkrueger.com/imprint">Imprint</a>
+    <span aria-hidden="true"> | </span>
+    <a href="https://benjaminkrueger.com/data-policy.html">Data Policy</a>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
