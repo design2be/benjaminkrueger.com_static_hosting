@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Kostenlosen BSDEX-Steuerbericht (FIFO) im Browser erstellen: CSV einfügen, ohne Upload, offline. Keine Steuerberatung."
+    />
+    <meta
+      name="keywords"
+      content="BSDEX Steuerbericht kostenlos, Kostenloser BSDEX Steuerbericht, Steuerbericht BSDEX herunterladen, blockpit kostenlos"
+    />
+    <title>Kostenlosen BSDEX-Steuerbericht erstellen (FIFO)</title>
+    <link rel="stylesheet" href="./style.css" />
+    
+   
+
+      <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W9RN3HLBTE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-W9RN3HLBTE');
+    </script>
+
+  </head>
+  <body>
+    <main class="container">
+      <header class="header no-print">
+        <div>
+          <h1>BSDEX-Steuerbericht <br/>kostenlos erstellen</h1>
+          <ul class="trustPoints" aria-label="Datenschutz und Nutzung">
+            <li>Keine Dateien werden irgendwohin hochgeladen</li>
+            <li>Läuft nur im Browser (offline)</li>
+            <li>Kostenlos nutzbar</li>
+            <li class="trustPointsCross">Nicht rechtlich geprüft</li>
+          </ul>
+        </div>
+      </header>  
+
+      <section class="uploadCard no-print">
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="CSV per Drag-and-Drop oder Dateiauswahl hochladen">
+          <svg class="dropzoneIcon" width="52" height="52" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" opacity="0.92" />
+          </svg>
+          <div class="dropzoneTitle">BSDEX-CSV hier hochladen</div>
+        
+          <div class="dropzoneHint">
+            <span class="dropzoneCta">Datei auswählen</span>
+            <span class="dropzoneHintRest">oder hier ablegen</span>
+          </div>
+          <input id="fileInput" class="fileInput" type="file" accept=".csv,text/csv" />
+        </div>
+    
+    
+        <div class="uploadMeta">
+          <div id="fileMeta" class="fileMeta"></div>
+          <div id="status" class="status" aria-live="polite"></div>
+        </div>
+      </section>
+     
+      <section class="results">
+        <h2 class="printDocTitle">BSDEX-Steuerbericht (FIFO)</h2>
+        <div class="resultsToolbar no-print" hidden>
+          <button type="button" id="printBtn" class="printBtn">Bericht drucken</button>
+        </div>
+        <div id="reportSuccess" class="reportSuccess no-print" hidden role="status" aria-live="polite"></div>
+        <div id="errors" class="errors" hidden></div>
+        <div id="yearBoxes" class="yearBoxes"></div>
+      </section>
+
+      <section class="howto no-print">
+        <h2>So exportieren Sie die Transaktions-CSV aus der BSDEX-App</h2>
+        
+        <img class="howtoScreenshot" src="./BSDEX_Steuerbericht_kostenlos.jpg" width="100%" alt="BSDEX-Steuerbericht kostenlos erstellen" />
+      </section>
+
+      <section class="no-print">
+        <p>
+          Dieses Hilfsmittel wurde mit KI erstellt und ist keine Steuerberatung. Bitte prüfen Sie die Ergebnisse anhand Ihrer eigenen Unterlagen.
+      </p>
+      </section>
+
+      <footer class="footer no-print">
+        <nav class="footerLegal" aria-label="Rechtliches">
+          <a href="https://benjaminkrueger.com/imprint.html" rel="noopener noreferrer">Imprint</a>
+          <span class="footerSep" aria-hidden="true">|</span>
+          <a href="https://benjaminkrueger.com/imprint.html" rel="noopener noreferrer">Data policy</a>
+        </nav>
+      </footer>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
