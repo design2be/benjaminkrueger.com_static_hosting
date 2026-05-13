@@ -33,7 +33,7 @@
         <div>
           <h1>BSDEX-Steuerbericht <br/>kostenlos erstellen</h1>
           <ul class="trustPoints" aria-label="Datenschutz und Nutzung">
-            <li>Keine Dateien werden irgendwohin hochgeladen</li>
+            <li>Keine Dateien werden hochgeladen</li>
             <li>Läuft nur im Browser (offline)</li>
             <li>Kostenlos nutzbar</li>
             <li class="trustPointsCross">Nicht rechtlich geprüft</li>
@@ -60,10 +60,21 @@
           <div id="fileMeta" class="fileMeta"></div>
           <div id="status" class="status" aria-live="polite"></div>
         </div>
+        <div class="sampleReportWrap no-print">
+          <button type="button" id="sampleReportBtn" class="sampleReportBtn">
+            Beispielbericht anzeigen
+          </button>
+        </div>
       </section>
      
       <section class="results">
         <h2 class="printDocTitle">BSDEX-Steuerbericht (FIFO)</h2>
+        <div id="sampleBanner" class="sampleBanner" hidden role="status">
+          <span class="sampleBannerMark">Beispielbericht</span>
+          <p class="sampleBannerText">
+            Nur Demo-Daten — kein echter Export. Für die Steuer bitte deine eigene BSDEX-CSV verwenden.
+          </p>
+        </div>
         <div class="resultsToolbar no-print" hidden>
           <button type="button" id="printBtn" class="printBtn">Bericht drucken</button>
         </div>

@@ -338,6 +338,80 @@ h1 {
   box-shadow: none;
 }
 
+.sampleReportWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.sampleReportBtn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(100, 116, 139, 0.45);
+  text-underline-offset: 3px;
+  border-radius: 6px;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.sampleReportBtn:hover {
+  color: #475569;
+  text-decoration-color: rgba(71, 85, 105, 0.55);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.sampleReportBtn:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.45);
+  outline-offset: 2px;
+}
+
+.sampleBanner {
+  margin: 0 0 18px;
+  padding: 22px 20px 24px;
+  border-radius: 14px;
+  border: 4px solid #d97706;
+  background: linear-gradient(165deg, #fffbeb 0%, #fef3c7 45%, #fde68a 100%);
+  box-shadow:
+    0 0 0 1px rgba(180, 83, 9, 0.12),
+    0 10px 28px rgba(180, 83, 9, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.sampleBanner[hidden] {
+  display: none !important;
+}
+
+.sampleBannerMark {
+  display: block;
+  max-width: 100%;
+  font-size: clamp(1.65rem, 7.5vw, 3.25rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1.1;
+  color: #9a3412;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.55);
+  text-wrap: balance;
+}
+
+.sampleBannerText {
+  margin: 0;
+  max-width: 38em;
+  font-size: clamp(14px, 2.4vw, 17px);
+  font-weight: 650;
+  line-height: 1.45;
+  color: #78350f;
+}
+
 .printDocTitle {
   display: none;
 }
@@ -607,5 +681,31 @@ h1 {
 
   .txTable th {
     background: #f1f5f9;
+  }
+
+  .sampleBanner {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 14pt;
+    padding: 14pt 16pt;
+    border: 3pt solid #000;
+    border-radius: 4pt;
+    background: #fff8e1;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sampleBannerMark {
+    font-size: 22pt;
+    letter-spacing: 0.05em;
+    color: #000;
+    text-shadow: none;
+  }
+
+  .sampleBannerText {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #000;
   }
 }

@@ -9,8 +9,17 @@
   const errorsEl = document.getElementById("errors");
   const reportSuccessEl = document.getElementById("reportSuccess");
   const printBtn = document.getElementById("printBtn");
+  const sampleReportBtn = document.getElementById("sampleReportBtn");
+  const sampleBannerEl = document.getElementById("sampleBanner");
   const INVENTORY_CSV_HINT_DE =
     "Stelle sicher, dass ALLE Transaktionen im CSV sind. Dazu das früheste Datum im Export auswählen";
+
+  /** Minimal BSDEX-shaped CSV for demo (two trades: buy then sell same year). */
+  const SAMPLE_BSDEX_CSV = [
+    "Transaction type;Asset id;Amount;Side;Filled;Quote filled;Quote quantity;Fee;Created;Finalized at;Order status;Fill status;Source address;Target address;IBAN",
+    "Market;BTC;0,05 BTC;Buy;;0,05 BTC;2.500,00 EUR;5,00 EUR;02.01.2025, 09:00;02.01.2025, 09:01;Filled;Complete;;;",
+    "Market;BTC;0,05 BTC;Sell;3.100,00 EUR;0,05 BTC;;5,00 EUR;15.07.2025, 11:00;15.07.2025, 11:01;Filled;Complete;;;",
+  ].join("\n");
 
   function setStatus(msg) {
     statusEl.textContent = msg || "";
@@ -30,6 +39,11 @@
     if (!reportSuccessEl) return;
     reportSuccessEl.hidden = true;
     reportSuccessEl.textContent = "";
+  }
+
+  function setSampleBanner(visible) {
+    if (!sampleBannerEl) return;
+    sampleBannerEl.hidden = !visible;
   }
 
   function showReportSuccess(yearCount) {
@@ -736,9 +750,31 @@
     return row;
   }
 
+  function processCsvText(text, { isSample = false } = {}) {
+    setSampleBanner(false);
+    setStatus("CSV wird ausgewertet …");
+    const parsed = parseCSV(text);
+
+    setStatus("Zeilen werden normalisiert …");
+    const { events, warnings } = normalizeEvents(parsed);
+
+    setStatus("FIFO und Haltefrist werden angewendet …");
+    const { processed, inventoryWarnings } = fifoProcess(events);
+
+    setStatus("Bericht wird erstellt …");
+    const years = summarizeByYear(processed);
+    renderReport(years, warnings, inventoryWarnings);
+
+    setSampleBanner(isSample);
+    showReportSuccess(years.length);
+    setStatus(`Fertig. ${events.length} relevante Ereignisse verarbeitet.`);
+    document.querySelector(".results")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   async function handleFile(file) {
     clearError();
     clearReportSuccess();
+    setSampleBanner(false);
     yearBoxes.innerHTML = "";
     syncPrintButton();
     if (!file) return;
@@ -747,25 +783,30 @@
       fileMeta.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
       setStatus("Datei wird gelesen …");
       const text = await file.text();
-
-      setStatus("CSV wird ausgewertet …");
-      const parsed = parseCSV(text);
-
-      setStatus("Zeilen werden normalisiert …");
-      const { events, warnings } = normalizeEvents(parsed);
-
-      setStatus("FIFO und Haltefrist werden angewendet …");
-      const { processed, inventoryWarnings } = fifoProcess(events);
-
-      setStatus("Bericht wird erstellt …");
-      const years = summarizeByYear(processed);
-      renderReport(years, warnings, inventoryWarnings);
-
-      showReportSuccess(years.length);
-      setStatus(`Fertig. ${events.length} relevante Ereignisse verarbeitet.`);
+      processCsvText(text, { isSample: false });
     } catch (err) {
       console.error(err);
       clearReportSuccess();
+      setSampleBanner(false);
+      showError(err instanceof Error ? err.message : String(err));
+      setStatus("Fehler.");
+      syncPrintButton();
+    }
+  }
+
+  function loadSampleReport() {
+    clearError();
+    clearReportSuccess();
+    setSampleBanner(false);
+    yearBoxes.innerHTML = "";
+    syncPrintButton();
+    try {
+      fileMeta.textContent = "Beispiel-BSDEX-Export (Demo)";
+      processCsvText(SAMPLE_BSDEX_CSV, { isSample: true });
+    } catch (err) {
+      console.error(err);
+      clearReportSuccess();
+      setSampleBanner(false);
       showError(err instanceof Error ? err.message : String(err));
       setStatus("Fehler.");
       syncPrintButton();
@@ -813,5 +854,9 @@
 
   printBtn?.addEventListener("click", () => {
     window.print();
+  });
+
+  sampleReportBtn?.addEventListener("click", () => {
+    loadSampleReport();
   });
 })();
