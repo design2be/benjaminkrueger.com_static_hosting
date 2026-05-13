@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-17",
+  "updatedAt": "2026-05-13",
   "projects": [
     {
       "id": "mvp-01",
@@ -9,8 +9,8 @@
       "cardColor": "#f5f5f5",
       "tone": "light",
       "imageColor": "#f97316",
-      "cardImage": "./assets/card_social_reply.jpg",
-      "detailImages": ["./assets/screenshot_social_reply_1.jpg"],
+      "cardImage": "./img/socialreply/card_social_reply.jpg",
+      "detailImages": ["./img/socialreply/screenshot_social_reply_1.jpg"],
       "gradient": "linear-gradient(135deg, #7c3aed 0%, #ec4899 45%, #f97316 100%)",
       "thumbnail": "./socialreply/assets/social_reply_logo.png",
       "problem": "Social Media Comment Suggestions is a lightweight assistant that helps people reply faster (and better) in comment threads.",
@@ -32,8 +32,8 @@
       "cardColor": "#FEE2B9",
       "tone": "light",
       "imageColor": "#60a5fa",
-      "cardImage": "./assets/card_auto_cut.jpg",
-      "detailImages": ["./assets/screenshot_cuttyai_1.jpg", "./assets/screenshot_cuttyai_2.jpg", "./assets/screenshot_cuttyai_3.jpg"],
+      "cardImage": "./img/cutty/card_auto_cut.jpg",
+      "detailImages": ["./img/cutty/screenshot_cuttyai_1.jpg", "./img/cutty/screenshot_cuttyai_2.jpg", "./img/cutty/screenshot_cuttyai_3.jpg"],
       "status": "building",
       "launchDate": "2026-03",
       "problem": "Creators waste time scrubbing timelines. They want to cut videos by selecting text, not dragging handles.",
@@ -51,8 +51,8 @@
       "cardColor": "#0F1114",
       "tone": "dark",
       "imageColor": "#ec4899",
-      "cardImage": "./assets/card_epic_photo_ai.jpg",
-      "detailImages": ["./assets/screenshot_epicphotoai_1.jpg", "./assets/screenshot_epicphotoai_2.jpg"],
+      "cardImage": "./img/epicphoto/card_epic_photo_ai.jpg",
+      "detailImages": ["./img/epicphoto/screenshot_epicphotoai_1.jpg", "./img/epicphoto/screenshot_epicphotoai_2.jpg"],
       "gradient": "linear-gradient(135deg, #0b0b0f 0%, #7c3aed 45%, #ec4899 100%)",
       "thumbnail": "./epicphoto/assets/epicphotoai.png",
       "problem": "EpicPhotoAI turns a handful of uploads into professional-looking photos in different styles—ideal for dating profiles, social media, and personal branding without booking a shoot.",
@@ -64,6 +64,46 @@
       "links": [
         { "label": "Visit EpicPhotoAI", "href": "https://epicphoto.ai/", "kind": "primary" },
         { "label": "Open the app", "href": "https://epicphoto.ai/app/", "kind": "secondary" }
+      ]
+    },
+    {
+      "id": "mvp-03",
+      "name": "backtestAI",
+      "shortDescription": "Describe a trading strategy in plain language and get a quick historical backtest with charts—no spreadsheet workflow required.",
+      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\"><span class=\"project-card__title-line\">Trading Strategies</span><span class=\"project-card__title-line\">validated by AI.</span></h3><p class=\"project-card__desc project-card__desc--dark\">Describe a trading strategy in plain language and get a quick historical backtest with charts—no spreadsheet workflow required.</p>",
+      "cardColor": "#E5E7EB",
+      "tone": "light",
+      "imageColor": "#22c55e",
+      "cardImage": "./img/backtestai/card_backtestai.jpg",
+      "detailImages": ["./img/backtestai/screenshot_backtestai_1.jpg", "./img/backtestai/screenshot_backtestai_2.jpg"],
+      "gradient": "linear-gradient(135deg, #0b0f14 0%, #14532d 50%, #22c55e 100%)",
+      "problem": "Traders want a fast way to sanity-check whether a strategy idea would have behaved reasonably in the past before investing more time in implementation.",
+      "status": "completed",
+      "launchDate": "2026-05",
+      "detailHtml": "./content/projects/mvp-03.html",
+      "primaryCtaLabel": "Try backtestAI",
+      "links": [
+        { "label": "Try backtestAI", "href": "./backtestai/", "kind": "primary" }
+      ]
+    },
+    {
+      "id": "mvp-04",
+      "name": "BSDEX Tax Report (free)",
+      "shortDescription": "Paste your BSDEX CSV and generate a FIFO report in the browser — no upload, processing stays local. Not tax advice.",
+      "cardContent": "<h3 class=\"project-card__title\">BSDEX Tax Report</h3><p class=\"project-card__desc\">FIFO report from your BSDEX CSV in the browser — no file upload, processing only on your device.</p>",
+      "cardColor": "#6031EB",
+      "tone": "dark",
+      "imageColor": "#6031EB",
+      "cardImage": "./img/bsdex-steuerbericht-kostenlos/card_bsdex_steuerbericht.jpg",
+      "detailImages": ["./img/bsdex-steuerbericht-kostenlos/screenshot_bsdex_steuerbericht_1.jpg", "./img/bsdex-steuerbericht-kostenlos/screenshot_bsdex_steuerbericht_2.jpg"],
+      "gradient": "linear-gradient(135deg, #4c1d95 0%, #6031eb 50%, #818cf8 100%)",
+      "problem": "BSDEX users often need a clear FIFO overview for taxes — without sending data to the cloud.",
+      "status": "completed",
+      "launchDate": "2026-05",
+      "detailHtml": "./content/projects/mvp-04.html",
+      "primaryCtaLabel": "Create Report",
+      "links": [
+        { "label": "Create Report", "href": "./bsdex-steuerbericht-kostenlos/", "kind": "primary" }
       ]
     }
   ]

@@ -632,6 +632,8 @@ button.btn-secondary .btn-secondary__icon {
   border: 1px solid rgb(220, 220, 220);
   border-radius: 8px;
   background: #ffffff;
+  max-height: 420px;
+  overflow-y: auto;
 }
 table.trades-table {
   width: 100%;
@@ -793,21 +795,11 @@ table.trades-table td.trade-pnl--flat {
 .success-card__status--error {
   color: #82071e;
 }
-.site-disclaimer {
-  text-align: center;
-  font-size: 11px;
-  line-height: 1.45;
-  max-width: 36rem;
-  margin: 200px auto 0;
-  padding: 0 1rem 0.5rem;
-  color: #666;
-}
-
 .site-footer {
   text-align: center;
   font-size: 11px;
-  margin-top: 0;
-  padding: 0.5rem 1rem 2rem;
+  margin-top: 200px;
+  padding: 1.5rem 1rem 2rem;
   color: #666;
 }
 .site-footer a {

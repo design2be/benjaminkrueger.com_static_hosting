@@ -1214,6 +1214,17 @@ p {
   background: #0068d1;
 }
 
+.project-detail[data-project-id="mvp-04"].project-detail--tone-dark .project-detail__cta .btn--action-primary {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #0F1114;
+}
+
+.project-detail[data-project-id="mvp-04"].project-detail--tone-dark .project-detail__cta .btn--action-primary:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: #0F1114;
+}
+
 .project-detail--tone-dark::before {
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0) 100%);
   opacity: 0.95;

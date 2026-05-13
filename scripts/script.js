@@ -272,7 +272,11 @@ function parseProjectDate(raw) {
 
 function projectSortKey(project) {
   const d = parseProjectDate(project?.launchDate || project?.date || project?.createdAt);
-  return d ? d.getTime() : -Infinity;
+  const time = d ? d.getTime() : -Infinity;
+  const isBuilding =
+    String(project?.status || "").trim().toLowerCase() === "building";
+  // renderProjects sorts descending by this key; keep "building" leftmost ahead of launch-date order.
+  return isBuilding ? 1e15 + time : time;
 }
 
 function getProjectStateLabel(project) {
