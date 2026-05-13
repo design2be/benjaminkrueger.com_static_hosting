@@ -11,9 +11,17 @@
   box-sizing: border-box;
 }
 
+:root {
+  --primary: #6031eb;
+  --primary-rgb: 96, 49, 235;
+  --primary-strong: #5020c9;
+  --primary-gradient-high: #8557f7;
+  --primary-border-deep: rgba(76, 39, 188, 0.45);
+}
+
 body {
   margin: 0;
-  background: radial-gradient(1000px 600px at 30% -10%, #e0f2fe 0%, rgba(224, 242, 254, 0) 60%),
+  background: radial-gradient(1000px 600px at 30% -10%, #f5f3ff 0%, rgba(245, 243, 255, 0) 60%),
     radial-gradient(900px 500px at 80% 0%, #ede9fe 0%, rgba(237, 233, 254, 0) 55%),
     #f8fafc;
 }
@@ -36,6 +44,7 @@ h1 {
   font-weight: 800;
   letter-spacing: -0.03em;
   text-align: center;
+  color: var(--primary);
 }
 
 .subtitle {
@@ -95,13 +104,13 @@ h1 {
   min-height: 340px;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(239, 246, 255, 0.75) 100%);
-  border: 2px solid rgba(59, 130, 246, 0.35);
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 243, 255, 0.75) 100%);
+  border: 2px solid rgba(var(--primary-rgb), 0.35);
   border-radius: 16px;
   padding: 18px 18px 16px;
   box-shadow:
     0 1px 2px rgba(15, 23, 42, 0.06),
-    0 16px 40px rgba(37, 99, 235, 0.12);
+    0 16px 40px rgba(var(--primary-rgb), 0.12);
   margin-bottom: 22px;
 }
 
@@ -111,7 +120,7 @@ h1 {
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: #1d4ed8;
+  color: var(--primary-strong);
   text-align: center;
 }
 
@@ -119,7 +128,7 @@ h1 {
   position: relative;
   flex: 1;
   min-height: 220px;
-  border: 2px dashed rgba(37, 99, 235, 0.45);
+  border: 2px dashed rgba(var(--primary-rgb), 0.45);
   border-radius: 14px;
   padding: 28px 20px 26px;
   display: flex;
@@ -127,7 +136,7 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(239, 246, 255, 0.65) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 243, 255, 0.65) 100%);
   outline: none;
   cursor: pointer;
   transition:
@@ -137,29 +146,29 @@ h1 {
 }
 
 .dropzone:hover {
-  border-color: rgba(37, 99, 235, 0.65);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(219, 234, 254, 0.55) 100%);
-  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+  border-color: rgba(var(--primary-rgb), 0.65);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(237, 233, 254, 0.55) 100%);
+  box-shadow: inset 0 0 0 1px rgba(var(--primary-rgb), 0.12);
 }
 
 .dropzone:focus-visible {
-  border-color: rgba(37, 99, 235, 0.85);
+  border-color: rgba(var(--primary-rgb), 0.85);
   box-shadow:
-    inset 0 0 0 1px rgba(59, 130, 246, 0.15),
-    0 0 0 3px rgba(59, 130, 246, 0.35);
+    inset 0 0 0 1px rgba(var(--primary-rgb), 0.15),
+    0 0 0 3px rgba(var(--primary-rgb), 0.35);
 }
 
 .dropzone.dragOver {
-  border-color: rgba(37, 99, 235, 0.95);
+  border-color: rgba(var(--primary-rgb), 0.95);
   border-style: solid;
-  background: rgba(219, 234, 254, 0.75);
-  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background: rgba(237, 233, 254, 0.75);
+  box-shadow: inset 0 0 0 2px rgba(var(--primary-rgb), 0.2);
 }
 
 .dropzoneIcon {
   flex-shrink: 0;
-  color: #2563eb;
-  filter: drop-shadow(0 2px 6px rgba(37, 99, 235, 0.25));
+  color: var(--primary);
+  filter: drop-shadow(0 2px 6px rgba(var(--primary-rgb), 0.25));
 }
 
 .dropzoneTitle {
@@ -204,11 +213,11 @@ h1 {
   font-weight: 700;
   font-size: clamp(14px, 2.2vw, 17px);
   color: #fff;
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
-  border: 1px solid rgba(30, 64, 175, 0.45);
+  background: linear-gradient(180deg, var(--primary-gradient-high) 0%, var(--primary) 100%);
+  border: 1px solid var(--primary-border-deep);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 2px 6px rgba(37, 99, 235, 0.35);
+    0 2px 6px rgba(var(--primary-rgb), 0.35);
   pointer-events: none;
 }
 
@@ -317,11 +326,11 @@ h1 {
   cursor: pointer;
   padding: 10px 16px;
   border-radius: 10px;
-  border: 1px solid rgba(30, 64, 175, 0.45);
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  border: 1px solid var(--primary-border-deep);
+  background: linear-gradient(180deg, var(--primary-gradient-high) 0%, var(--primary) 100%);
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.2) inset,
-    0 2px 6px rgba(37, 99, 235, 0.28);
+    0 2px 6px rgba(var(--primary-rgb), 0.28);
 }
 
 .printBtn:hover:not(:disabled) {
@@ -367,7 +376,7 @@ h1 {
 }
 
 .sampleReportBtn:focus-visible {
-  outline: 2px solid rgba(59, 130, 246, 0.45);
+  outline: 2px solid rgba(var(--primary-rgb), 0.45);
   outline-offset: 2px;
 }
 
@@ -566,7 +575,7 @@ h1 {
 }
 
 .tag.transfer {
-  background: rgba(219, 234, 254, 0.75);
+  background: rgba(237, 233, 254, 0.75);
 }
 
 .tag.warn {
