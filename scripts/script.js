@@ -1,8 +1,21 @@
 const PROJECTS_JSON_URL = "./data/projects.json";
+const RESOURCES_JSON_URL = "./data/resources.json";
+const SITE_CONFIG = window.SITE_CONFIG || {};
+const isLocalPage = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+const configuredSignupApiBase = String(
+  isLocalPage
+    ? SITE_CONFIG.localSignupApiBaseUrl || SITE_CONFIG.signupApiBaseUrl || ""
+    : SITE_CONFIG.signupApiBaseUrl || "",
+).replace(/\/+$/, "");
+const RESOURCE_REQUEST_URL = configuredSignupApiBase ? `${configuredSignupApiBase}/signup` : "/signup";
+const DEFAULT_RESOURCE_ID = "early-access";
 
 let waitlistModalLastActive = null;
 let waitlistModalScrollY = 0;
 let waitlistModalScrollLocked = false;
+let resourcesPromise = null;
+let resourceConfig = null;
+let activeWaitlistResourceId = DEFAULT_RESOURCE_ID;
 
 function focusNoScroll(el) {
   if (!(el instanceof HTMLElement)) return;
@@ -46,19 +59,138 @@ function unlockWaitlistBackgroundScroll() {
   window.scrollTo({ top: y, behavior: "auto" });
 }
 
+function normalizeResourceEntry(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const id = String(raw.id || "").trim();
+  if (!id) return null;
+  return {
+    id,
+    overlayTitle: String(raw.overlayTitle || "").trim() || "Get Early Access",
+    overlayDescription:
+      String(raw.overlayDescription || "").trim() ||
+      "Join the list and I will send you the requested resource.",
+    overlayButtonText: String(raw.overlayButtonText || "").trim() || "Request Access",
+  };
+}
+
+function fallbackResourceEntry(resourceId = DEFAULT_RESOURCE_ID) {
+  const id = String(resourceId || DEFAULT_RESOURCE_ID).trim() || DEFAULT_RESOURCE_ID;
+  return {
+    id,
+    overlayTitle: "Get Early Access",
+    overlayDescription:
+      "Confirm your email to join the newsletter and receive launch notes, useful resources, and new product updates.",
+    overlayButtonText: "Send Confirmation",
+  };
+}
+
+function normalizeResourceConfig(data) {
+  const resources = Array.isArray(data?.resources) ? data.resources : [];
+  const byId = new Map();
+  for (const item of resources) {
+    const entry = normalizeResourceEntry(item);
+    if (entry) byId.set(entry.id, entry);
+  }
+  const defaultIdRaw = String(data?.defaultResourceId || DEFAULT_RESOURCE_ID).trim();
+  const defaultResourceId = byId.has(defaultIdRaw) ? defaultIdRaw : byId.keys().next().value || DEFAULT_RESOURCE_ID;
+  return { byId, defaultResourceId };
+}
+
+async function loadResourceConfig() {
+  if (resourceConfig) return resourceConfig;
+  if (!resourcesPromise) {
+    resourcesPromise = fetch(RESOURCES_JSON_URL, { cache: "no-store" })
+      .then((res) => {
+        if (!res.ok) throw new Error(`Failed to load resources (${res.status})`);
+        return res.json();
+      })
+      .then((data) => {
+        resourceConfig = normalizeResourceConfig(data);
+        return resourceConfig;
+      })
+      .catch((err) => {
+        resourcesPromise = null;
+        throw err;
+      });
+  }
+  return resourcesPromise;
+}
+
+function getWaitlistResourceSync(resourceId) {
+  const requestedId = String(resourceId || "").trim();
+  const config = resourceConfig;
+  if (!config) return fallbackResourceEntry(requestedId || DEFAULT_RESOURCE_ID);
+  const id = requestedId || config.defaultResourceId;
+  return config.byId.get(id) || config.byId.get(config.defaultResourceId) || fallbackResourceEntry(id);
+}
+
 function getWaitlistModalEls() {
   const root = document.getElementById("waitlist-modal");
   if (!(root instanceof HTMLElement)) return null;
   const dialog = root.querySelector(".waitlist-modal__dialog");
   const email = root.querySelector('input[name="email"]');
+  const form = root.querySelector("[data-waitlist-form]");
+  const resourceIdInput = root.querySelector("[data-waitlist-resource-id]");
+  const title = root.querySelector("[data-waitlist-title]");
+  const desc = root.querySelector("[data-waitlist-desc]");
+  const submit = root.querySelector("[data-waitlist-submit]");
+  const submitLabel = root.querySelector("[data-waitlist-submit-label]");
+  const status = root.querySelector("[data-waitlist-status]");
   if (!(dialog instanceof HTMLElement)) return null;
   const emailInput = email instanceof HTMLInputElement ? email : null;
-  return { root, dialog, emailInput };
+  return {
+    root,
+    dialog,
+    emailInput,
+    form: form instanceof HTMLFormElement ? form : null,
+    resourceIdInput: resourceIdInput instanceof HTMLInputElement ? resourceIdInput : null,
+    title: title instanceof HTMLElement ? title : null,
+    desc: desc instanceof HTMLElement ? desc : null,
+    submit: submit instanceof HTMLButtonElement ? submit : null,
+    submitLabel: submitLabel instanceof HTMLElement ? submitLabel : null,
+    status: status instanceof HTMLElement ? status : null,
+  };
 }
 
 function isWaitlistModalOpen() {
   const els = getWaitlistModalEls();
   return Boolean(els && !els.root.hidden);
+}
+
+function renderWaitlistResource(resource) {
+  const els = getWaitlistModalEls();
+  if (!els) return;
+  const entry = resource || fallbackResourceEntry();
+  activeWaitlistResourceId = entry.id;
+  if (els.title) els.title.innerHTML = entry.overlayTitle;
+  if (els.desc) els.desc.innerHTML = entry.overlayDescription;
+  if (els.submitLabel) els.submitLabel.textContent = entry.overlayButtonText;
+  if (els.resourceIdInput) els.resourceIdInput.value = entry.id;
+}
+
+function setWaitlistStatus(message, { variant } = {}) {
+  const els = getWaitlistModalEls();
+  if (!els?.status) return;
+  els.status.textContent = message || "";
+  els.status.classList.toggle("waitlist-form__status--error", variant === "error");
+  els.status.classList.toggle("waitlist-form__status--success", variant === "success");
+}
+
+function setWaitlistLoading(isLoading) {
+  const els = getWaitlistModalEls();
+  if (!els?.submit) return;
+  els.submit.disabled = Boolean(isLoading);
+  els.submit.setAttribute("aria-busy", isLoading ? "true" : "false");
+  if (els.submitLabel) {
+    const resource = getWaitlistResourceSync(activeWaitlistResourceId);
+    els.submitLabel.textContent = isLoading ? "Sending..." : resource.overlayButtonText;
+  }
+}
+
+function isValidWaitlistEmail(value) {
+  const email = String(value || "").trim();
+  if (!email || email.length > 254) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(email);
 }
 
 function closeWaitlistModal({ restoreFocus = true } = {}) {
@@ -76,9 +208,11 @@ function closeWaitlistModal({ restoreFocus = true } = {}) {
   waitlistModalLastActive = null;
 }
 
-function openWaitlistModal({ focus = true } = {}) {
+function openWaitlistModal({ focus = true, resourceId = "" } = {}) {
   const els = getWaitlistModalEls();
   if (!els) return;
+  const requestedResourceId = String(resourceId || "").trim() || DEFAULT_RESOURCE_ID;
+  renderWaitlistResource(getWaitlistResourceSync(requestedResourceId));
 
   if (!isWaitlistModalOpen()) {
     waitlistModalLastActive = document.activeElement;
@@ -90,6 +224,18 @@ function openWaitlistModal({ focus = true } = {}) {
   if (els.emailInput) {
     els.emailInput.value = "";
   }
+  setWaitlistStatus("");
+  setWaitlistLoading(false);
+
+  loadResourceConfig()
+    .then((config) => {
+      const resource = config.byId.get(requestedResourceId) || config.byId.get(config.defaultResourceId);
+      renderWaitlistResource(resource || fallbackResourceEntry(requestedResourceId));
+      setWaitlistLoading(false);
+    })
+    .catch(() => {
+      setWaitlistStatus("Could not load this resource right now. Please try again.", { variant: "error" });
+    });
 
   // Ensure focus happens after layout is updated.
   if (focus) {
@@ -113,7 +259,43 @@ function initWaitlistModal() {
     const openEl = target?.closest("[data-waitlist-open]");
     if (!openEl) return;
     e.preventDefault();
-    openWaitlistModal();
+    const resourceId =
+      openEl instanceof HTMLElement ? String(openEl.dataset.resourceId || "").trim() : "";
+    openWaitlistModal({ resourceId });
+  });
+
+  els.form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = String(els.emailInput?.value || "").trim();
+    const resourceId = String(els.resourceIdInput?.value || activeWaitlistResourceId || DEFAULT_RESOURCE_ID).trim();
+
+    if (!isValidWaitlistEmail(email)) {
+      setWaitlistStatus("Please enter a valid email address.", { variant: "error" });
+      els.emailInput?.focus();
+      return;
+    }
+
+    setWaitlistStatus("");
+    setWaitlistLoading(true);
+
+    try {
+      const res = await fetch(RESOURCE_REQUEST_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, resourceId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.detail || data?.message || "Could not submit your request.");
+      }
+      setWaitlistStatus("Thank you! Please check your inbox.", { variant: "success" });
+      if (els.emailInput) els.emailInput.value = "";
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Could not submit your request.";
+      setWaitlistStatus(message, { variant: "error" });
+    } finally {
+      setWaitlistLoading(false);
+    }
   });
 
   // Close on backdrop / close button.
@@ -259,24 +441,6 @@ function formatMonthYear(raw) {
   } catch {
     return "";
   }
-}
-
-function parseProjectDate(raw) {
-  const s = String(raw || "").trim();
-  if (!s) return null;
-  const iso = /^\d{4}-\d{2}$/.test(s) ? `${s}-01` : s;
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return null;
-  return d;
-}
-
-function projectSortKey(project) {
-  const d = parseProjectDate(project?.launchDate || project?.date || project?.createdAt);
-  const time = d ? d.getTime() : -Infinity;
-  const isBuilding =
-    String(project?.status || "").trim().toLowerCase() === "building";
-  // renderProjects sorts descending by this key; keep "building" leftmost ahead of launch-date order.
-  return isBuilding ? 1e15 + time : time;
 }
 
 function getProjectStateLabel(project) {
@@ -789,9 +953,11 @@ function renderProjectDetail(project, { cardEl } = {}) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "btn btn--action-primary";
-    btn.textContent = "Join Waitlist";
+    btn.textContent = String(project?.resourceCtaLabel || "").trim() || "Join Waitlist";
     btn.setAttribute("aria-haspopup", "dialog");
-    btn.addEventListener("click", () => openWaitlistModal());
+    const resourceId = String(project?.resourceId || project?.id || "").trim();
+    if (resourceId) btn.dataset.resourceId = resourceId;
+    btn.addEventListener("click", () => openWaitlistModal({ resourceId }));
     cta.append(btn);
   }
 
@@ -934,10 +1100,10 @@ function renderProjects(target, projects) {
     return;
   }
 
-  const sorted = [...projects].sort((a, b) => projectSortKey(b) - projectSortKey(a));
+  const orderedProjects = [...projects].reverse();
   const cards = [];
 
-  for (const [index, project] of sorted.entries()) {
+  for (const [index, project] of orderedProjects.entries()) {
     const cardEl = document.createElement("button");
     cardEl.type = "button";
     cardEl.className = "project-card project-card--selectable";
@@ -1014,7 +1180,7 @@ function renderProjects(target, projects) {
   const detailSection = document.getElementById("project-detail");
   const shouldAutoOpen = detailSection instanceof HTMLElement ? detailSection.hidden : true;
   const firstCard = cards[0];
-  const firstProject = sorted[0];
+  const firstProject = orderedProjects[0];
   if (shouldAutoOpen && firstCard instanceof HTMLElement && firstProject) {
     renderProjectDetail(firstProject, { cardEl: firstCard });
 

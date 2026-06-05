@@ -1,0 +1,26 @@
+{
+  "updatedAt": "2026-06-04",
+  "defaultResourceId": "early-access",
+  "resources": [
+    {
+      "id": "early-access",
+      "resourceTitle": "Early Access",
+      "resourceDescription": "Join the list for new product launches, useful resources, and behind-the-scenes updates as I build AI products in public.",
+      "overlayTitle": "Get Early Access",
+      "overlayDescription": "Confirm your email to join the newsletter and receive launch notes, useful resources, and new product updates.",
+      "overlayButtonText": "🚀 Join Waitlist",
+      "resourceUrl": "https://benjaminkrueger.com/",
+      "newsletterTag": "early-access"
+    },
+    {
+      "id": "caltrack-source-code",
+      "resourceTitle": "CalTrack Source Code",
+      "resourceDescription": "The CalTrack source code repository for learning from or adapting the project.",
+      "overlayTitle": "Download CalTrack Source Code",
+      "overlayDescription": "Enter your email to get the<br>CalTrack source code download link.",
+      "overlayButtonText": "🚀 Get Download Link",
+      "resourceUrl": "https://github.com/design2be/caltrack",
+      "newsletterTag": "resource-caltrack-source-code"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-13",
+  "updatedAt": "2026-06-04",
   "projects": [
     {
       "id": "mvp-01",
@@ -21,26 +21,6 @@
       "videoHref": "https://youtu.be/uRuDdRoLKHU",
       "links": [
         { "label": "See Launched Product", "href": "./socialreply/index.html", "kind": "primary" }
-      ]
-    },
-    {
-      "id": "mvp-05",
-      "name": "Your video automatically organized by script.",
-      "shortDescription": "Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect take and you’re done.",
-      "badge": "Currently Building",
-      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\">Your video automatically organized by script.</h3><p class=\"project-card__desc project-card__desc--dark\">Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect takes.</p>",
-      "cardColor": "#FEE2B9",
-      "tone": "light",
-      "imageColor": "#60a5fa",
-      "cardImage": "./img/cutty/card_auto_cut.jpg",
-      "detailImages": ["./img/cutty/screenshot_cuttyai_1.jpg", "./img/cutty/screenshot_cuttyai_2.jpg", "./img/cutty/screenshot_cuttyai_3.jpg"],
-      "status": "building",
-      "launchDate": "2026-03",
-      "problem": "Creators waste time scrubbing timelines. They want to cut videos by selecting text, not dragging handles.",
-      "detailHtml": "./content/projects/mvp-05.html",
-      "primaryCtaLabel": "Try cutty",
-      "links": [
-        { "href": "./cutty/", "kind": "primary" }
       ]
     },
     {
@@ -105,6 +85,44 @@
       "links": [
         { "label": "Create Report", "href": "./bsdex-steuerbericht-kostenlos/", "kind": "primary" }
       ]
+    },
+    {
+      "id": "mvp-05",
+      "name": "Your video automatically organized by script.",
+      "shortDescription": "Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect take and you’re done.",
+      "cardContent": "<h3 class=\"project-card__title project-card__title--dark\">Your video automatically organized by script.</h3><p class=\"project-card__desc project-card__desc--dark\">Save hours of editing with automatically organized, pre-cut takes. Simply choose the perfect takes.</p>",
+      "cardColor": "#FEE2B9",
+      "tone": "light",
+      "imageColor": "#60a5fa",
+      "cardImage": "./img/cutty/card_auto_cut.jpg",
+      "detailImages": ["./img/cutty/screenshot_cuttyai_1.jpg", "./img/cutty/screenshot_cuttyai_2.jpg", "./img/cutty/screenshot_cuttyai_3.jpg"],
+      "status": "completed",
+      "launchDate": "2026-03",
+      "problem": "Creators waste time scrubbing timelines. They want to cut videos by selecting text, not dragging handles.",
+      "detailHtml": "./content/projects/mvp-05.html",
+      "primaryCtaLabel": "Try cutty",
+      "links": [
+        { "href": "./cutty/", "kind": "primary" }
+      ]
+    },
+    {
+      "id": "mvp-06",
+      "name": "CalTrackAI",
+      "shortDescription": "Track calories from a photo of your food with an AI-powered meal log.",
+      "badge": "Currently Building",
+      "cardContent": "<h3 class=\"project-card__title project-card__text-gradient\">CalTrack</h3><p class=\"project-card__desc project-card__text-gradient\">Track calories from a photo of your food with an AI-powered meal log.</p>",
+      "cardColor": "#F5F4FF",
+      "tone": "light",
+      "imageColor": "#16a34a",
+      "cardImage": "./img/caltrack/card_caltrack.jpg",
+      "detailImages": ["./img/caltrack/screenshot_caltrack_1.jpg"],
+      "gradient": "linear-gradient(135deg, #052e16 0%, #16a34a 55%, #facc15 100%)",
+      "problem": "Logging meals is tedious. CalTrack makes calorie tracking faster by estimating meals from food photos and turning them into an easy daily log.",
+      "status": "building",
+      "launchDate": "2026-06",
+      "resourceId": "caltrack-source-code",
+      "resourceCtaLabel": "Download Source Code",
+      "detailHtml": "./content/projects/mvp-06.html"
     }
   ]
 }

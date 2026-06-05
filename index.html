@@ -19,8 +19,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@100..900&display=swap" rel="stylesheet">
-    <script src="https://waitlister.me/js/embed.js" defer></script>
-
     <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-W9RN3HLBTE"></script>
   <script>
@@ -53,7 +51,7 @@
       <p class="profile__tagline">
         Tech Founder | <strong>Building AI products in public</strong> | Bootstrapped &amp; Exited Fleetbird — <strong>20 million+ bookings</strong> yearly
       </p>
-      <button class="btn btn--action-primary profile__early-access" type="button" data-waitlist-open aria-haspopup="dialog">
+      <button class="btn btn--action-primary profile__early-access" type="button" data-waitlist-open data-resource-id="early-access" aria-haspopup="dialog">
         🚀 Join Waitlist
       </button>
       <p class="profile__early-access-note">
@@ -147,9 +145,9 @@
       <section class="section--fullbleed projects-section" aria-labelledby="projects-title">
         <div class="section__inner projects-section__inner">
           <div class="section__header">
-            <h2 class="section__title section__title--hero" id="projects-title">What I’m Building</h2>
+            <h2 class="section__title section__title--hero" id="projects-title">Building AI products in public.</h2>
             <div class="projects-section__subrow">
-              <p class="section__subtitle">I build minimal viral products in public and validate them in the market.</p>
+              <p class="section__subtitle"></p>
               <div class="projects-slider__controls" aria-hidden="false">
                 <button class="projects-slider__btn" id="projects-prev" type="button" aria-label="Scroll projects left">
                   <span aria-hidden="true">‹</span>
@@ -183,9 +181,9 @@
         <div class="submit-idea__layout">
           <div class="submit-idea__left">
             <div class="section__header section__header--hero">
-              <h2 class="section__title section__title--hero" id="submit-idea-title ">I turn your idea into a real product.</h2>
+              <h2 class="section__title section__title--hero" id="submit-idea-title ">Got an idea?<br/>Let's make it a reality.</h2>
               <p class="section__subtitle section__subtitle--muted">
-                Got a product idea? Let’s <span class="section__subtitle-keep">build it</span>. If it works, you earn <span class="section__subtitle-keep">a share of the revenue</span>.
+                Get in contact and we figure out how to <span class="section__subtitle-keep">build it</span>. I will point you toward the next practical step, resource, or we can build it together.
                <br/>
               </p>
             </div>
@@ -292,12 +290,41 @@
         <button class="waitlist-modal__close" type="button" data-waitlist-close aria-label="Close waitlist dialog">
           <span aria-hidden="true">×</span>
         </button>
-        
-        <div class="waitlister-form" data-waitlist-key="pb1Unekhg9aW" data-height="254px"></div>
-        
-    </div>
+        <h2 class="waitlist-modal__title" id="waitlist-title" data-waitlist-title>Get Early Access</h2>
+        <p class="waitlist-modal__desc" id="waitlist-desc" data-waitlist-desc>
+          Confirm your email to join the newsletter and receive launch notes, useful resources, and new product updates.
+        </p>
+
+        <form class="waitlist-form" data-waitlist-form novalidate>
+          <div class="form-inner-container">
+            <input type="hidden" name="resourceId" value="early-access" data-waitlist-resource-id />
+            <label class="waitlist-form__field">
+              <span class="sr-only">Email address</span>
+              <input
+                class="field__input"
+                name="email"
+                type="email"
+                inputmode="email"
+                autocomplete="email"
+                placeholder="Enter your email"
+                required
+              />
+            </label>
+            <button class="btn btn--primary waitlist-form__submit" type="submit" data-waitlist-submit>
+              <span data-waitlist-submit-label>Send Confirmation</span>
+            </button>
+            <p class="waitlist-form__status" data-waitlist-status role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
     </div>
 
+    <script>
+      window.SITE_CONFIG = {
+        localSignupApiBaseUrl: "http://localhost:8000",
+        signupApiBaseUrl: "https://api.benjaminkrueger.com"
+      };
+    </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" defer></script>
     <script src="./scripts/script.js" defer></script>
   </body>
