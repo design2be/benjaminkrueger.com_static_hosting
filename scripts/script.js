@@ -1091,6 +1091,96 @@ function scrollProjectDetailIntoView({ onlyIfNeeded = true, cardEl } = {}) {
   window.scrollTo({ top: targetY, behavior });
 }
 
+let openCurrentProjectDeepLink = null;
+let projectDeepLinkListenersAttached = false;
+
+function normalizeProjectDeepLinkHash(hashRaw) {
+  const raw = String(hashRaw || "").replace(/^#/, "").trim();
+  if (!raw) return "";
+
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    decoded = raw;
+  }
+
+  for (const prefix of ["project-card-", "project-"]) {
+    if (decoded.startsWith(prefix)) return decoded.slice(prefix.length).trim();
+  }
+
+  return decoded;
+}
+
+function getProjectDeepLinkProjectId() {
+  const params = new URLSearchParams(window.location.search || "");
+  const queryProject = String(params.get("project") || "").trim();
+  if (queryProject) return queryProject;
+
+  return normalizeProjectDeepLinkHash(window.location.hash);
+}
+
+function updateProjectDeepLinkUrl(projectId, { replace = false } = {}) {
+  const id = String(projectId || "").trim();
+  if (!id) return;
+
+  const url = new URL(window.location.href);
+  url.hash = `project-${encodeURIComponent(id)}`;
+  if (url.href === window.location.href) return;
+
+  const method = replace ? "replaceState" : "pushState";
+  window.history[method](null, "", url);
+}
+
+function scrollProjectCardIntoView(cardEl) {
+  if (!(cardEl instanceof HTMLElement)) return;
+  const behavior = prefersReducedMotion() ? "auto" : "smooth";
+  cardEl.scrollIntoView({ behavior, block: "nearest", inline: "center" });
+}
+
+function setSelectedProjectCard(cardEl) {
+  const track = document.getElementById("projects-list");
+  if (!(track instanceof HTMLElement)) return;
+
+  const cards = track.querySelectorAll(".project-card--selectable");
+  for (const node of cards) {
+    if (!(node instanceof HTMLElement)) continue;
+    const isSelected = node === cardEl;
+    node.classList.toggle("is-selected", isSelected);
+    node.setAttribute("aria-pressed", isSelected ? "true" : "false");
+  }
+}
+
+function selectProject(project, { cardEl, scroll = true, scrollCard = scroll, onlyIfNeeded = true, updateUrl = false } = {}) {
+  if (!project) return;
+
+  renderProjectDetail(project, { cardEl });
+  setSelectedProjectCard(cardEl);
+  updateProjectDetailChevron();
+
+  const projectId = typeof project?.id === "string" ? project.id.trim() : "";
+  if (updateUrl && projectId) updateProjectDeepLinkUrl(projectId);
+
+  if (scrollCard && cardEl instanceof HTMLElement) scrollProjectCardIntoView(cardEl);
+  if (scroll) {
+    window.requestAnimationFrame(() => scrollProjectDetailIntoView({ onlyIfNeeded, cardEl }));
+  }
+}
+
+function attachProjectDeepLinkListeners() {
+  if (projectDeepLinkListenersAttached) return;
+  projectDeepLinkListenersAttached = true;
+
+  const openFromUrl = () => {
+    if (typeof openCurrentProjectDeepLink === "function") {
+      openCurrentProjectDeepLink({ scroll: true });
+    }
+  };
+
+  window.addEventListener("hashchange", openFromUrl);
+  window.addEventListener("popstate", openFromUrl);
+}
+
 function renderProjects(target, projects) {
   target.replaceChildren();
   target.setAttribute("aria-busy", "false");
@@ -1102,16 +1192,21 @@ function renderProjects(target, projects) {
 
   const orderedProjects = [...projects].reverse();
   const cards = [];
+  const projectsById = new Map();
+  const cardsById = new Map();
 
   for (const [index, project] of orderedProjects.entries()) {
     const cardEl = document.createElement("button");
     cardEl.type = "button";
     cardEl.className = "project-card project-card--selectable";
     cardEl.setAttribute("aria-label", project?.name ? `Show details for ${project.name}` : "Show project details");
+    cardEl.setAttribute("aria-pressed", "false");
     const projectId = typeof project?.id === "string" ? project.id.trim() : "";
     if (projectId) {
       cardEl.dataset.projectId = projectId;
       cardEl.id = `project-card-${projectId}`;
+      projectsById.set(projectId.toLowerCase(), project);
+      cardsById.set(projectId.toLowerCase(), cardEl);
     }
 
     const bg = typeof project?.cardColor === "string" ? project.cardColor.trim() : "";
@@ -1163,9 +1258,7 @@ function renderProjects(target, projects) {
     cardEl.append(content);
 
     cardEl.addEventListener("click", () => {
-      renderProjectDetail(project, { cardEl });
-      updateProjectDetailChevron();
-      window.requestAnimationFrame(() => scrollProjectDetailIntoView({ onlyIfNeeded: true, cardEl }));
+      selectProject(project, { cardEl, scroll: true, onlyIfNeeded: true, updateUrl: true });
     });
 
     target.append(cardEl);
@@ -1174,15 +1267,30 @@ function renderProjects(target, projects) {
 
   registerAppearElements(cards);
   window.requestAnimationFrame(() => animateVisibleRegisteredInOrder());
+  attachProjectDeepLinkListeners();
+
+  openCurrentProjectDeepLink = ({ scroll = true } = {}) => {
+    const projectId = getProjectDeepLinkProjectId();
+    if (!projectId) return false;
+
+    const key = projectId.toLowerCase();
+    const project = projectsById.get(key);
+    const cardEl = cardsById.get(key);
+    if (!project || !(cardEl instanceof HTMLElement)) return false;
+
+    selectProject(project, { cardEl, scroll, onlyIfNeeded: false, updateUrl: false });
+    return true;
+  };
 
   // Pre-open the first project on initial render so visitors immediately see a detail panel.
   // (We avoid scrolling; this simply sets the initial selected state + detail content.)
   const detailSection = document.getElementById("project-detail");
   const shouldAutoOpen = detailSection instanceof HTMLElement ? detailSection.hidden : true;
+  const openedDeepLink = openCurrentProjectDeepLink({ scroll: true });
   const firstCard = cards[0];
   const firstProject = orderedProjects[0];
-  if (shouldAutoOpen && firstCard instanceof HTMLElement && firstProject) {
-    renderProjectDetail(firstProject, { cardEl: firstCard });
+  if (!openedDeepLink && shouldAutoOpen && firstCard instanceof HTMLElement && firstProject) {
+    selectProject(firstProject, { cardEl: firstCard, scroll: false });
 
     // The cards animate in, so re-measure after layout settles.
     window.requestAnimationFrame(() => updateProjectDetailChevron());
