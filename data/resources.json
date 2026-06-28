@@ -21,6 +21,16 @@
       "overlayButtonText": "🚀 Get Download Link",
       "resourceUrl": "https://github.com/design2be/caltrack",
       "newsletterTag": "resource-caltrack-source-code"
+    },
+    {
+      "id": "rockify-source-code",
+      "resourceTitle": "Rockify Source Code",
+      "resourceDescription": "The Rockify source code repository for learning from or adapting the project.",
+      "overlayTitle": "Download Rockify Source Code",
+      "overlayDescription": "Enter your email to get the<br>Rockify source code download link.",
+      "overlayButtonText": "🚀 Get Download Link",
+      "resourceUrl": "https://github.com/design2be/rockify_public",
+      "newsletterTag": "resource-rockify-source-code"
     }
   ]
 }

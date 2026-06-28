@@ -109,7 +109,6 @@
       "id": "mvp-06",
       "name": "CalTrackAI",
       "shortDescription": "Track calories from a photo of your food with an AI-powered meal log.",
-      "badge": "Currently Building",
       "cardContent": "<h3 class=\"project-card__title project-card__text-gradient\">CalTrack</h3><p class=\"project-card__desc project-card__text-gradient\">Track calories from a photo of your food with an AI-powered meal log.</p>",
       "cardColor": "#F5F4FF",
       "tone": "light",
@@ -122,7 +121,28 @@
       "launchDate": "2026-06",
       "resourceId": "caltrack-source-code",
       "resourceCtaLabel": "Download Source Code",
-      "detailHtml": "./content/projects/mvp-06.html"
+      "detailHtml": "./content/projects/mvp-06.html",
+      "videoHref": "https://youtu.be/bVeDkxdMXOs"
+    },
+    {
+      "id": "mvp-07",
+      "name": "Rockify",
+      "shortDescription": "Identify rocks by taking pictures of them using AI, with quick insights about what you found.",
+      "badge": "Currently Building",
+      "cardContent": "<h3 class=\"project-card__title project-card__text-gradient\">Rockify</h3><p class=\"project-card__desc project-card__text-gradient\">Identify rocks by taking pictures of them using AI, with quick insights about what you found.</p>",
+      "cardColor": "#CEB29A",
+      "tone": "light",
+      "imageColor": "#CEB29A",
+      "cardImage": "./img/rockify/card_rockify.jpg",
+      "detailImages": ["./img/rockify/screenshot_rockify_1.jpg"],
+      "gradient": "linear-gradient(135deg, #4a3425 0%, #CEB29A 55%, #f4e6d8 100%)",
+      "problem": "Rockify helps people identify rocks quickly by using AI to turn a picture into an easy-to-understand result.",
+      "status": "building",
+      "launchDate": "2026-06",
+      "resourceId": "rockify-source-code",
+      "resourceCtaLabel": "Download Source Code",
+      "detailHtml": "./content/projects/mvp-07.html",
+      "videoHref": "https://youtu.be/kzJJc8pVeN8"
     }
   ]
 }
