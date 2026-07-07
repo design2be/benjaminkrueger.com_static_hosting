@@ -716,6 +716,7 @@
               rel="noreferrer noopener"
               role="listitem"
               aria-label="Download for Chrome"
+              aria-haspopup="dialog"
             >
               <img class="browser-icon" src="./assets/browser-chrome.svg" alt="" aria-hidden="true" />
               <div class="browser-meta">
@@ -730,6 +731,7 @@
               rel="noreferrer noopener"
               role="listitem"
               aria-label="Download for Microsoft Edge"
+              aria-haspopup="dialog"
             >
               <img class="browser-icon" src="./assets/browser-edge.svg" alt="" aria-hidden="true" />
               <div class="browser-meta">
@@ -820,6 +822,67 @@
       </div>
     </footer>
 
+    <div class="download-popover" data-download-popover hidden>
+      <div class="download-popover-backdrop" data-download-popover-close></div>
+      <section
+        class="download-popover-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="download-popover-title"
+        aria-describedby="download-popover-description"
+        tabindex="-1"
+      >
+        <button class="download-popover-close" type="button" aria-label="Close" data-download-popover-close>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7A1 1 0 0 0 5.7 7.11L10.59 12 5.7 16.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+        <div class="download-popover-kicker">Discontinued</div>
+        <h2 class="download-popover-title" id="download-popover-title">SocialReply is no longer available</h2>
+        <p class="download-popover-description" id="download-popover-description">
+          SocialReply has been discontinued, so downloads for Chrome and Microsoft Edge are no longer offered.
+        </p>
+        <button class="download-popover-action" type="button" data-download-popover-close>Got it</button>
+      </section>
+    </div>
+
     <script src="./js/demo.js" defer></script>
+    <script>
+      const downloadPopover = document.querySelector("[data-download-popover]");
+      const downloadPopoverCard = document.querySelector(".download-popover-card");
+      let lastFocusedDownloadButton = null;
+
+      function closeDownloadPopover() {
+        if (!downloadPopover) return;
+
+        downloadPopover.hidden = true;
+        lastFocusedDownloadButton?.focus();
+      }
+
+      document.querySelectorAll(".browser-card--cta").forEach((downloadButton) => {
+        downloadButton.addEventListener("click", (event) => {
+          event.preventDefault();
+
+          if (!downloadPopover || !downloadPopoverCard) return;
+
+          lastFocusedDownloadButton = downloadButton;
+          downloadPopover.hidden = false;
+          downloadPopoverCard.focus();
+        });
+      });
+
+      document.querySelectorAll("[data-download-popover-close]").forEach((closeButton) => {
+        closeButton.addEventListener("click", closeDownloadPopover);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && downloadPopover && !downloadPopover.hidden) {
+          closeDownloadPopover();
+        }
+      });
+    </script>
   </body>
 </html>

@@ -1506,6 +1506,121 @@ body {
   outline-offset: 4px;
 }
 
+.download-popover {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.download-popover[hidden] {
+  display: none;
+}
+
+.download-popover-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.52);
+  backdrop-filter: blur(6px);
+}
+
+.download-popover-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 460px);
+  padding: 34px 30px 28px;
+  border-radius: 24px;
+  border: 1px solid rgba(15, 22, 38, 0.12);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(47, 129, 255, 0.14), transparent 42%),
+    #ffffff;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.32);
+  text-align: center;
+}
+
+.download-popover-card:focus {
+  outline: none;
+}
+
+.download-popover-card:focus-visible,
+.download-popover-action:focus-visible,
+.download-popover-close:focus-visible {
+  outline: 3px solid rgba(47, 129, 255, 0.28);
+  outline-offset: 4px;
+}
+
+.download-popover-close {
+  appearance: none;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  color: #334155;
+  cursor: pointer;
+}
+
+.download-popover-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.download-popover-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.download-popover-title {
+  margin: 16px 0 0;
+  color: #111827;
+  font-size: clamp(26px, 4.2vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.download-popover-description {
+  margin: 14px auto 0;
+  max-width: 36ch;
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.download-popover-action {
+  appearance: none;
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #2f81ff 0%, #8b5cf6 100%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(47, 129, 255, 0.2);
+}
+
 /* --- Benefits section --- */
 .benefits {
   padding: 42px 0 10px;
