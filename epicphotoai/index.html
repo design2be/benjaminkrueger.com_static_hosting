@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EpicPhotoAI</title>
+    <link rel="icon" href="./assets/favicon/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./assets/favicon/site.webmanifest" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="../css/discontinued-ribbon.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="siteHeader">
+      <nav class="siteHeader__inner" aria-label="Primary">
+        <div class="siteHeader__brand">
+          <a class="siteHeader__back" href="../index.html" aria-label="Back to main site">← Back</a>
+          <a class="siteHeader__logoLink" href="/" aria-label="Home">
+            <img
+              class="siteHeader__logo"
+              src="./assets/logo_v2_200.png"
+              alt="EpicPhotoAI logo"
+              onerror="this.onerror=null;this.src='./assets/logo.svg';"
+            />
+          </a>
+        </div>
+        <div class="siteHeader__nav">
+          <a class="siteHeader__link" href="#project-discontinued" data-discontinued-trigger>Login</a>
+          <a class="btnPrimary" href="#project-discontinued" data-discontinued-trigger>Get started</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="teaser discontinued-ribbon-host" aria-label="Teaser">
+        <span class="discontinued-ribbon">Discontinued</span>
+        <div class="teaser__media" aria-hidden="true">
+          <div class="teaser__cols" data-teaser-cols></div>
+          <div class="teaser__overlay"></div>
+        </div>
+
+        <div class="teaser__content">
+          <h1 class="teaser__headline">Create Epic<br />Photos of You</h1>
+
+          <div class="teaserDemo" aria-label="How it works">
+            <ol class="teaserDemo__steps" aria-label="Steps">
+              <li class="teaserDemo__step">
+                <span class="teaserDemo__stepIcon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      fill="currentColor"
+                      d="M11 16V8.83L8.41 11.41L7 10l5-5l5 5l-1.41 1.41L13 8.83V16zM5 20q-.83 0-1.41-.59T3 18v-3h2v3h14v-3h2v3q0 .83-.59 1.41T19 20z"
+                    />
+                  </svg>
+                </span>
+                <span class="teaserDemo__stepText">Upload your photos</span>
+              </li>
+              <li class="teaserDemo__step">
+                <span class="teaserDemo__stepIcon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      fill="currentColor"
+                      d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"
+                    />
+                  </svg>
+                </span>
+                <span class="teaserDemo__stepText">Pick a Style</span>
+              </li>
+              <li class="teaserDemo__step">
+                <span class="teaserDemo__stepIcon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path
+                      fill="currentColor"
+                      d="M21 19V5q0-.83-.59-1.41T19 3H5q-.83 0-1.41.59T3 5v14q0 .83.59 1.41T5 21h14q.83 0 1.41-.59T21 19M5 5h14v9l-3.5-3.5l-3 3L9 10l-4 4zm0 14v-3l4-4l3.5 3.5l3-3L19 16v3z"
+                    />
+                  </svg>
+                </span>
+                <span class="teaserDemo__stepText">Generate Epic Photos</span>
+              </li>
+            </ol>
+
+            <figure class="teaserDemo__figure teaserDemo__figure--before">
+              <img
+                class="teaserDemo__img"
+                src="./assets/teaser/before.jpg"
+                alt="Before photo example"
+                loading="lazy"
+                decoding="async"
+                onerror="this.onerror=null;this.src='./assets/teaser/before.jpg';"
+              />
+              <figcaption class="teaserDemo__caption">Before</figcaption>
+            </figure>
+
+            <div class="teaserDemo__arrow" aria-hidden="true">
+              <img
+                class="teaserDemo__arrowImg"
+                src="./assets/arrow.png"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <figure class="teaserDemo__figure teaserDemo__figure--after">
+              <div class="teaserDemo__afterSlider" data-teaser-demo-stack aria-hidden="true">
+                <div class="teaserDemo__afterBackWrap teaserDemo__afterBackWrap--a" aria-hidden="true">
+                  <img
+                    class="teaserDemo__img teaserDemo__afterBack"
+                    data-teaser-demo-back-a
+                    src="./assets/presets/preset_greenhouse_casual_smile.jpg"
+                    alt=""
+                    loading="eager"
+                    decoding="async"
+                  />
+                </div>
+                <div class="teaserDemo__afterBackWrap teaserDemo__afterBackWrap--b" aria-hidden="true">
+                  <img
+                    class="teaserDemo__img teaserDemo__afterBack"
+                    data-teaser-demo-back-b
+                    src="./assets/presets/preset_tropical_water_portrait.jpg"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+
+                <div class="teaserDemo__afterViewport" aria-hidden="true">
+                  <div class="teaserDemo__afterTrack" data-teaser-demo-track>
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/presets/preset_desert_confident_portrait.jpg"
+                      alt=""
+                      loading="eager"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/presets/preset_private_jet_candid.jpg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/presets/preset_studio_black_white_portrait.jpg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/presets/preset_guitar_stage_moody.jpg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="teaserDemo__img teaserDemo__afterSlide"
+                      data-random-preset="true"
+                      src="./assets/presets/preset_cafe_relaxed_moment.jpg"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                </div>
+              </div>
+              <figcaption class="teaserDemo__caption">After</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="styles" aria-labelledby="pick-your-look">
+        <div class="styles__inner">
+          <header class="styles__header">
+            <h2 id="pick-your-look" class="styles__headline">Pick your look</h2>
+            <p class="styles__subhead">
+              Choose a preset that matches your vibe. Try multiple looks from the same upload—no reshoots.
+            </p>
+            <div
+              class="styles__filters"
+              data-style-filters
+              role="group"
+              aria-label="Preset categories"
+            ></div>
+          </header>
+
+          <div
+            class="styles__grid"
+            data-styles-grid
+            role="list"
+            aria-label="Preset style examples"
+          ></div>
+
+        </div>
+      </section>
+
+      <section class="usecase" aria-label="Dating profile photos use case">
+        <div class="usecase__inner">
+          <header class="usecase__header">
+            <h2 class="usecase__headline">Dating<br>Better photos = more matches</h2>
+            <p class="usecase__subhead">
+              Get more attention with photos that stand out — without a photoshoot.
+            </p>
+          </header>
+
+          <div class="usecase__grid" role="list" aria-label="Selling points and dating app preview">
+            <div class="usecase__selling" role="listitem" aria-label="Why EpicPhotoAI works for dating apps">
+          
+              <ul class="usecase__bullets" aria-label="Why EpicPhotoAI works for dating apps">
+                <li>
+                  <strong>The easiest way to get more matches</strong><br>
+                  Better photos simply help people notice you and swipe right more often.
+                </li>
+                
+                <li>
+                  <strong>Feel more confident putting yourself out there</strong><br>
+                  When you like your photos,
+                  you&rsquo;re less hesitant to start conversations.
+                </li>
+                <li>
+                  <strong>Attract people who are genuinely interested</strong> <br>
+                  Clear, expressive photos help
+                  others understand your vibe and personality faster.
+                </li>
+                <li>
+                  <strong>Look professionally photographed &mdash; without the shoot</strong> <br>
+                  Get high-quality photos for your dating profile in minutes.
+                </li>
+              </ul>
+            </div>
+
+            <div class="usecase__phone" role="listitem" aria-label="Dating app preview">
+              <div class="usecaseVisual" aria-hidden="true">
+                <img
+                  class="usecaseVisual__before"
+                  src="./assets/teaser/before.jpg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='./assets/teaser/before.jpg';"
+                />
+                <img class="usecaseVisual__arrow" src="./assets/arrow.png" alt="" loading="lazy" decoding="async" />
+
+                <div class="usecaseVisual__main">
+                  <div class="phoneMock" aria-hidden="true">
+                    <div class="phoneMock__screen">
+                      <div class="phoneMock__notch" aria-hidden="true"></div>
+
+                  <header class="phoneMock__topbar" aria-label="App header">
+                    <div class="phoneMock__brand" aria-label="dating">
+                      <svg
+                        class="phoneMock__brandIcon"
+                        width="26"
+                        height="26"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path
+                          fill="currentColor"
+                          d="M12.6 2.1c.3 3.2-1.1 5.1-2.7 6.6c-1.8 1.7-3.8 3.4-3.8 6.4c0 3.8 3.1 6.9 6.9 6.9s6.9-3.1 6.9-6.9c0-3.1-1.8-5-3.6-6.8c-1.1-1.1-2.1-2.2-2.4-3.9c-.8.7-1.6 1.4-2.3 2.1c-.3-1.7-.2-3.2 1-5.4z"
+                        />
+                      </svg>
+                      <span class="phoneMock__brandText">dating</span>
+                    </div>
+                  </header>
+
+                  <div class="phoneMock__photoWrap" aria-hidden="true">
+                    <div class="phoneMock__likeBubbles" aria-hidden="true">
+                      <span class="phoneMock__likeBubble phoneMock__likeBubble--a">LIKE</span>
+                      <span class="phoneMock__likeBubble phoneMock__likeBubble--b">LIKE</span>
+                      <span class="phoneMock__likeBubble phoneMock__likeBubble--c">LIKE</span>
+                    </div>
+                    <div class="phoneMock__slider" data-dating-slider>
+                      <img
+                        class="phoneMock__sliderImg phoneMock__sliderImg--next"
+                        data-dating-next
+                        src="./assets/presets/preset_private_jet_candid.jpg"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="phoneMock__sliderImg phoneMock__sliderImg--current"
+                        data-dating-current
+                        src="./assets/presets/preset_tropical_water_portrait.jpg"
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+
+                  <section class="phoneMock__card" aria-label="Profile card">
+                    <div class="phoneMock__cardBody">
+                      <div class="phoneMock__nameRow">
+                        <span class="phoneMock__name">Benjamin</span><span class="phoneMock__age">, 29</span>
+                      </div>
+                      <p class="phoneMock__bio">Looking for adventure &amp; good company.</p>
+                    </div>
+
+                    <div class="phoneMock__actions" aria-label="Actions">
+                      <span class="phoneMock__action phoneMock__action--rewind" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" focusable="false">
+                          <path
+                            fill="currentColor"
+                            d="M12 5a7 7 0 1 1-6.7 9.2a1 1 0 1 1 1.9-.6A5 5 0 1 0 12 7h-1.6l1.3 1.3a1 1 0 0 1-1.4 1.4L6.6 6l3.7-3.7a1 1 0 1 1 1.4 1.4L10.4 5H12z"
+                          />
+                        </svg>
+                      </span>
+                      <span class="phoneMock__action phoneMock__action--nope" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" focusable="false">
+                          <path
+                            fill="currentColor"
+                            d="M18.3 5.7a1 1 0 0 1 0 1.4L13.4 12l4.9 4.9a1 1 0 1 1-1.4 1.4L12 13.4l-4.9 4.9a1 1 0 0 1-1.4-1.4L10.6 12L5.7 7.1a1 1 0 1 1 1.4-1.4L12 10.6l4.9-4.9a1 1 0 0 1 1.4 0z"
+                          />
+                        </svg>
+                      </span>
+                      <span class="phoneMock__action phoneMock__action--like" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" focusable="false">
+                          <path
+                            fill="currentColor"
+                            d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                          />
+                        </svg>
+                      </span>
+                      <span class="phoneMock__action phoneMock__action--super" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="28" height="28" focusable="false">
+                          <path
+                            fill="currentColor"
+                            d="M12 2l2.7 6.1l6.6.6l-5 4.3l1.5 6.4L12 16.9L6.2 19.4L7.7 13l-5-4.3l6.6-.6L12 2z"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  </section>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="usecase" aria-label="Social media photos use case">
+        <div class="usecase__inner">
+          <header class="usecase__header">
+            <h2 class="usecase__headline">Social Media<br>Look like you belong on the explore page</h2>
+            <p class="usecase__subhead">
+              Upgrade your content with scroll-stopping photos that still look like you.
+            </p>
+          </header>
+
+          <div class="usecase__grid" role="list" aria-label="Social media selling points and SocialMedia-style preview">
+            <div class="usecase__phone" role="listitem" aria-label="SocialMedia-style preview">
+              <div class="usecaseVisual usecaseVisual--beforeRight" aria-hidden="true">
+                <img
+                  class="usecaseVisual__before"
+                  src="./assets/teaser/before.jpg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='./assets/teaser/before.jpg';"
+                />
+                <img class="usecaseVisual__arrow" src="./assets/arrow.png" alt="" loading="lazy" decoding="async" />
+
+                <div class="usecaseVisual__main">
+                  <div class="phoneMock phoneMock--ig" aria-hidden="true">
+                    <div class="phoneMock__screen">
+                      <div class="phoneMock__notch" aria-hidden="true"></div>
+
+                  <header class="igMock__topbar" aria-label="App header">
+                    <div class="igMock__icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                        <path
+                          fill="currentColor"
+                          d="M12 5a7 7 0 1 0 7 7a1 1 0 1 0-2 0a5 5 0 1 1-5-5a1 1 0 1 0 0-2zm0 3a1 1 0 0 1 1 1v1.2l.8-.5a1 1 0 1 1 1 1.7l-2.3 1.4a1 1 0 0 1-1.5-.9V9a1 1 0 0 1 1-1z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="igMock__logo" aria-label="SocialMedia">SocialMedia</div>
+                    <div class="igMock__actions" aria-hidden="true">
+                      <span class="igMock__action">
+                        <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                          <path
+                            fill="currentColor"
+                            d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                          />
+                        </svg>
+                      </span>
+                      <span class="igMock__action">
+                        <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                          <path
+                            fill="currentColor"
+                            d="M2.4 19.6L22 12L2.4 4.4l2.3 6.4L16 12L4.7 13.2l-2.3 6.4z"
+                          />
+                        </svg>
+                      </span>
+                    </div>
+                  </header>
+
+                  <div class="igMock__likeFx" aria-hidden="true">
+                    <span class="igMock__heart igMock__heart--a" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                        <path
+                          fill="currentColor"
+                          d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                        />
+                      </svg>
+                    </span>
+                    <span class="igMock__heart igMock__heart--b" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                        <path
+                          fill="currentColor"
+                          d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                        />
+                      </svg>
+                    </span>
+                    <span class="igMock__heart igMock__heart--c" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="18" height="18" focusable="false">
+                        <path
+                          fill="currentColor"
+                          d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+
+                  <div class="igMock__content" data-ig-feed aria-hidden="true">
+                    <div class="igMock__stories" aria-label="Stories">
+                      <div class="igMock__story"><span class="igMock__avatar">E</span><span class="igMock__storyName">epic</span></div>
+                      <div class="igMock__story"><span class="igMock__avatar">B</span><span class="igMock__storyName">ben</span></div>
+                      <div class="igMock__story"><span class="igMock__avatar">M</span><span class="igMock__storyName">mila</span></div>
+                      <div class="igMock__story"><span class="igMock__avatar">J</span><span class="igMock__storyName">jules</span></div>
+                      <div class="igMock__story"><span class="igMock__avatar">K</span><span class="igMock__storyName">kai</span></div>
+                      <div class="igMock__story"><span class="igMock__avatar">S</span><span class="igMock__storyName">sara</span></div>
+                    </div>
+
+                    <article class="igMock__post">
+                      <header class="igMock__postHeader">
+                        <span class="igMock__postAvatar" aria-hidden="true">E</span>
+                        <div class="igMock__postMeta">
+                          <div class="igMock__postUser">epicphotoai</div>
+                          <div class="igMock__postSub">Featured preset</div>
+                        </div>
+                        <span class="igMock__dots" aria-hidden="true">•••</span>
+                      </header>
+                      <img class="igMock__postImg" src="./assets/presets/preset_travel_doorway_portrait.jpg" alt="" loading="lazy" decoding="async" />
+                      <div class="igMock__postActions" aria-hidden="true">
+                        <span class="igMock__postAction">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="igMock__postAction">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M21 15a4 4 0 0 1-4 4H8l-4 3V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4v8zm-4 2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v11.2L7.6 17H17z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="igMock__postAction">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M2.4 19.6L22 12L2.4 4.4l2.3 6.4L16 12L4.7 13.2l-2.3 6.4z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="igMock__postAction igMock__postAction--right">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M6 2h12a1 1 0 0 1 1 1v19l-7-4l-7 4V3a1 1 0 0 1 1-1zm1 2v14.6l5-2.9l5 2.9V4H7z"
+                            />
+                          </svg>
+                        </span>
+                      </div>
+                      <div class="igMock__postText">
+                        <div class="igMock__likes"><strong>8,214 likes</strong></div>
+                        <div class="igMock__caption"><strong>epicphotoai</strong> Same upload, new vibe. #preset #portrait</div>
+                        <div class="igMock__time">2 HOURS AGO</div>
+                      </div>
+                    </article>
+
+                    <article class="igMock__post">
+                      <header class="igMock__postHeader">
+                        <span class="igMock__postAvatar igMock__postAvatar--alt" aria-hidden="true">B</span>
+                        <div class="igMock__postMeta">
+                          <div class="igMock__postUser">benjamin</div>
+                          <div class="igMock__postSub">New post</div>
+                        </div>
+                        <span class="igMock__dots" aria-hidden="true">•••</span>
+                      </header>
+                      <img class="igMock__postImg" src="./assets/presets/preset_guitar_stage_moody.jpg" alt="" loading="lazy" decoding="async" />
+                      <div class="igMock__postActions" aria-hidden="true">
+                        <span class="igMock__postAction">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M12 21s-7.1-4.5-9.6-8.6C.5 9.1 2.3 5.8 5.8 5.3c2-.3 3.6.7 4.6 2c1-1.3 2.6-2.3 4.6-2c3.5.5 5.3 3.8 3.4 7.1C19.1 16.5 12 21 12 21z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="igMock__postAction">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M21 15a4 4 0 0 1-4 4H8l-4 3V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4v8zm-4 2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v11.2L7.6 17H17z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="igMock__postAction">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M2.4 19.6L22 12L2.4 4.4l2.3 6.4L16 12L4.7 13.2l-2.3 6.4z"
+                            />
+                          </svg>
+                        </span>
+                        <span class="igMock__postAction igMock__postAction--right">
+                          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+                            <path
+                              fill="currentColor"
+                              d="M6 2h12a1 1 0 0 1 1 1v19l-7-4l-7 4V3a1 1 0 0 1 1-1zm1 2v14.6l5-2.9l5 2.9V4H7z"
+                            />
+                          </svg>
+                        </span>
+                      </div>
+                      <div class="igMock__postText">
+                        <div class="igMock__likes"><strong>3,102 likes</strong></div>
+                        <div class="igMock__caption"><strong>benjamin</strong> Fresh set for my next carousel. #creator</div>
+                        <div class="igMock__time">YESTERDAY</div>
+                      </div>
+                    </article>
+                  </div>
+
+                  <nav class="igMock__bottomNav" aria-label="Bottom navigation">
+                    <span class="igMock__navIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                        <path fill="currentColor" d="M12 3l9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1V11l9-8z" />
+                      </svg>
+                    </span>
+                    <span class="igMock__navIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                        <path fill="currentColor" d="M10 2a8 8 0 1 0 4.9 14.3l4.4 4.4a1 1 0 0 0 1.4-1.4l-4.4-4.4A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12a6 6 0 0 1 0-12z" />
+                      </svg>
+                    </span>
+                    <span class="igMock__navIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                        <path fill="currentColor" d="M4 6a2 2 0 0 1 2-2h10a4 4 0 0 1 4 4v10a2 2 0 0 1-2 2H8a4 4 0 0 1-4-4V6zm4 14h10a0 0 0 0 0 0 0V8a2 2 0 0 0-2-2H6a0 0 0 0 0 0 0v10a4 4 0 0 0 4 4z" />
+                      </svg>
+                    </span>
+                    <span class="igMock__navIcon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="22" height="22" focusable="false">
+                        <path fill="currentColor" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 2a8 8 0 0 1 8 8a8 8 0 0 1-8 8a8 8 0 0 1-8-8a8 8 0 0 1 8-8zm-1 4l6 4l-6 4V8z" />
+                      </svg>
+                    </span>
+                    <span class="igMock__navIcon igMock__navIcon--avatar" aria-hidden="true">E</span>
+                  </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="usecase__selling" role="listitem" aria-label="Why EpicPhotoAI works for social media">
+              <ul class="usecase__bullets" aria-label="Why EpicPhotoAI works for social media">
+                <li>
+                  <strong>Make your grid look intentional</strong><br>
+                  Keep a consistent style across posts, carousels, and profile pics.
+                </li>
+                <li>
+                  <strong>Stand out in a crowded feed</strong><br>
+                  Better lighting, composition, and mood = more stops, saves, and shares.
+                </li>
+                <li>
+                  <strong>Post more often without burnout</strong><br>
+                  Generate multiple high-quality options from one upload.
+                </li>
+                <li>
+                  <strong>Still looks like you</strong><br>
+                  The goal is upgraded photos, not a different person.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="usecase" aria-label="Personal branding photos use case">
+        <div class="usecase__inner">
+          <header class="usecase__header">
+            <h2 class="usecase__headline">Personal Branding<br>Look credible everywhere</h2>
+            <p class="usecase__subhead">
+              Professional-grade photos for LinkedIn, your website, press, and announcements — without booking a shoot.
+            </p>
+          </header>
+
+          <div class="usecase__grid" role="list" aria-label="Personal branding selling points and professional photo preview">
+            <div class="usecase__selling" role="listitem" aria-label="Why EpicPhotoAI works for personal branding">
+              <ul class="usecase__bullets" aria-label="Why EpicPhotoAI works for personal branding">
+                <li>
+                  <strong>Instant LinkedIn-ready photos</strong><br>
+                  Clean, polished, and still recognizable as you.
+                </li>
+                <li>
+                  <strong>Consistent look across platforms</strong><br>
+                  Use the same vibe for your site, bio, thumbnails, and profiles.
+                </li>
+                <li>
+                  <strong>Build trust at a glance</strong><br>
+                  High-quality photos help clients and employers take you seriously.
+                </li>
+                <li>
+                  <strong>Perfect for founders &amp; speakers</strong><br>
+                  Get a set for press kits, event promos, and announcements.
+                </li>
+                <li>
+                  <strong>No scheduling, no studio fees</strong><br>
+                  Generate multiple professional looks from one upload.
+                </li>
+              </ul>
+            </div>
+
+            <div class="usecase__phone" role="listitem" aria-label="Professional photo examples">
+              <div class="usecaseVisual" aria-hidden="true">
+                <img
+                  class="usecaseVisual__before"
+                  src="./assets/teaser/before.jpg"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  onerror="this.onerror=null;this.src='./assets/teaser/before.jpg';"
+                />
+                <img class="usecaseVisual__arrow" src="./assets/arrow.png" alt="" loading="lazy" decoding="async" />
+
+                <div class="usecaseVisual__main">
+                  <div class="brandGallery" data-brand-gallery>
+                    <div class="brandGallery__top" aria-hidden="true">
+                      <span class="brandGallery__pill">Professional</span>
+                      <span class="brandGallery__topText">Personal brand set</span>
+                    </div>
+                    <div class="brandGallery__grid">
+                      <img
+                        class="brandGallery__img"
+                        data-brand-img
+                        src="./assets/presets/preset_studio_black_white_portrait.jpg"
+                        alt="Professional photo example"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="brandGallery__img"
+                        data-brand-img
+                        src="./assets/presets/preset_conference_speaker_stage.jpg"
+                        alt="Professional photo example"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="brandGallery__img"
+                        data-brand-img
+                        src="./assets/presets/preset_cafe_relaxed_moment.jpg"
+                        alt="Professional photo example"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="brandGallery__img"
+                        data-brand-img
+                        src="./assets/presets/preset_studio_black_white_portrait.jpg"
+                        alt="Professional photo example"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="brandGallery__img"
+                        data-brand-img
+                        src="./assets/presets/preset_conference_speaker_stage.jpg"
+                        alt="Professional photo example"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <img
+                        class="brandGallery__img"
+                        data-brand-img
+                        src="./assets/presets/preset_cafe_relaxed_moment.jpg"
+                        alt="Professional photo example"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section id="get-started" class="getStarted" aria-labelledby="get-started-title">
+      <div class="getStarted__inner">
+        <div class="getStarted__card">
+          <div class="getStarted__content">
+            <p class="getStarted__eyebrow">Get started</p>
+            <h2 id="get-started-title" class="getStarted__title">Ready to make your photos epic?</h2>
+            <p class="getStarted__lead">
+              Pick a style, upload your photos, and generate a set you’ll actually want to use.
+            </p>
+
+          </div>
+
+          <div class="getStarted__actions" aria-label="Get started actions">
+            <a class="btnPrimary" href="#project-discontinued" data-discontinued-trigger>Get Started</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="siteFooter" aria-label="Footer">
+      <div class="siteFooter__inner">
+        <div class="siteFooter__brand">
+          <span class="siteFooter__copyright">©</span>
+          <span id="js-year" class="siteFooter__year" aria-label="Current year"></span>
+          <span class="siteFooter__name">EpicPhotoAI</span>
+        </div>
+        <nav class="siteFooter__links" aria-label="Legal">
+          <a class="siteFooter__link" href="./imprint.html">Imprint</a>
+          <a class="siteFooter__link" href="./data-policy.html">Data Policy</a>
+        </nav>
+      </div>
+    </footer>
+
+    <div class="discontinuedModal" data-discontinued-modal aria-hidden="true">
+      <div class="discontinuedModal__dialog" role="dialog" aria-modal="true" aria-labelledby="project-discontinued-title">
+        <button class="discontinuedModal__close" type="button" aria-label="Close" data-discontinued-close>×</button>
+        <p class="discontinuedModal__eyebrow">Project discontinued</p>
+        <h2 class="discontinuedModal__title" id="project-discontinued-title">EpicPhotoAI has been discontinued</h2>
+        <p class="discontinuedModal__desc">
+          The app is no longer available, so login and sign-up are disabled.
+        </p>
+        <button class="discontinuedModal__button" type="button" data-discontinued-close>Got it</button>
+      </div>
+    </div>
+
+    <script src="./js/index.js" defer></script>
+  </body>
+</html>

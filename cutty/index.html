@@ -16,6 +16,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="../css/discontinued-ribbon.css" />
     <link rel="stylesheet" href="assets/style.css" />
     
     <!-- Google tag (gtag.js) -->
@@ -338,7 +339,8 @@
       />
     </a>
     <main>
-      <section class="teaser" aria-label="Cutty">
+      <section class="teaser discontinued-ribbon-host" aria-label="Cutty">
+        <span class="discontinued-ribbon">Discontinued</span>
         <div class="teaser__inner">
           <div class="teaserStageWrap">
             <div class="teaserEditorHeadlines" data-teaser-editor-headlines aria-hidden="true">
@@ -354,7 +356,8 @@
                 class="teaserEditorCta earlyAccessCta"
                 data-teaser-editor-cta
                 data-cutty-download-with-thanks
-                href="https://benjaminkrueger.com/cutty/download/cutty-latest.dmg"
+                data-cutty-download-source="hero"
+                href="#download-discontinued"
                 ><svg class="cuttyDownloadIcon cuttyDownloadIcon--editor" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                   <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
                   <path
@@ -713,7 +716,8 @@
             <a
               class="tryCutty__cta earlyAccessCta"
               data-cutty-download-with-thanks
-              href="https://benjaminkrueger.com/cutty/download/cutty-latest.dmg"
+              data-cutty-download-source="footer"
+              href="#download-discontinued"
               ><svg class="cuttyDownloadIcon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                 <circle class="cuttyDownloadIcon__ring" cx="12" cy="12" r="9.65" />
                 <path
@@ -816,14 +820,14 @@
       <div class="earlyAccessModal__dialog" role="dialog" aria-modal="true" aria-labelledby="thank-you-title">
         <button class="earlyAccessModal__close" type="button" aria-label="Close" data-thank-you-close>×</button>
         <div class="earlyAccessModal__body">
-          <h2 class="earlyAccessModal__title" id="thank-you-title">You are awesome! 🎉</h2>
+          <h2 class="earlyAccessModal__title" id="thank-you-title">Cutty has been discontinued</h2>
           <div class="thankYouModal__belowHeadline">
             <div class="thankYouModal__main">
               <p class="earlyAccessModal__desc">
-                Thank you for downloading cutty.
+                Cutty is no longer available for download.
               </p>
               <p class="earlyAccessModal__desc">
-                When you’ve had a chance to try it, I’d <b>love your feedback</b>. It’s genuinely valuable to me and I appreciate every bit of it.
+                The app has been discontinued, so the download will not start.
               </p>
             </div>
             <div class="cuttySuccess__mascot" aria-hidden="true">
@@ -839,7 +843,7 @@
           </div>
           <div class="earlyAccessModal__actions thankYouModal__actions">
             <button class="earlyAccessModal__primary" type="button" data-thank-you-dismiss>
-              <span class="earlyAccessModal__primaryLabel">Let's go!</span>
+              <span class="earlyAccessModal__primaryLabel">Got it</span>
             </button>
           </div>
         </div>
@@ -860,29 +864,6 @@
       <span aria-hidden="true" style="padding: 0 10px;">·</span>
       <a href="../data-policy.html" style="color: inherit; text-decoration: underline;">Privacy Policy</a>
     </footer>
-
-    <script>
-      (() => {
-        const CUTTY_DOWNLOAD_MAC = "https://api.cutty.benjaminkrueger.com/download/cutty-latest.dmg";
-        const CUTTY_DOWNLOAD_WIN = "https://api.cutty.benjaminkrueger.com/download/cutty-latest.dmg";
-        const CUTTY_DOWNLOAD_DEFAULT = "https://api.cutty.benjaminkrueger.com/download/cutty-latest.dmg";
-
-        function cuttyDownloadHrefForVisitor() {
-          const ua = navigator.userAgent || "";
-          const uaPlatform = navigator.userAgentData?.platform;
-          if (uaPlatform === "Windows") return CUTTY_DOWNLOAD_WIN;
-          if (uaPlatform === "macOS") return CUTTY_DOWNLOAD_MAC;
-          if (/Windows/i.test(ua)) return CUTTY_DOWNLOAD_WIN;
-          if (/Macintosh|Mac OS X/i.test(ua)) return CUTTY_DOWNLOAD_MAC;
-          return CUTTY_DOWNLOAD_DEFAULT;
-        }
-
-        const href = cuttyDownloadHrefForVisitor();
-        for (const el of document.querySelectorAll("[data-cutty-download]")) {
-          if (el instanceof HTMLAnchorElement) el.href = href;
-        }
-      })();
-    </script>
 
     <script>
       (() => {
@@ -999,23 +980,20 @@
           }, 0);
         };
 
-        const triggerDownloadFromUrl = (url) => {
-          const a = document.createElement("a");
-          a.href = url;
-          a.rel = "noopener";
-          a.download = "cutty-latest.dmg";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
+        const trackDiscontinuedDownloadRequest = (source) => {
+          if (typeof gtag !== "function") return;
+          gtag("event", "cutty_download_discontinued_request", {
+            event_category: "cutty",
+            event_label: source || "unknown",
+          });
         };
 
         for (const el of document.querySelectorAll("[data-cutty-download-with-thanks]")) {
           el.addEventListener("click", (e) => {
             if (!(el instanceof HTMLAnchorElement)) return;
             e.preventDefault();
-            const url = el.href;
+            trackDiscontinuedDownloadRequest(el.dataset.cuttyDownloadSource || "cta");
             openThankYou();
-            window.requestAnimationFrame(() => triggerDownloadFromUrl(url));
           });
         }
 

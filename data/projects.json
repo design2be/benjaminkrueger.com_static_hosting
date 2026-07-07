@@ -42,7 +42,7 @@
       "detailHtml": "./content/projects/mvp-02.html",
       "videoHref": "https://youtu.be/yDi2JsvhC6s",
       "links": [
-        { "label": "Visit EpicPhotoAI", "href": "https://epicphoto.ai/", "kind": "primary" },
+        { "label": "Visit EpicPhotoAI", "href": "./epicphotoai/index.html", "kind": "primary" },
         { "label": "Open the app", "href": "https://epicphoto.ai/app/", "kind": "secondary" }
       ]
     },

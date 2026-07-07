@@ -5,16 +5,21 @@ if (typeof Chart !== "undefined") {
   Chart.defaults.datasets.line.borderWidth = 2;
 }
 
-// All backend calls go to the deployed API host. The page itself is served from
-// a different origin (e.g. benjaminkrueger.com), so paths must be absolute and
-// requests must use credentials: "include" for the session cookie to ride along.
-// CORS for this origin is configured on the server (see server/main.py).
-const API_BASE = "https://api.backtestai.benjaminkrueger.com";
+// The backtest service has been discontinued; the page now renders a static
+// demo payload bundled beside this script.
+const DEMO_DATA_URL = "demo_5y.json";
+const LOOKBACK_DAYS_BY_KEY = {
+  "1m": 31,
+  "1y": 365,
+  "2y": 365 * 2,
+  "5y": 365 * 5,
+};
+const DEMO_LOAD_DELAY_MS = 1000;
 
 let chartInstance = null;
 let backtestInFlight = false;
 
-/** Selected window for API: 1m | 1y | 2y | 5y (matches server LOOKBACK_BY_KEY). */
+/** Selected demo window for the time range controls: 1m | 1y | 2y | 5y. */
 let selectedLookback = "1y";
 /** Selected Binance spot symbol, e.g. BTCUSDT. */
 let selectedSymbol = "BTCUSDT";
@@ -22,6 +27,7 @@ let selectedSymbol = "BTCUSDT";
 let canRerunBacktest = false;
 /** User-entered strategy text shown with the current results. */
 let lastStrategyDescription = "";
+let demoPayloadPromise = null;
 
 let assetChoices = [
   { symbol: "BTCUSDT", name: "Bitcoin / TetherUS", icon: "btc", iconText: "₿" },
@@ -35,34 +41,6 @@ let assetChoices = [
   { symbol: "LINKUSDT", name: "Chainlink / TetherUS", icon: "link", iconText: "L" },
   { symbol: "SUIUSDT", name: "Sui / TetherUS", icon: "sui", iconText: "S" },
 ];
-
-async function loadAssetsFromServer() {
-  try {
-    const res = await fetch(`${API_BASE}/api/assets`, { credentials: "include" });
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data || typeof data !== "object") return;
-    const rows = Array.isArray(data.assets) ? data.assets : [];
-    const cleaned = rows
-      .map((r) => {
-        const sym = r && typeof r.symbol === "string" ? r.symbol.trim().toUpperCase() : "";
-        const name = r && typeof r.name === "string" ? r.name.trim() : "";
-        if (!/^[A-Z0-9]{3,20}USDT$/.test(sym)) return null;
-        return { symbol: sym, name: name || sym, icon: "", iconText: "$" };
-      })
-      .filter(Boolean);
-    if (cleaned.length >= 10) {
-      // Keep BTC/ETH/SOL icons at top if present, then append the rest.
-      const pinned = new Map(assetChoices.map((c) => [c.symbol, c]));
-      const merged = [];
-      cleaned.forEach((c) => {
-        merged.push(pinned.get(c.symbol) || c);
-      });
-      assetChoices = merged;
-    }
-  } catch (_) {
-    // Non-fatal: selector falls back to built-in curated list.
-  }
-}
 
 function normalizeSymbol(raw) {
   const s = typeof raw === "string" ? raw.trim().toUpperCase() : "";
@@ -1160,6 +1138,153 @@ function setSubmitRunning(running) {
   syncTimeRangeButtons();
 }
 
+async function fetchDemoPayload() {
+  if (!demoPayloadPromise) {
+    demoPayloadPromise = fetch(DEMO_DATA_URL, { cache: "no-store" }).then(async (res) => {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const detail = data && data.detail !== undefined ? data.detail : data;
+        throw new Error(formatDetail(detail) || "Failed to load demo data.");
+      }
+      return data;
+    });
+  }
+  return demoPayloadPromise;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+function lookbackStartIndex(dates, lookbackKey) {
+  if (!Array.isArray(dates) || dates.length === 0) return 0;
+  const days = LOOKBACK_DAYS_BY_KEY[lookbackKey];
+  if (!days) return 0;
+
+  const end = parseChartLabelToUtcMidnight(dates[dates.length - 1]);
+  if (!end || Number.isNaN(end.getTime())) return 0;
+  const startMs = end.getTime() - days * 24 * 60 * 60 * 1000;
+
+  const idx = dates.findIndex((date) => {
+    const parsed = parseChartLabelToUtcMidnight(date);
+    return parsed && !Number.isNaN(parsed.getTime()) && parsed.getTime() >= startMs;
+  });
+  return idx === -1 ? 0 : idx;
+}
+
+function normalizeSeriesToFirstValue(series) {
+  if (!Array.isArray(series) || series.length === 0) return series;
+  const first = Number(series[0]);
+  if (!Number.isFinite(first) || first === 0) return series.slice();
+  return series.map((value) => {
+    const n = Number(value);
+    return Number.isFinite(n) ? n / first : value;
+  });
+}
+
+function totalReturnFromEquity(equity) {
+  if (!Array.isArray(equity) || equity.length === 0) return null;
+  const first = Number(equity[0]);
+  const last = Number(equity[equity.length - 1]);
+  if (!Number.isFinite(first) || !Number.isFinite(last) || first === 0) return null;
+  return last / first - 1;
+}
+
+function maxDrawdownFromEquity(equity) {
+  if (!Array.isArray(equity) || equity.length === 0) return null;
+  let peak = -Infinity;
+  let maxDrawdown = 0;
+  for (const value of equity) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) continue;
+    peak = Math.max(peak, n);
+    if (peak > 0) maxDrawdown = Math.min(maxDrawdown, n / peak - 1);
+  }
+  return Number.isFinite(maxDrawdown) ? maxDrawdown : null;
+}
+
+function tradeOverlapsDateRange(trade, startDate, endDate) {
+  if (!trade || typeof trade !== "object") return false;
+  const entry = normalizeIsoDay(trade.EntryTime);
+  const exit = normalizeIsoDay(trade.ExitTime);
+  if (entry && entry > endDate) return false;
+  if (exit && exit < startDate) return false;
+  return !!(entry || exit);
+}
+
+function filterDemoPayloadForLookback(data, lookbackKey) {
+  const sourceDates = Array.isArray(data.dates) ? data.dates : [];
+  const startIdx = lookbackStartIndex(sourceDates, lookbackKey);
+  if (startIdx <= 0) return { ...data };
+
+  const dates = sourceDates.slice(startIdx);
+  const filtered = {
+    ...data,
+    metrics: { ...(data.metrics || {}) },
+    capital: { ...(data.capital || {}) },
+  };
+
+  Object.keys(data).forEach((key) => {
+    const value = data[key];
+    if (Array.isArray(value) && value.length === sourceDates.length) {
+      filtered[key] = value.slice(startIdx);
+    }
+  });
+
+  filtered.dates = dates;
+  filtered.equity = normalizeSeriesToFirstValue(filtered.equity);
+  if (Array.isArray(filtered.buy_and_hold)) {
+    filtered.buy_and_hold = normalizeSeriesToFirstValue(filtered.buy_and_hold);
+  }
+
+  const startDate = normalizeIsoDay(dates[0]);
+  const endDate = normalizeIsoDay(dates[dates.length - 1]);
+  const trades = Array.isArray(data.trades) ? data.trades : [];
+  if (startDate && endDate) {
+    filtered.trades = trades
+      .filter((trade) => tradeOverlapsDateRange(trade, startDate, endDate))
+      .map((trade) => ({
+        ...trade,
+        EntryBar:
+          typeof trade.EntryBar === "number" && Number.isFinite(trade.EntryBar)
+            ? trade.EntryBar - startIdx
+            : trade.EntryBar,
+        ExitBar:
+          typeof trade.ExitBar === "number" && Number.isFinite(trade.ExitBar)
+            ? trade.ExitBar - startIdx
+            : trade.ExitBar,
+      }));
+  } else {
+    filtered.trades = [];
+  }
+
+  const totalReturn = totalReturnFromEquity(filtered.equity);
+  if (totalReturn !== null) filtered.metrics.total_return = totalReturn;
+  const maxDrawdown = maxDrawdownFromEquity(filtered.equity);
+  if (maxDrawdown !== null) filtered.metrics.max_drawdown = maxDrawdown;
+
+  const endReturn = totalReturn !== null ? totalReturn : 0;
+  filtered.capital.start_usd = RESULTS_CHART_START_SCALE;
+  filtered.capital.end_usd = RESULTS_CHART_START_SCALE * (1 + endReturn);
+  const deployStats = incrementalLongDeployStats(filtered.trades);
+  if (deployStats && Number.isFinite(deployStats.totalDeployed)) {
+    filtered.capital.total_deployed_usd = deployStats.totalDeployed;
+    filtered.capital.max_entry_usd = deployStats.maxEntry;
+  } else {
+    delete filtered.capital.total_deployed_usd;
+    delete filtered.capital.max_entry_usd;
+  }
+
+  return filtered;
+}
+
+async function fetchFilteredDemoPayload(lookbackKey) {
+  const [data] = await Promise.all([fetchDemoPayload(), wait(DEMO_LOAD_DELAY_MS)]);
+  return filterDemoPayloadForLookback(data, lookbackKey || selectedLookback);
+}
+
 function applyBacktestPayload(data, opts) {
     const dates = data.dates;
     const equity = data.equity;
@@ -1340,21 +1465,7 @@ async function rerunBacktest(lookbackKey) {
   setSubmitRunning(true);
 
   try {
-    const res = await fetch(`${API_BASE}/api/backtest/rerun`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ lookback: lookbackKey, symbol: selectedSymbol }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      const detail = data.detail !== undefined ? data.detail : data;
-      showError(formatDetail(detail), { keepResults: true });
-      return;
-    }
-
+    const data = await fetchFilteredDemoPayload(lookbackKey);
     applyBacktestPayload(data);
   } catch (err) {
     showError(err.message || String(err), { keepResults: true });
@@ -1380,26 +1491,8 @@ async function runBacktest(strategyText) {
   setSubmitRunning(true);
 
   try {
-    const res = await fetch(`${API_BASE}/api/backtest`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({
-        strategyText: text,
-        lookback: selectedLookback,
-        symbol: selectedSymbol,
-      }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      const detail = data.detail !== undefined ? data.detail : data;
-      showError(formatDetail(detail));
-      return;
-    }
-
     lastStrategyDescription = "";
+    const data = await fetchFilteredDemoPayload(selectedLookback);
     applyBacktestPayload(data);
   } catch (err) {
     showError(err.message || String(err));
@@ -1415,9 +1508,7 @@ document.getElementById("form").addEventListener("submit", async (e) => {
   await runBacktest(strategyText);
 });
 
-loadAssetsFromServer().finally(() => {
-  initAssetSelector();
-});
+initAssetSelector();
 
 setLookbackUI(selectedLookback);
 
@@ -1542,18 +1633,14 @@ if (strategySampleIdeaBtn instanceof HTMLButtonElement && strategyField instance
   });
 }
 
+if (strategyField instanceof HTMLTextAreaElement) {
+  typeDemoStrategyIntoField();
+}
+
 const testAgainBtn = document.getElementById("test-again");
 if (testAgainBtn) {
   testAgainBtn.addEventListener("click", async () => {
     canRerunBacktest = false;
-    try {
-      await fetch(`${API_BASE}/api/session/forget-last-strategy`, {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (_) {
-      /* non-fatal */
-    }
     document.getElementById("chart-section").classList.add("hidden");
     lastStrategyDescription = "";
     hideError();
@@ -1611,18 +1698,7 @@ async function loadSuccessPreset(card) {
   if (!preset) return;
   setSuccessStatus(card, "Loading…", false);
   try {
-    const res = await fetch(`${API_BASE}/api/backtest/preset`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ name: preset, symbol: selectedSymbol }),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const detail = data && data.detail !== undefined ? data.detail : data;
-      setSuccessStatus(card, "Failed: " + formatDetail(detail), true);
-      return;
-    }
+    const data = await fetchFilteredDemoPayload(selectedLookback);
     setSuccessReturn(card, data && data.metrics ? data.metrics.total_return : null);
     renderSuccessChart(card, data);
     setSuccessStatus(card, "", false);

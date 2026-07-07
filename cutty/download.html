@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Thank you · Cutty</title>
+    <title>Cutty discontinued</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
@@ -19,6 +19,15 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="assets/style.css" />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W9RN3HLBTE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W9RN3HLBTE');
+    </script>
 
     <style>
       body {
@@ -139,37 +148,21 @@
       <img class="cuttyPageLogo__img" src="assets/logo.png" alt="" decoding="async" draggable="false" />
     </a>
 
-    <main class="cuttySuccess" aria-label="Download thank you">
+    <main class="cuttySuccess" aria-label="Cutty discontinued">
       <section class="cuttySuccess__card">
         <div class="cuttySuccess__brand">cutty</div>
-        <h1 class="cuttySuccess__title">🎉 Thanks for downloading Cutty</h1>
+        <h1 class="cuttySuccess__title">Cutty has been discontinued</h1>
 
         <div class="cuttySuccess__belowHeadline">
           <div class="cuttySuccess__content">
             <p class="cuttySuccess__desc">
-              Your download for macOS should start automatically.
+              Cutty is no longer available for download.
             </p>
             <p class="cuttySuccess__desc">
-              If it doesn’t start, manually
-              <a
-                class="cuttySuccess__inlineLink"
-                href="download/cutty-latest.dmg"
-                download="cutty-latest.dmg"
-                >click here</a>
-              to download the latest DMG file.
-            </p>
-            <p class="cuttySuccess__desc">
-              Open the disk image, drag Cutty into Applications, and launch it from there. We hope you enjoy using Cutty.
+              The app has been discontinued, so the download will not start.
             </p>
 
             <div class="cuttySuccess__actions">
-              <a
-                class="teaserEditorCta cuttySuccess__cta"
-                href="download/cutty-latest.dmg"
-                download="cutty-latest.dmg"
-              >
-                Download again
-              </a>
               <a class="teaserEditorCta cuttySuccess__cta" href="./">
                 Back to Cutty
               </a>
@@ -207,20 +200,11 @@
 
     <script>
       (() => {
-        const dmgHref = "download/cutty-latest.dmg";
-        const triggerDownload = () => {
-          const link = document.createElement("a");
-          link.href = dmgHref;
-          link.download = "cutty-latest.dmg";
-          link.rel = "noopener";
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        };
-        if (document.readyState === "loading") {
-          document.addEventListener("DOMContentLoaded", triggerDownload, { once: true });
-        } else {
-          triggerDownload();
+        if (typeof gtag === "function") {
+          gtag("event", "cutty_download_discontinued_request", {
+            event_category: "cutty",
+            event_label: "direct_download_page",
+          });
         }
 
         const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;

@@ -1,0 +1,50 @@
+.discontinued-ribbon-host {
+  position: relative;
+  overflow: visible;
+}
+
+.discontinued-ribbon {
+  position: fixed;
+  top: 1.45rem;
+  right: -4.45rem;
+  z-index: 2147483647;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15.5rem;
+  padding: 0.78rem 0;
+  box-sizing: border-box;
+  background: #ff4346;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-align: center;
+  text-indent: 0.4rem;
+  text-transform: uppercase;
+  transform: rotate(45deg);
+  transform-origin: center;
+  box-shadow: 0 8px 18px rgba(31, 35, 40, 0.16);
+  pointer-events: none;
+}
+
+.discontinued-ribbon::before,
+.discontinued-ribbon::after {
+  content: "";
+  position: absolute;
+  bottom: -0.75rem;
+  border-style: solid;
+}
+
+.discontinued-ribbon::before {
+  left: 0;
+  border-width: 0.75rem 0.75rem 0 0;
+  border-color: #c90012 transparent transparent transparent;
+}
+
+.discontinued-ribbon::after {
+  right: 0;
+  border-width: 0.75rem 0 0 0.75rem;
+  border-color: #c90012 transparent transparent transparent;
+}

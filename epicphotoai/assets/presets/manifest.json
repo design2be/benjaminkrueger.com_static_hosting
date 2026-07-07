@@ -1,0 +1,30 @@
+{
+  "images": [
+    "./assets/presets/preset_artistic_sugar_skull.jpg",
+    "./assets/presets/preset_beach_walk_sunset.jpg",
+    "./assets/presets/preset_birthday_candle_moment.jpg",
+    "./assets/presets/preset_cafe_relaxed_moment.jpg",
+    "./assets/presets/preset_christmas_gift_moment.jpg",
+    "./assets/presets/preset_conference_speaker_stage.jpg",
+    "./assets/presets/preset_desert_confident_portrait.jpg",
+    "./assets/presets/preset_driving_candid_profile.jpg",
+    "./assets/presets/preset_glam_beauty_closeup.jpg",
+    "./assets/presets/preset_greenhouse_casual_smile.jpg",
+    "./assets/presets/preset_guitar_stage_moody.jpg",
+    "./assets/presets/preset_gym_mirror_selfie.jpg",
+    "./assets/presets/preset_jetski_action.jpg",
+    "./assets/presets/preset_live_concert_singer.jpg",
+    "./assets/presets/preset_moody_outdoor_portrait.jpg",
+    "./assets/presets/preset_night_street_moody.jpg",
+    "./assets/presets/preset_outdoor_cozy_golden.jpg",
+    "./assets/presets/preset_private_jet_candid.jpg",
+    "./assets/presets/preset_roses_studio_portrait.jpg",
+    "./assets/presets/preset_shopping_candid_smile.jpg",
+    "./assets/presets/preset_studio_black_white_portrait.jpg",
+    "./assets/presets/preset_sunny_fitness_low_angle.jpg",
+    "./assets/presets/preset_travel_doorway_portrait.jpg",
+    "./assets/presets/preset_tropical_water_portrait.jpg",
+    "./assets/presets/preset_wedding_joy_portrait.jpg"
+  ]
+}
+
